@@ -1,0 +1,48 @@
+{
+	"expo": {
+		"name": "Nalli",
+		"privacy": "unlisted",
+		"platforms": [
+			"ios",
+			"android"
+		],
+		"version": "1.0.8",
+		"orientation": "portrait",
+		"icon": "./src/assets/images/icon.png",
+		"splash": {
+			"image": "./src/assets/images/splash.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#184fd9"
+		},
+		"updates": {
+			"fallbackToCacheTimeout": 30000,
+			"checkAutomatically": "ON_ERROR_RECOVERY"
+		},
+		"assetBundlePatterns": [
+			"**/*"
+		],
+		"ios": {
+			"bundleIdentifier": "fi.heimo.nalli",
+			"buildNumber": "1.0.8",
+			"supportsTablet": false,
+			"infoPlist": {
+				"NSCameraUsageDescription": "Nalli will use your camera to read QR codes containing Nano addresses or other related information.",
+				"NSContactsUsageDescription": "Nalli will use your contacts to allow you to send assets to them."
+			}
+		},
+		"android": {
+			"package": "fi.heimo.nalli",
+			"versionCode": 8,
+			"googleServicesFile": "./google-services.json",
+			"allowBackup": false,
+			"permissions": [
+				"CAMERA",
+				"READ_CONTACTS"
+			]
+		},
+		"androidStatusBar": {
+			"barStyle": "light-content",
+			"translucent": true
+		}
+	}
+}

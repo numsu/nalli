@@ -1,0 +1,30 @@
+{
+	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
+		"jsx": "react-native",
+		"lib": [
+			"dom",
+			"esnext"
+		],
+		"moduleResolution": "node",
+		"noEmit": true,
+		"skipLibCheck": true,
+		"downlevelIteration": true,
+		"sourceMap": true,
+		"experimentalDecorators": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true
+	},
+	"types": [
+		"react",
+		"react-dom",
+		"react-native"
+	],
+	"exclude": [
+		"build",
+		"node_modules",
+		"App.js"
+	],
+	"compileOnSave": false
+}

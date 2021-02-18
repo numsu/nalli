@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "455810410827",
+    "firebase_url": "https://nalli-5ecf8.firebaseio.com",
+    "project_id": "nalli-5ecf8",
+    "storage_bucket": "nalli-5ecf8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:455810410827:android:c9b029cc756f24df0de0ce",
+        "android_client_info": {
+          "package_name": "fi.heimo.nalli"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "455810410827-vi8gn7tk5s25ks2q36ch22pekv231k8r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3fxKzIW0KhaXkH7BTbCCQjJnGLH50kFU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "455810410827-vi8gn7tk5s25ks2q36ch22pekv231k8r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
