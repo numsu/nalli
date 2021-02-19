@@ -37,7 +37,7 @@ export default class ContactsService {
 		return status == Permissions.PermissionStatus.GRANTED;
 	}
 
-	static async getContacts(alertNoPermission = true) {
+	static async getContacts(alertNoPermission = true): Promise<ContactItem[]> {
 		if (this.saved && this.saved.length > 0) {
 			return this.saved;
 		}
@@ -115,7 +115,7 @@ export default class ContactsService {
 		};
 	}
 
-	static async getClientCountry() {
+	static async getClientCountry(): Promise<string> {
 		return (await ClientService.getClient()).country;
 	}
 

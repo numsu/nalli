@@ -1,22 +1,20 @@
 import { Map } from 'core-js';
-import { AsyncStorage, DeviceEventEmitter, EmitterSubscription, NativeEventEmitter } from 'react-native';
+import { AsyncStorage, DeviceEventEmitter, EmitterSubscription } from 'react-native';
 
 export default class VariableStore {
 
 	static variables = new Map<NalliVariable, any>();
 	static variablesKey = 'NalliVariables';
-	static watches = new Map<NalliVariable, NativeEventEmitter>();
 
-	static async setVariable<T>(key: NalliVariable, value: T) {
+	static async setVariable<T>(key: NalliVariable, value: T): Promise<void> {
 		try {
 			const cloned = JSON.parse(JSON.stringify(value));
 			if (this.variables.size == 0) {
 				await this.populate();
 			}
 			this.variables.set(key, cloned);
-			await AsyncStorage.setItem(this.variablesKey, JSON.stringify(this.variables))
+			await AsyncStorage.setItem(this.variablesKey, JSON.stringify(this.variables));
 			DeviceEventEmitter.emit(this.variablesKey + key, cloned);
-			return;
 		} catch (err) {
 			console.error('Error saving variables to storage', err);
 		}
@@ -39,10 +37,6 @@ export default class VariableStore {
 	}
 
 	static watchVariable<T>(key: NalliVariable, callback: (value?: T) => void): EmitterSubscription {
-		if (this.watches.has(key)) {
-			return this.watches.get(key);
-		}
-
 		return DeviceEventEmitter.addListener(this.variablesKey + key, callback);
 	}
 
@@ -64,7 +58,6 @@ export default class VariableStore {
 		if (storageVariables) {
 			this.variables = new Map(JSON.parse(storageVariables));
 		}
-		return;
 	}
 
 }

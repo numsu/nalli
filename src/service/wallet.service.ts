@@ -19,7 +19,8 @@ export default class WalletService {
 	}
 
 	static async removeAccount(account: Account) {
-		return HttpService.post<void>(`${this.uri}/account/remove`, account);
+		const { privateKey, ...rest } = account;
+		return HttpService.post<void>(`${this.uri}/account/remove`, rest);
 	}
 
 	static getWalletBalance() {
@@ -55,7 +56,7 @@ export default class WalletService {
 	}
 
 	static returnPendingSend(id: string) {
-		return HttpService.get<void>(`${this.uri}/pending/${id}/return`)
+		return HttpService.get<void>(`${this.uri}/pending/${id}/return`);
 	}
 
 }

@@ -23,7 +23,7 @@ export default class AuthStore {
 			return this.client;
 		} catch (err) {
 			console.error(err);
-			throw new Error('Error setting pin to storage');
+			throw new Error('Error getting client from storage');
 		}
 	}
 
@@ -33,7 +33,7 @@ export default class AuthStore {
 			return await AsyncStorage.setItem(this.clientKey, JSON.stringify(this.client));
 		} catch (err) {
 			console.error(err);
-			throw new Error('Error getting pin from storage');
+			throw new Error('Error setting client to storage');
 		}
 	}
 
@@ -56,7 +56,7 @@ export default class AuthStore {
 			return hash == pinHash;
 		} catch (err) {
 			console.error(err);
-			throw new Error('Error setting pin to storage');
+			throw new Error('Error validating pin in storage');
 		}
 	}
 
@@ -74,7 +74,7 @@ export default class AuthStore {
 			return await SecureStore.setItemAsync(this.pinKey, Convert.ab2hex(blake2b(Convert.str2bin(pin))));
 		} catch (err) {
 			console.error(err);
-			throw new Error('Error getting pin from storage');
+			throw new Error('Error setting pin to storage');
 		}
 	}
 

@@ -5,7 +5,7 @@ export default class CurrencyService {
 	static resourceUrl = 'https://api.coingecko.com/api/v3/coins/nano?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false';
 	static cachedResponse = { res: [], time: undefined };
 
-	static async convert(amount, from, to) {
+	static async convert(amount: string, from: string, to: string): Promise<string> {
 		const price = await this.getCurrentPrice(from, to);
 		const convertToFiat = to.toLowerCase() != 'xrb';
 
@@ -13,22 +13,21 @@ export default class CurrencyService {
 			amount = '0';
 		}
 
-		amount = parseFloat(amount.replace(/,/g, '.'));
+		const parsed = parseFloat(amount.replace(/,/g, '.'));
 		if (convertToFiat) {
-			return (amount * price).toFixed(2);
+			return (parsed * price).toFixed(2);
 		}
-		return (amount / price).toFixed(4);
+		return (parsed / price).toFixed(4);
 	}
 
-	static async getCurrentPrice(from, to) {
+	static async getCurrentPrice(from: string, to: string): Promise<number> {
 		await this.updateCache();
 		const convertToFiat = to.toLowerCase() != 'xrb';
 		const fiat = convertToFiat ? to : from;
 		return this.cachedResponse.res.filter(c => c.currency == fiat)[0].price;
-
 	}
 
-	static getNumberDecimalPlaces(number) {
+	static getNumberDecimalPlaces(number): number {
 		const hasFraction = n => Math.abs(Math.round(n) - n) > 1e-10;
 		let decimalPlaces = 0;
 		while (hasFraction(number * (10 ** decimalPlaces)) && isFinite(10 ** decimalPlaces)) {
@@ -41,7 +40,7 @@ export default class CurrencyService {
 		return currencyList.find(c => c.iso == iso.toUpperCase());
 	}
 
-	static formatNanoAmount(balance: number) {
+	static formatNanoAmount(balance: number): string {
 		let decimalPlaces = CurrencyService.getNumberDecimalPlaces(balance);
 
 		if (decimalPlaces > 6) {

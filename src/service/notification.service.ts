@@ -21,8 +21,6 @@ export default class NotificationService {
 		if (status == Permissions.PermissionStatus.GRANTED) {
 			return Notifications.addListener(listener);
 		}
-
-		return;
 	}
 
 }
