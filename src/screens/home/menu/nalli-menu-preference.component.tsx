@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Text } from 'react-native-elements';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 
 interface NalliMenuPreferenceProps {
@@ -27,8 +27,8 @@ export default class NalliMenuPreference extends React.Component<NalliMenuPrefer
 				<View style={styles.preference}>
 					<MaterialCommunityIcons style={styles.preferenceIcon} name={icon} />
 					<View>
-						<Text style={styles.preferenceHeader}>{header}</Text>
-						<Text style={styles.preferenceSubheader}>{subheader}</Text>
+						<NalliText size={ETextSize.P_LARGE} style={styles.preferenceHeader}>{header}</NalliText>
+						<NalliText style={styles.preferenceSubheader}>{subheader}</NalliText>
 					</View>
 				</View>
 			</TouchableOpacity>
@@ -44,18 +44,15 @@ const styles = StyleSheet.create({
 		paddingRight: 30,
 	},
 	preferenceHeader: {
-		fontSize: 20,
-		fontFamily: 'OpenSans',
-		marginLeft: 10,
+		marginLeft: 6,
 	},
 	preferenceSubheader: {
-		marginLeft: 10,
-		fontFamily: 'OpenSans',
+		marginLeft: 6,
 		color: Colors.darkText,
 	},
 	preferenceIcon: {
 		color: Colors.main,
-		fontSize: 35,
-		marginTop: 5,
+		fontSize: 30,
+		marginTop: 3,
 	},
 });

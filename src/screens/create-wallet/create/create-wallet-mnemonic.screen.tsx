@@ -2,7 +2,6 @@ import React from 'react';
 import {
 	Alert,
 	StyleSheet,
-	Text,
 	View,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -11,6 +10,7 @@ import { HeaderBackButton } from 'react-navigation';
 import Loading from '../../../components/loading.component';
 import MnemonicWord from '../../../components/mnemonic-word.component';
 import NalliButton from '../../../components/nalli-button.component';
+import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 import PhoneNumberSigner from '../../../crypto/phone-number-signer';
 import VariableStore, { NalliVariable } from '../../../service/variable-store';
@@ -32,7 +32,9 @@ export default class CreateWalletMnemonic extends React.Component<any, any> {
 	}
 
 	static navigationOptions = ({ navigation }) => ({
+		headerStyle: { height: 60 },
 		headerLeft: <HeaderBackButton tintColor={Colors.main} onPress={() => navigation.goBack(undefined)} />,
+		headerLeftContainerStyle: { marginTop: 15 },
 	})
 
 	onChangeText = (key, val) => {
@@ -78,18 +80,18 @@ export default class CreateWalletMnemonic extends React.Component<any, any> {
 			return (
 				<View style={styles.container}>
 					<View style={styles.content}>
-						<Text style={styles.h1}>
+						<NalliText size={ETextSize.H1} style={styles.h1}>
 							Your wallet
-						</Text>
-						<Text style={styles.text}>
+						</NalliText>
+						<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 							Your wallet has now been created. It will be encrypted on your device.
-						</Text>
-						<Text style={styles.text}>
+						</NalliText>
+						<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 							Next, you will be provided with the keys to your wallet. Make sure that nobody else than you can see the key.
-						</Text>
-						<Text style={styles.text}>
+						</NalliText>
+						<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 							Losing or sharing the key will cause loss of assets.
-						</Text>
+						</NalliText>
 						<View style={styles.actions}>
 							<NalliButton
 									text="Continue"
@@ -110,12 +112,12 @@ export default class CreateWalletMnemonic extends React.Component<any, any> {
 				<View style={styles.container}>
 					<Loading show={process} />
 					<ScrollView contentContainerStyle={styles.content}>
-						<Text style={styles.h1}>
+						<NalliText size={ETextSize.H1} style={styles.h1}>
 							Recovery phrase
-						</Text>
-						<Text style={styles.text}>
+						</NalliText>
+						<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 							These 24 words are your key. These can be used to control your wallet if you don't have access to this phone or this application.
-						</Text>
+						</NalliText>
 						<View style={styles.wordsContainer}>
 							{words}
 						</View>
@@ -146,13 +148,10 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	h1: {
-		fontSize: 30,
-		fontWeight: '600',
 		marginBottom: 20,
 		color: Colors.main,
 	},
 	text: {
-		fontSize: 20,
 		width: '80%',
 		textAlign: 'center',
 		marginBottom: 12,

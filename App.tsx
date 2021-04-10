@@ -21,6 +21,7 @@ const customFonts = {
 	'MaterialDesignIcons': require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf'),
 	'OpenSans': require('./src/assets/fonts/OpenSans-Regular.ttf'),
 	'OpenSansBold': require('./src/assets/fonts/OpenSans-SemiBold.ttf'),
+	'MontserratBold': require('./src/assets/fonts/Montserrat-SemiBold.ttf'),
 };
 
 export default class App extends React.Component<any, any> {

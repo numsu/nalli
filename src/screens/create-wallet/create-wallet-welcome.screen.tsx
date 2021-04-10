@@ -1,7 +1,6 @@
 import React from 'react';
 import {
 	StyleSheet,
-	Text,
 	View,
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -9,6 +8,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { SimpleLineIcons } from '@expo/vector-icons';
 
 import NalliButton from '../../components/nalli-button.component';
+import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
 import AuthStore from '../../service/auth-store';
 
@@ -47,12 +47,12 @@ export default class CreateWalletWelcome extends React.Component<any, any> {
 				</TouchableOpacity>
 				<View style={styles.content}>
 					<View style={styles.welcome}>
-						<Text style={styles.h1}>
+						<NalliText size={ETextSize.H1} style={styles.h1}>
 							Welcome
-						</Text>
-						<Text style={styles.text}>
+						</NalliText>
+						<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 							To start using the app, you will need a wallet. You can either import an existing one or create a new one.
-						</Text>
+						</NalliText>
 					</View>
 					<View style={styles.actions}>
 						<NalliButton
@@ -89,13 +89,10 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	h1: {
-		fontSize: 40,
-		fontWeight: '600',
 		marginBottom: 50,
 		color: Colors.main,
 	},
 	text: {
-		fontSize: 20,
 		width: '80%',
 		textAlign: 'center',
 	},

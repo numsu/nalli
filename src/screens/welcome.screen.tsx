@@ -13,6 +13,7 @@ import Link from '../components/link.component';
 import NalliButton from '../components/nalli-button.component';
 import PhoneNumberInput from '../components/phone-number-input.component';
 import NalliLogo from '../components/svg/nalli-logo';
+import NalliText from '../components/text.component';
 import Colors from '../constants/colors';
 import AuthService from '../service/auth.service';
 import ContactsService from '../service/contacts.service';
@@ -27,6 +28,12 @@ export default class WelcomeScreen extends React.Component<NavigationInjectedPro
 
 	constructor(props) {
 		super(props);
+	}
+
+	static navigationOptions = () => {
+		return {
+			headerStyle: { height: 75, backgroundColor: Colors.main, borderBottomColor: Colors.main, elevation: 0, shadowOpacity: 0 },
+		};
 	}
 
 	onChangeText = (key, val) => {
@@ -70,9 +77,9 @@ export default class WelcomeScreen extends React.Component<NavigationInjectedPro
 		return (
 			<DismissKeyboardView style={styles.container}>
 				<NalliLogo width={150} height={60} color="white" />
-				<Text style={styles.text}>
+				<NalliText style={styles.text}>
 					Pay anyone, anywhere, instantly. Using just a phone number.
-				</Text>
+				</NalliText>
 				<KeyboardAvoidingView
 						style={styles.formContainer}
 						behavior="height"

@@ -2,12 +2,12 @@ import React from 'react';
 import {
 	Platform,
 	StyleSheet,
-	Text,
 	View,
 } from 'react-native';
 
 import colors from '../constants/colors';
 import Colors from '../constants/colors';
+import NalliText, { ETextSize } from './text.component';
 
 interface BottomSheetHeaderProps {
 	header: string;
@@ -27,9 +27,11 @@ export default class BottomSheetHeader extends React.Component<BottomSheetHeader
 		return (
 			<View style={styles.headerStyle}>
 				<View style={styles.panelHandle} />
-				<Text style={styles.h2}>
+				<NalliText
+						size={ETextSize.H1}
+						style={styles.header}>
 					{header}
-				</Text>
+				</NalliText>
 			</View>
 		);
 	}
@@ -45,11 +47,9 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 		alignSelf: 'center',
 	},
-	h2: {
-		fontSize: 25,
+	header: {
 		marginBottom: 10,
 		marginTop: -15,
-		fontFamily: 'OpenSansBold',
 	},
 	headerStyle: {
 		shadowOffset: { width: 0, height: -5 },

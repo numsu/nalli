@@ -2,15 +2,16 @@ import React, { RefObject } from 'react';
 import {
 	Alert,
 	StyleSheet,
-	Text,
 	TextInput,
 	View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	HeaderBackButton,
 	NavigationInjectedProps,
 } from 'react-navigation';
 
+import NalliText, { ETextSize } from '../components/text.component';
 import Colors from '../constants/colors';
 import AuthStore from '../service/auth-store';
 import AuthService from '../service/auth.service';
@@ -44,12 +45,13 @@ export default class WelcomeOtpScreen extends React.Component<WelcomeOtpScreenPr
 
 	static navigationOptions = ({ navigation }) => {
 		return {
+			headerStyle: { height: 75, backgroundColor: Colors.main, borderBottomColor: Colors.main, elevation: 0, shadowOpacity: 0 },
 			headerTitle: 'Verify',
 			headerLeft: <HeaderBackButton tintColor={'white'} onPress={() => navigation.goBack()} />,
 		};
 	}
 
-	onChangeNumberPad = (val) => {
+	onChangeNumberPad = (val: string) => {
 		if (val.length > 6) {
 			return;
 		}
@@ -82,10 +84,10 @@ export default class WelcomeOtpScreen extends React.Component<WelcomeOtpScreenPr
 	render = () => {
 		const { otp } = this.state;
 		return (
-			<View style={styles.container}>
-				<Text style={styles.text}>
+			<SafeAreaView edges={['top']} style={styles.container}>
+				<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 					Please input the code we sent to your phone number
-				</Text>
+				</NalliText>
 				<View style={styles.numberPadContainer}>
 					<View style={styles.numberPadPinContainer}>
 						<TextInput
@@ -96,25 +98,24 @@ export default class WelcomeOtpScreen extends React.Component<WelcomeOtpScreenPr
 								value={otp} />
 					</View>
 				</View>
-			</View>
+			</SafeAreaView>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
 	container: {
+		zIndex: -1,
 		paddingTop: 40,
 		backgroundColor: Colors.main,
 		flex: 1,
 		alignItems: 'center',
 	},
 	text: {
-		fontSize: 20,
-		fontWeight: '400',
-		color: Colors.borderColor,
-		paddingHorizontal: 60,
-		alignSelf: 'center',
+		color: 'white',
+		paddingTop: 10,
 		textAlign: 'center',
+		marginHorizontal: 50,
 	},
 	numberPadContainer: {
 		flex: 1,

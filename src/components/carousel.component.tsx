@@ -12,8 +12,8 @@ import Card from './card.component';
 interface CarouselProps {
 	price: number;
 	onChangeAccount: (index: number) => void;
-	onAddNewAccount: (index: number) => void;
-	onHideAccount: (index: number) => void;
+	onAddNewAccount: (index: number) => Promise<boolean>;
+	onHideAccount: (index: number) => Promise<boolean>;
 }
 
 interface CarouselState {
@@ -66,10 +66,11 @@ export default class NalliCarousel extends React.Component<CarouselProps, Carous
 		this.setState({ activeAccount: index });
 	}
 
-	hideAccount = (index: number) => {
-		this.props.onHideAccount(index);
-		this.carouselRef.snapToPrev();
-		this.setState({ activeAccount: index - 1 });
+	hideAccount = async (index: number) => {
+		if (await this.props.onHideAccount(index)) {
+			this.carouselRef.snapToPrev();
+			this.setState({ activeAccount: index - 1 });
+		}
 	}
 
 	render = () => {
@@ -130,6 +131,8 @@ const styles = StyleSheet.create({
 	loadingCard: {
 		marginTop: 10,
 		marginBottom: 10,
+		marginLeft: 3,
+		marginRight: 3,
 	},
 	loadingText: {
 		color: Colors.main,

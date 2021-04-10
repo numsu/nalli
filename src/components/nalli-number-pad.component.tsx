@@ -1,7 +1,6 @@
 import React from 'react';
 import {
 	StyleSheet,
-	Text,
 	TouchableOpacity,
 	View,
 } from 'react-native';
@@ -9,9 +8,10 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 
 import layout from '../constants/layout';
+import NalliText, { ETextSize } from './text.component';
 
 interface NalliNumberPadProps {
-	onChangeText: Function;
+	onChangeText: (pin: string) => any;
 	style?: any;
 	maxLength?: number;
 	pin?: string;
@@ -61,9 +61,9 @@ export default class NalliNumberPad extends React.Component<NalliNumberPadProps,
 					key={n}
 					style={[styles.number, style]}
 					onPress={() => this.onChangeText(n, onChangeText)}>
-				<Text style={[styles.numberText, style]}>
+				<NalliText size={ETextSize.BUTTON} style={[styles.numberText, style]}>
 					{n}
-				</Text>
+				</NalliText>
 			</TouchableOpacity>
 		));
 
@@ -75,9 +75,9 @@ export default class NalliNumberPad extends React.Component<NalliNumberPadProps,
 						key={0}
 						style={[styles.number, style]}
 						onPress={() => this.onChangeText('0', onChangeText)}>
-					<Text style={[styles.numberText, style]}>
+					<NalliText size={ETextSize.BUTTON} style={[styles.numberText, style]}>
 						0
-					</Text>
+					</NalliText>
 				</TouchableOpacity>
 				<TouchableOpacity
 						key={10}
@@ -114,6 +114,5 @@ const styles = StyleSheet.create({
 	},
 	numberText: {
 		color: 'white',
-		fontSize: 25,
 	},
 });

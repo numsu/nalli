@@ -3,12 +3,12 @@ import {
 	KeyboardTypeOptions,
 	ReturnKeyTypeOptions,
 	StyleSheet,
-	Text,
 	TextInput,
 	View,
 } from 'react-native';
 
 import Colors from '../constants/colors';
+import NalliText from './text.component';
 
 interface NalliInputProps {
 	reference?: RefObject<any>;
@@ -16,7 +16,7 @@ interface NalliInputProps {
 	placeholder?: string;
 	readonly?: boolean;
 	onChangeText: (str: string) => any;
-	onBlur?: (event: Event) => any;
+	onBlur?: () => any;
 	keyboardType?: KeyboardTypeOptions;
 	autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
 	secureTextEntry?: boolean;
@@ -44,9 +44,9 @@ export default class NalliInput extends React.Component<NalliInputProps, NalliIn
 		this.setState({ borderColor: Colors.main });
 	}
 
-	onBlur = (outerBlurEvent) => {
-		if (outerBlurEvent) {
-			outerBlurEvent();
+	onBlur = () => {
+		if (this.props.onBlur) {
+			this.props.onBlur();
 		}
 		this.setState({ borderColor: Colors.borderColor });
 	}
@@ -58,7 +58,6 @@ export default class NalliInput extends React.Component<NalliInputProps, NalliIn
 			placeholder,
 			readonly,
 			onChangeText,
-			onBlur,
 			keyboardType,
 			autoCapitalize,
 			secureTextEntry,
@@ -70,28 +69,28 @@ export default class NalliInput extends React.Component<NalliInputProps, NalliIn
 		} = this.props;
 		const { borderColor } = this.state;
 		return (
-			<View style={styles.inputContainer}>
+			<View>
 				{label &&
-					<Text style={styles.label}>
+					<NalliText style={styles.label}>
 						{label}
-					</Text>
+					</NalliText>
 				}
 				<TextInput
 						returnKeyType={returnKeyType}
 						ref={reference}
 						editable={!readonly}
-						onFocus={() => this.onFocus()}
+						onFocus={this.onFocus}
 						placeholder={placeholder}
 						style={[styles.input, style, { borderColor }]}
 						secureTextEntry={secureTextEntry}
 						keyboardType={keyboardType}
 						autoCapitalize={autoCapitalize}
 						placeholderTextColor={Colors.inputPlaceholder}
-						onBlur={() => this.onBlur(onBlur)}
+						onBlur={this.onBlur}
 						multiline={multiline}
 						numberOfLines={numberOfLines}
 						value={value}
-						onChangeText={val => onChangeText(val)} />
+						onChangeText={onChangeText} />
 			</View>
 		);
 	}
@@ -99,8 +98,6 @@ export default class NalliInput extends React.Component<NalliInputProps, NalliIn
 }
 
 const styles = StyleSheet.create({
-	inputContainer: {
-	},
 	label: {
 		marginBottom: -12,
 		marginLeft: 12,
@@ -108,12 +105,11 @@ const styles = StyleSheet.create({
 		padding: 5,
 		zIndex: 105,
 		alignSelf: 'flex-start',
-		fontFamily: 'OpenSans',
 	},
 	input: {
 		backgroundColor: 'white',
 		borderWidth: 1,
-		borderRadius: 5,
+		borderRadius: 15,
 		padding: 12,
 		marginBottom: 10,
 		color: 'black',

@@ -3,7 +3,6 @@ import React from 'react';
 import {
 	Alert,
 	StyleSheet,
-	Text,
 	View,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
@@ -13,6 +12,7 @@ import DismissKeyboardView from '../../../components/dismiss-keyboard-hoc.compon
 import Loading from '../../../components/loading.component';
 import NalliButton from '../../../components/nalli-button.component';
 import NalliInput from '../../../components/nalli-input.component';
+import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 import layout from '../../../constants/layout';
 import PhoneNumberSigner from '../../../crypto/phone-number-signer';
@@ -33,7 +33,9 @@ export default class CreateWalletImportSeed extends React.Component<any, any> {
 	}
 
 	static navigationOptions = ({ navigation }) => ({
+		headerStyle: { height: 60 },
 		headerLeft: <HeaderBackButton tintColor={Colors.main} onPress={() => navigation.goBack(undefined)} />,
+		headerLeftContainerStyle: { marginTop: 15 },
 	})
 
 	onChangeText = (text) => {
@@ -78,12 +80,12 @@ export default class CreateWalletImportSeed extends React.Component<any, any> {
 				<Loading show={process} />
 				<KeyboardAwareScrollView>
 					<DismissKeyboardView style={styles.content}>
-						<Text style={styles.h1}>
+						<NalliText size={ETextSize.H1} style={styles.h1}>
 							Import with seed
-						</Text>
-						<Text style={styles.text}>
+						</NalliText>
+						<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 							Write down your seed in the field below.
-						</Text>
+						</NalliText>
 						<NalliInput
 								label='Seed'
 								value={seed}
@@ -120,13 +122,10 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	h1: {
-		fontSize: 30,
-		fontWeight: '600',
 		marginBottom: 20,
 		color: Colors.main,
 	},
 	text: {
-		fontSize: 20,
 		width: '80%',
 		textAlign: 'center',
 		marginBottom: 12,

@@ -15,7 +15,6 @@ export default class WalletStore {
 		if (!this.wallet) {
 			const storedWallet = await SecureStore.getItemAsync(this.walletKey);
 			this.wallet = JSON.parse(storedWallet);
-
 			// Handle imported wallets from earlier versions
 			if (this.wallet && this.wallet.type === undefined) {
 				if (!!this.wallet.mnemonic) {

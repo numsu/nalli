@@ -69,9 +69,10 @@ export default class PhoneNumberInputModal extends React.Component<NumberInputMo
 		if (isOpen) {
 			return (
 				<NalliModal
+						noScroll={true}
 						isOpen={isOpen}
 						onClose={this.hide}
-						header='Input phone number'
+						header='Phone number'
 						size={EModalSize.MINI}>
 					<View>
 						<PhoneNumberInput

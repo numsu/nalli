@@ -1,11 +1,11 @@
 import React from 'react';
 import {
 	StyleSheet,
-	Text,
 	View,
 } from 'react-native';
 
 import NalliButton from '../../components/nalli-button.component';
+import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
 import AuthService from '../../service/auth.service';
 import ContactsService from '../../service/contacts.service';
@@ -48,18 +48,18 @@ export default class Permissions extends React.Component<any, PermissionsState> 
 			<View style={styles.container}>
 				<View style={styles.content}>
 					<View style={styles.welcome}>
-						<Text style={styles.h1}>
+						<NalliText size={ETextSize.H1} style={styles.h1}>
 							Permissions
-						</Text>
+						</NalliText>
 						{permission == 1 &&
-							<Text style={styles.text}>
+							<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 								We need your permission to send you notifications about incoming payments.
-							</Text>
+							</NalliText>
 						}
 						{permission == 2 &&
-							<Text style={styles.text}>
+							<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 								We need your permission to use your contacts in order to allow you to use them as recipients. Nalli will never save information about your contacts unless you are about to use one as a recipient.
-							</Text>
+							</NalliText>
 						}
 					</View>
 					<View style={styles.actions}>
@@ -87,13 +87,10 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	h1: {
-		fontSize: 40,
-		fontWeight: '600',
 		marginBottom: 50,
 		color: Colors.main,
 	},
 	text: {
-		fontSize: 20,
 		width: '80%',
 		textAlign: 'center',
 	},

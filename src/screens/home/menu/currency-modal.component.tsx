@@ -5,9 +5,9 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native';
-import { Text } from 'react-native-elements';
 
 import NalliModal from '../../../components/modal.component';
+import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 import { Currency, currencyList } from '../../../service/currency.service';
 import VariableStore, { NalliVariable } from '../../../service/variable-store';
@@ -51,6 +51,7 @@ export default class CurrencyModal extends React.Component<CurrencyModalProps, C
 		if (isOpen) {
 			return (
 				<NalliModal
+						noScroll={true}
 						isOpen={isOpen}
 						onClose={close}
 						header='Select currency'>
@@ -60,8 +61,8 @@ export default class CurrencyModal extends React.Component<CurrencyModalProps, C
 							renderItem={({ item }) => (
 								<TouchableOpacity onPress={() => this.selectCurrency(item)}>
 									<View style={styles.currencyItem}>
-										<Text style={styles.currencyIcon}>{item.icon}</Text>
-										<Text style={styles.currencyText}>{item.name} ({item.iso})</Text>
+										<NalliText size={ETextSize.P_LARGE} style={styles.currencyIcon}>{item.icon}</NalliText>
+										<NalliText style={styles.currencyText}>{item.name} ({item.iso})</NalliText>
 									</View>
 								</TouchableOpacity>
 							)} />
@@ -82,15 +83,11 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 	},
 	currencyIcon: {
-		fontFamily: 'OpenSansBold',
 		color: Colors.main,
 		width: 60,
-		fontSize: 20,
 		lineHeight: 30,
 	},
 	currencyText: {
-		fontFamily: 'OpenSans',
-		fontSize: 15,
 		lineHeight: 30,
 	},
 });
