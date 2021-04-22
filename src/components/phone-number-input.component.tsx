@@ -44,7 +44,7 @@ export default class PhoneNumberInput extends React.Component<PhoneNumberInputPr
 	}
 
 	init = async () => {
-		const country = (await VariableStore.getVariable(NalliVariable.COUNTRY)) || Localization.locale.split('-')[1] || 'US';
+		const country = (await VariableStore.getVariable<string>(NalliVariable.COUNTRY)) || Localization.locale.split('-')[1] || 'US';
 		this.selectCountry(country.toUpperCase(), this.props.onChangeCountry);
 	}
 
@@ -112,24 +112,21 @@ const styles = StyleSheet.create({
 	},
 	countryInputContainer: {
 		backgroundColor: 'white',
-		paddingHorizontal: 15,
-		paddingVertical: 20,
-		borderRadius: 30,
-		width: layout.window.width * 0.31,
+		paddingHorizontal: 10,
+		paddingVertical: 15,
+		borderRadius: 15,
+		width: layout.window.width * 0.25,
 	},
 	countryInput: {
-		fontSize: 18,
+		fontSize: 15,
 	},
 	phoneNumberInput: {
 		backgroundColor: 'white',
-		borderRadius: 30,
-		paddingHorizontal: 15,
-		paddingVertical: 20,
+		borderRadius: 15,
+		paddingHorizontal: 10,
+		paddingVertical: 15,
 		flexGrow: 1,
-		marginLeft: 10,
-		fontSize: 18,
-	},
-	textStyle: {
-		fontSize: 18,
+		marginLeft: 5,
+		fontSize: 15,
 	},
 });

@@ -2,13 +2,13 @@ import React from 'react';
 import {
 	Alert,
 	StyleSheet,
-	Text,
 	TextInput,
 	View,
 } from 'react-native';
 
 import DismissKeyboardView from '../components/dismiss-keyboard-hoc.component';
 import NalliNumberPad from '../components/nalli-number-pad.component';
+import NalliText, { ETextSize } from '../components/text.component';
 import Colors from '../constants/colors';
 import AuthStore from '../service/auth-store';
 
@@ -31,7 +31,7 @@ export default class WelcomePinScreen extends React.Component<any, WelcomPinScre
 
 	static navigationOptions = () => ({
 		header: null,
-	});
+	})
 
 	onChangeNumberPad = (val: string) => {
 		if (this.state.verify) {
@@ -67,9 +67,9 @@ export default class WelcomePinScreen extends React.Component<any, WelcomPinScre
 
 		return (
 			<DismissKeyboardView style={styles.container}>
-				<Text style={styles.text}>
+				<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 					{ text }
-				</Text>
+				</NalliText>
 				<View style={styles.numberPadContainer}>
 					<View style={styles.numberPadPinContainer}>
 						<TextInput
@@ -96,13 +96,10 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	text: {
-		fontSize: 20,
-		fontWeight: '400',
-		color: Colors.borderColor,
-		paddingHorizontal: 60,
-		paddingTop: 20,
-		alignSelf: 'center',
+		color: 'white',
+		paddingTop: 50,
 		textAlign: 'center',
+		marginHorizontal: 50,
 	},
 	numberPadContainer: {
 		flex: 1,

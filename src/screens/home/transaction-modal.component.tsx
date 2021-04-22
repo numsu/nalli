@@ -3,15 +3,14 @@ import React from 'react';
 import {
 	Alert,
 	StyleSheet,
-	Text,
 	View,
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 
 import Link from '../../components/link.component';
 import NalliModal from '../../components/modal.component';
 import NalliButton from '../../components/nalli-button.component';
 import ShowHide from '../../components/show-hide.component';
+import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
 import WalletService, { EPendingStatus, WalletTransaction } from '../../service/wallet.service';
 
@@ -79,90 +78,90 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 					isOpen={isOpen}
 					onClose={this.close}
 					header='Transaction'>
-				<ScrollView style={styles.content}>
+				<View style={styles.content}>
 					<View style={styles.row}>
-						<Text style={styles.title}>Time</Text>
-						<Text style={styles.text}>
+						<NalliText size={ETextSize.H2}>Time</NalliText>
+						<NalliText>
 							{moment.unix(transaction.timestamp).format('D MMMM YYYY HH:mm:ss')}
-						</Text>
+						</NalliText>
 					</View>
 					<View style={styles.row}>
-						<Text style={styles.title}>
+						<NalliText size={ETextSize.H2}>
 							{transaction.type == 'send' ? 'Recipient' : 'Sender'}
-						</Text>
-						<Text style={styles.text}>
+						</NalliText>
+						<NalliText>
 							{contactName}
-						</Text>
+						</NalliText>
 						{transaction.phone && contactName != 'Unknown' && transaction.pendingStatus != EPendingStatus.RETURNED ?
-							<Text style={styles.text}>
+							<NalliText>
 								{transaction.phone}
-							</Text> : undefined
+							</NalliText> : undefined
 						}
 					</View>
 					<View style={styles.row}>
-						<Text style={styles.title}>
+						<NalliText size={ETextSize.H2}>
 							{transaction.type == 'send' ? 'Sent' : 'Received'}
-						</Text>
+						</NalliText>
 						{transaction.type == 'send' ?
-							<Text style={styles.text}>
+							<NalliText>
 								- {transaction.amount} NANO
-							</Text> :
-							<Text style={styles.text}>
+							</NalliText> :
+							<NalliText>
 								+ {transaction.amount} NANO
-							</Text>
+							</NalliText>
 						}
 					</View>
 					{transaction.pendingStatus == EPendingStatus.CREATED || transaction.pendingStatus == EPendingStatus.FILLED ?
 						<View style={styles.row}>
-							<Text style={styles.title}>Custodial transaction status</Text>
-							<Text style={styles.text}>Funds are in custodial account</Text>
+							<NalliText size={ETextSize.H2}>Custodial transaction status</NalliText>
+							<NalliText>Funds are in custodial account</NalliText>
 						</View>
 						: undefined
 					}
 					{transaction.pendingStatus == EPendingStatus.SETTLED && transaction.type == 'send' ?
 						<View style={styles.row}>
-							<Text style={styles.title}>Custodial transaction status</Text>
-							<Text style={styles.text}>Funds are received by the recipient</Text>
+							<NalliText size={ETextSize.H2}>Custodial transaction status</NalliText>
+							<NalliText>Funds are received by the recipient</NalliText>
 						</View>
 						: undefined
 					}
 					{transaction.pendingStatus == EPendingStatus.RETURNED ?
 						<View style={styles.row}>
-							<Text style={styles.title}>Custodial transaction status</Text>
-							<Text style={styles.text}>Funds are returned to you</Text>
+							<NalliText size={ETextSize.H2}>Custodial transaction status</NalliText>
+							<NalliText>Funds are returned to you</NalliText>
 						</View>
-						: undefined
-					}
-					{transaction.custodialAccount && transaction.type == 'send' ?
-							<View>
-								<Text style={styles.info}>
-									When sending funds to a user who has not yet registered to the service,
-									the funds are first sent to a temporary custodial account.
-								</Text>
-								{transaction.pendingStatus != EPendingStatus.RETURNED ?
-									<Text style={styles.info}>
-										You are able to cancel the transaction and return your funds up until the recipient has claimed them.
-									</Text>
-									: undefined
-								}
-							</View>
-						: undefined
-					}
-					{transaction.custodialAccount && transaction.type == 'receive' && transaction.pendingStatus != EPendingStatus.RETURNED ?
-							<View>
-								<Text style={styles.info}>
-									You received these funds from a custodial account upon registration.
-								</Text>
-							</View>
 						: undefined
 					}
 					<ShowHide
 							containerStyle={styles.details}
 							showText='Show details'
 							hideText='Hide details'>
+						{transaction.custodialAccount && transaction.type == 'send' ?
+							<View>
+								<NalliText style={styles.info}>
+									When sending funds to a user who has not yet registered to the service,
+									the funds are first sent to a temporary custodial account.
+								</NalliText>
+								{transaction.pendingStatus != EPendingStatus.RETURNED ?
+									<NalliText style={styles.info}>
+										You are able to cancel the transaction and return your funds up until the recipient has claimed them.
+									</NalliText>
+									: undefined
+								}
+							</View>
+							: undefined
+						}
+						{transaction.custodialAccount && transaction.type == 'receive' && transaction.pendingStatus != EPendingStatus.RETURNED ?
+								<View>
+									<NalliText style={styles.info}>
+										You received these funds from a custodial account upon registration.
+									</NalliText>
+								</View>
+							: undefined
+						}
 						{transaction.account ?
 							<View style={styles.row}>
-								<Text style={styles.title}>Account</Text>
+								<NalliText size={ETextSize.H2}>Account</NalliText>
 								<Link url={`https://nanocrawler.cc/explorer/account/${transaction.account}`}>
 									{transaction.account}
 								</Link>
@@ -170,14 +169,14 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 							: undefined
 						}
 						<View style={styles.row}>
-							<Text style={styles.title}>Hash</Text>
+							<NalliText size={ETextSize.H2}>Hash</NalliText>
 							<Link url={`https://nanocrawler.cc/explorer/block/${transaction.hash}`}>
 								{transaction.hash}
 							</Link>
 						</View>
 						{transaction.custodialAccount ?
 							<View style={styles.row}>
-								<Text style={styles.title}>Custodial account</Text>
+								<NalliText size={ETextSize.H2}>Custodial account</NalliText>
 								<Link url={`https://nanocrawler.cc/explorer/account/${transaction.custodialAccount}`}>
 									{transaction.custodialAccount}
 								</Link>
@@ -185,30 +184,30 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 							: undefined
 						}
 						{transaction.custodialHash ?
-							<View style={styles.row}>
-								<Text style={styles.title}>Custodial hash</Text>
+							<View style={[styles.row]}>
+								<NalliText size={ETextSize.H2}>Custodial hash</NalliText>
 								<Link url={`https://nanocrawler.cc/explorer/block/${transaction.custodialHash}`}>
 									{transaction.custodialHash}
 								</Link>
 							</View>
 							: undefined
 						}
+						{transaction.custodialAccount
+								&& transaction.type == 'send'
+								&& (transaction.pendingStatus == EPendingStatus.FILLED
+									|| transaction.pendingStatus == EPendingStatus.CREATED) ?
+							<View>
+								<NalliButton
+										text='Cancel transaction'
+										solid={true}
+										style={styles.cancelButton}
+										onPress={this.returnPendingSend} />
+										{/* disabled={!moment().subtract(24, 'hours').isBefore(moment.unix(transaction.timestamp))} */}
+							</View>
+							: undefined
+						}
 					</ShowHide>
-					{transaction.custodialAccount
-							&& transaction.type == 'send'
-							&& (transaction.pendingStatus == EPendingStatus.FILLED
-								|| transaction.pendingStatus == EPendingStatus.CREATED) ?
-						<View>
-							<NalliButton
-									text='Cancel transaction'
-									solid={true}
-									style={styles.cancelButton}
-									onPress={this.returnPendingSend} />
-									{/* disabled={!moment().subtract(24, 'hours').isBefore(moment.unix(transaction.timestamp))} */}
-						</View>
-						: undefined
-					}
-				</ScrollView>
+				</View>
 			</NalliModal>
 		);
 	}
@@ -217,29 +216,17 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 
 const styles = StyleSheet.create({
 	content: {
+		paddingBottom: 20,
 	},
 	row: {
 		paddingVertical: 5,
-		borderBottomWidth: 1,
-		borderBottomColor: Colors.borderColor,
-	},
-	title: {
-		fontSize: 16,
-		fontFamily: 'OpenSansBold',
-	},
-	text: {
-		fontSize: 16,
-		fontFamily: 'OpenSans',
 	},
 	link: {
 		fontSize: 16,
 		color: Colors.main,
 	},
 	info: {
-		marginTop: 20,
-		fontSize: 16,
-		textAlign: 'center',
-		fontFamily: 'OpenSans',
+		marginBottom: 15,
 	},
 	details: {
 		marginTop: 30,

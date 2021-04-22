@@ -97,14 +97,14 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 						<Ionicons
 								style={styles.changeDisplayedCurrencyArrow}
 								name="ios-swap"
-								size={32} />
+								size={25} />
 					</TouchableOpacity>
 					{accountActive &&
 						<TouchableOpacity
 								onPress={this.onHomeAccountPress}
 								style={styles.homeAccount}>
 							<Text style={{ color: Colors.main }}>
-								<MaterialIcons size={32} name='home' />
+								<MaterialIcons size={25} name='home' />
 							</Text>
 						</TouchableOpacity>
 					}
@@ -113,7 +113,7 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 								style={styles.hideAccount}
 								onPress={() => onHideAccount(accountIndex)}>
 							<Text style={{ color: Colors.main }}>
-								<FontAwesome5 size={20} name='eye-slash' />
+								<FontAwesome5 size={17} name='eye-slash' />
 							</Text>
 						</TouchableOpacity>
 					}
@@ -168,18 +168,18 @@ const styles = StyleSheet.create({
 	},
 	homeAccount: {
 		position: 'absolute',
-		right: 65,
-		top: 15,
+		right: 48,
+		top: 14,
 	},
 	hideAccount: {
 		position: 'absolute',
-		right: 65,
-		top: 20,
+		right: 50,
+		top: 16,
 	},
 	changeDisplayedCurrencyButton: {
 		position: 'absolute',
 		top: 13,
-		right: 20,
+		right: 16,
 	},
 	changeDisplayedCurrencyArrow: {
 		color: Colors.main,

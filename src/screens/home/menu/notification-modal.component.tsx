@@ -5,10 +5,10 @@ import {
 	StyleSheet,
 	View,
 } from 'react-native';
-import { Text } from 'react-native-elements';
 
 import NalliModal from '../../../components/modal.component';
 import NalliButton from '../../../components/nalli-button.component';
+import NalliText from '../../../components/text.component';
 import AuthService from '../../../service/auth.service';
 import NotificationService from '../../../service/notification.service';
 
@@ -78,17 +78,19 @@ export default class NotificationModal extends React.Component<NotificationModal
 						onClose={close}
 						header='Notifications'>
 					<View style={styles.container}>
-						<Text style={styles.text}>Nalli will send you notifications about incoming payments and when someone that you've sent Nano via SMS has registered and claimed them.</Text>
-						<Text style={styles.text}>Do you want to receive these notifications in the future?</Text>
+						<View>
+							<NalliText style={styles.text}>Nalli will send you notifications about incoming payments and when someone that you've sent Nano via SMS has registered and claimed them.</NalliText>
+							<NalliText style={styles.text}>Do you want to receive these notifications in the future?</NalliText>
+						</View>
+						<NalliButton
+								text="Yes"
+								solid={true}
+								style={{ marginBottom: 10 }}
+								onPress={() => this.selectNotificationState(true)} />
+						<NalliButton
+								text="No"
+								onPress={() => this.selectNotificationState(false)} />
 					</View>
-					<NalliButton
-							text="Yes"
-							solid={true}
-							style={{ marginBottom: 10 }}
-							onPress={() => this.selectNotificationState(true)} />
-					<NalliButton
-							text="No"
-							onPress={() => this.selectNotificationState(false)} />
 				</NalliModal>
 			);
 		} else {
@@ -100,11 +102,9 @@ export default class NotificationModal extends React.Component<NotificationModal
 
 const styles = StyleSheet.create({
 	container: {
-		marginTop: 20,
+		paddingBottom: 20,
 	},
 	text: {
-		fontSize: 16,
-		fontFamily: 'OpenSans',
 		marginBottom: 20,
 	},
 });

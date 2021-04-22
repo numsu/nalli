@@ -102,9 +102,9 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 		this.setState({ borderColor: Colors.main });
 	}
 
-	onBlur = (outerOnBlur) => {
-		if (outerOnBlur) {
-			outerOnBlur();
+	onBlur = () => {
+		if (this.props.onBlur) {
+			this.props.onBlur();
 		}
 		this.setState({ borderColor: Colors.borderColor });
 	}
@@ -127,7 +127,7 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 	}
 
 	render = () => {
-		const { reference, onBlur, style } = this.props;
+		const { reference, style } = this.props;
 		const { borderColor, currency, convertedCurrency, convertedValue, value } = this.state;
 		return (
 			<View style={styles.container}>
@@ -137,12 +137,12 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 						<TextInput
 								ref={reference}
 								placeholder="0"
-								onBlur={() => this.onBlur(onBlur)}
-								onFocus={() => this.onFocus()}
+								onBlur={this.onBlur}
+								onFocus={this.onFocus}
 								style={[styles.input, style, { borderBottomColor: borderColor }]}
 								keyboardType="decimal-pad"
 								value={value}
-								onChangeText={val => this.onChangeText(val)} />
+								onChangeText={this.onChangeText} />
 					</View>
 					<TouchableHighlight
 							style={styles.switchButton}
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
 		width: 40,
 		marginRight: -38,
 		alignSelf: 'center',
-		fontSize: 35,
+		fontSize: 34,
 		color: Colors.main,
 		fontFamily: 'OpenSans',
 	},
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
 		borderRadius: 30,
 		alignSelf: 'center',
 		position: 'absolute',
-		top: 39,
+		top: 43,
 		right: -1,
 		zIndex: 200,
 	},

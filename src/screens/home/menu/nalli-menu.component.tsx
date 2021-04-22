@@ -1,8 +1,8 @@
 import { Linking } from 'expo';
 import React from 'react';
 import { Alert, EmitterSubscription, ScrollView, StyleSheet, View } from 'react-native';
-import { Text } from 'react-native-elements';
 
+import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 import ClientService from '../../../service/client.service';
 import VariableStore, { NalliVariable } from '../../../service/variable-store';
@@ -115,12 +115,12 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 		return (
 			<ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 30 }}>
 				<View style={styles.content}>
-					<Text style={styles.header}>New users adopted</Text>
+					<NalliText size={ETextSize.H2} style={styles.header}>New users adopted</NalliText>
 					<View style={styles.border} />
-					<Text style={styles.invitedNumber}>{invitedCount}</Text>
+					<NalliText style={styles.invitedNumber}>{invitedCount}</NalliText>
 				</View>
 				<View style={styles.content}>
-					<Text style={styles.header}>Settings</Text>
+					<NalliText size={ETextSize.H2} style={styles.header}>Settings</NalliText>
 					<View style={styles.border} />
 					<NalliMenuPreference
 							icon="home-currency-usd"
@@ -134,7 +134,7 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 							subheader={pushEnabled ? "On" : "Off"} />
 				</View>
 				<View style={styles.content}>
-					<Text style={styles.header}>Manage</Text>
+					<NalliText size={ETextSize.H2} style={styles.header}>Manage</NalliText>
 					<View style={styles.border} />
 					<NalliMenuPreference
 							icon="wallet"
@@ -143,7 +143,7 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 							subheader="Recovery phrase" />
 				</View>
 				<View style={styles.content}>
-					<Text style={styles.header}>Support</Text>
+					<NalliText size={ETextSize.H2} style={styles.header}>Support</NalliText>
 					<View style={styles.border} />
 					<NalliMenuPreference
 							icon="information-outline"
@@ -152,7 +152,7 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 							subheader="Get help by contacting us" />
 				</View>
 				<View style={styles.content}>
-					<Text style={styles.header}>Contribute</Text>
+					<NalliText size={ETextSize.H2} style={styles.header}>Contribute</NalliText>
 					<View style={styles.border} />
 					<NalliMenuPreference
 							icon="rocket"
@@ -179,19 +179,19 @@ const styles = StyleSheet.create({
 	container: {
 		height: '100%',
 		width: '100%',
-		paddingTop: 30,
+		paddingTop: 40,
 		backgroundColor: 'rgba(0, 0, 0, 0.05)',
 	},
 	content: {
-		padding: 20,
+		paddingVertical: 15,
+		paddingHorizontal: 20,
 	},
 	border: {
 		borderBottomWidth: 1,
-		borderBottomColor: Colors.darkText,
+		paddingTop: 2,
+		borderBottomColor: '#bbb',
 	},
 	header: {
-		fontSize: 15,
-		fontFamily: 'OpenSansBold',
 		color: Colors.darkText,
 	},
 	invitedNumber: {

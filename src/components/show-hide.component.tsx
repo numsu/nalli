@@ -3,14 +3,15 @@ import {
 	Alert,
 	Clipboard,
 	StyleSheet,
-	Text,
 	TouchableOpacity,
+	TouchableWithoutFeedback,
 	View
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
 
 import Colors from '../constants/colors';
+import NalliText, { ETextSize } from './text.component';
 
 interface ShowHideProps {
 	showText?: string;
@@ -67,11 +68,13 @@ export default class ShowHide extends React.Component<ShowHideProps, ShowHideSta
 		const { allowCopy, children, showText, hideText, containerStyle } = this.props;
 		const { show } = this.state;
 		return (
-			<View style={[styles.container, containerStyle ? containerStyle : undefined]}>
+			<View style={containerStyle ? containerStyle : undefined}>
 				<View style={styles.title}>
-					<Text style={styles.showhide} onPress={this.toggle}>
-						{!show ? showText || 'Show' : hideText || 'Hide'}
-					</Text>
+					<TouchableWithoutFeedback onPress={this.toggle}>
+						<View style={styles.showhide}>
+							<NalliText size={ETextSize.BUTTON_SMALL} style={styles.showhideText}>{!show ? showText || 'Show' : hideText || 'Hide'}</NalliText>
+						</View>
+					</TouchableWithoutFeedback>
 					{allowCopy &&
 						<TouchableOpacity
 								style={styles.copyButton}
@@ -94,27 +97,28 @@ export default class ShowHide extends React.Component<ShowHideProps, ShowHideSta
 }
 
 const styles = StyleSheet.create({
-	container: {
-	},
 	title: {
 		flexDirection: 'row',
 		alignSelf: 'center',
 	},
 	showhide: {
-		fontSize: 18,
 		marginBottom: 10,
-		color: Colors.main,
-		backgroundColor: Colors.borderColor,
+		backgroundColor: 'rgba(200, 200, 200, 0.15)',
 		alignSelf: 'center',
 		paddingHorizontal: 30,
 		paddingVertical: 5,
+		borderRadius: 15,
+	},
+	showhideText: {
+		color: Colors.main,
 	},
 	content: {
-		paddingHorizontal: 5,
+		paddingHorizontal: 10,
 		paddingVertical: 10,
 		borderWidth: 1,
-		borderStyle: 'dashed',
-		borderColor: Colors.disabledButton,
+		borderRadius: 15,
+		borderStyle: 'solid',
+		borderColor: Colors.borderColor,
 	},
 	copyButton: {
 		position: 'absolute',

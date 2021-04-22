@@ -2,12 +2,12 @@ import React, { RefObject } from 'react';
 import {
 	FlatList,
 	StyleSheet,
-	Text,
 } from 'react-native';
 
 import Contact from '../../components/contact.component';
-import NalliModal from '../../components/modal.component';
+import NalliModal, { EModalSize } from '../../components/modal.component';
 import NalliInput from '../../components/nalli-input.component';
+import NalliText from '../../components/text.component';
 import Colors from '../../constants/colors';
 
 interface ContactsModalProps {
@@ -36,22 +36,28 @@ export default class ContactsModal extends React.Component<ContactsModalProps, C
 		};
 	}
 
-	static getDerivedStateFromProps(nextProps, prevState) {
+	componentDidMount = () => {
+		this.filterContacts();
+	}
+
+	static getDerivedStateFromProps(nextProps: ContactsModalProps, prevState: ContactsModalState) {
 		if (prevState.isOpen != nextProps.isOpen) {
-			return { isOpen: nextProps.isOpen };
+			return { isOpen: nextProps.isOpen, filtered: nextProps.contacts };
 		}
 		return null;
 	}
 
-	filterContacts = (value) => {
-		if (value.trim().length > 2) {
+	filterContacts = (value?) => {
+		if (value) {
 			this.setState({
 				filtered: this.props.contacts.filter(contact => (
 					contact.name.toUpperCase().indexOf(value.trim().toUpperCase()) > -1
 				))
 			});
 		} else {
-			this.setState({ filtered: [] });
+			this.setState({
+				filtered: [ ...this.props.contacts ]
+			});
 		}
 	}
 
@@ -74,24 +80,28 @@ export default class ContactsModal extends React.Component<ContactsModalProps, C
 		if (isOpen) {
 			return (
 				<NalliModal
+						size={EModalSize.LARGE}
 						isOpen={isOpen}
 						onClose={this.hide}
-						header='Select contact'>
+						header='Select contact'
+						noScroll={true}>
 					<NalliInput
 							reference={this.contactsSearchRef}
-							placeholder="Search contacts..."
+							placeholder="Search..."
 							keyboardType="default"
-							onChangeText={val => this.filterContacts(val)} />
+							onChangeText={this.filterContacts} />
 					<FlatList
+							style={{ height: '100%' }}
+							contentContainerStyle={{ paddingBottom: 40 }}
 							data={filtered}
 							keyExtractor={item => item.id}
 							ListEmptyComponent={() => (
-								<Text style={styles.text}>Start writing a name to search contacts...</Text>
+								<NalliText style={styles.text}>No contacts</NalliText>
 							)}
 							renderItem={({ item }) => (
 								<Contact
 										contact={item}
-										onSelectContact={(contact) => this.onSelectContact(contact)} />
+										onSelectContact={this.onSelectContact} />
 							)} />
 				</NalliModal>
 			);
@@ -106,8 +116,6 @@ const styles = StyleSheet.create({
 	text: {
 		textAlign: 'center',
 		alignSelf: 'center',
-		fontFamily: 'OpenSans',
-		fontSize: 16,
 		color: Colors.darkText,
 		marginTop: 30,
 	},

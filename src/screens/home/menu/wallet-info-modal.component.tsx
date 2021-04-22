@@ -9,9 +9,10 @@ import {
 import { Text } from 'react-native-elements';
 
 import MnemonicWord from '../../../components/mnemonic-word.component';
-import NalliModal from '../../../components/modal.component';
+import NalliModal, { EModalSize } from '../../../components/modal.component';
 import NalliNumberPad from '../../../components/nalli-number-pad.component';
 import ShowHide from '../../../components/show-hide.component';
+import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 import layout from '../../../constants/layout';
 import AuthStore from '../../../service/auth-store';
@@ -93,7 +94,7 @@ export default class WalletInfoModal extends React.Component<WalletInfoModallPro
 			));
 			const privateKeys = walletInfo.accounts.map(account => (
 				<View style={{ alignItems: "center" }} key={account.accountIndex}>
-					<Text style={styles.header}>{`Account #${account.accountIndex} private key`}</Text>
+					<NalliText size={ETextSize.H2} style={styles.header}>{`Account #${account.accountIndex} private key`}</NalliText>
 					<ShowHide allowCopy={true} copyValue={account.privateKey} confirmCopy={true}>
 						<Text>{account.privateKey}</Text>
 					</ShowHide>
@@ -101,20 +102,21 @@ export default class WalletInfoModal extends React.Component<WalletInfoModallPro
 			));
 			return (
 				<NalliModal
+						size={EModalSize.LARGE}
 						isOpen={isOpen}
 						onClose={this.closeAndLock}
 						header='Wallet'>
 					{isUnlocked &&
 						<ScrollView contentContainerStyle={styles.container}>
-							<Text style={styles.disclaimer}>This information is everything needed to access your wallet and spend your funds. Keep a copy of this information in a safe place in case your phone breaks or you lose it and never share it with anyone.</Text>
-							<Text style={styles.header}>Recovery phrase</Text>
-							<Text style={styles.addition}>Wallet type: {walletInfo.type == WalletType.HD_WALLET ? 'HD Wallet' : 'Legacy wallet'}</Text>
+							<NalliText>This information is everything needed to access your wallet and spend your funds. Keep a copy of this information in a safe place in case your phone breaks or you lose it and never share it with anyone.</NalliText>
+							<NalliText size={ETextSize.H2} style={styles.header}>Recovery phrase</NalliText>
+							<NalliText style={styles.addition}>Wallet type: {walletInfo.type == WalletType.HD_WALLET ? 'HD Wallet' : 'Legacy wallet'}</NalliText>
 							<ShowHide allowCopy={true} copyValue={walletInfo.mnemonic} confirmCopy={true}>
 								<View style={styles.wordsContainer}>
 									{words}
 								</View>
 							</ShowHide>
-							<Text style={styles.header}>Wallet seed</Text>
+							<NalliText size={ETextSize.H2} style={styles.header}>Wallet seed</NalliText>
 							<ShowHide allowCopy={true} copyValue={walletInfo.seed} confirmCopy={true}>
 								<Text>{walletInfo.seed}</Text>
 							</ShowHide>
@@ -123,7 +125,7 @@ export default class WalletInfoModal extends React.Component<WalletInfoModallPro
 					}
 					{!isUnlocked &&
 						<View style={styles.pinContainer}>
-							<Text style={styles.header}>Enter pin to view</Text>
+							<NalliText size={ETextSize.H2} style={styles.header}>Enter pin to view</NalliText>
 							<TextInput
 									style={styles.numberPadPin}
 									value={pin}
@@ -151,23 +153,19 @@ const styles = StyleSheet.create({
 	container: {
 		marginHorizontal: 5,
 		alignItems: 'center',
+		paddingBottom: 30,
 	},
 	pinContainer: {
-		marginHorizontal: -20,
+		marginHorizontal: -28,
 		marginTop: layout.isSmallDevice ? 0 : 30,
 		alignItems: 'center',
-	},
-	disclaimer: {
-		fontFamily: 'OpenSans',
+		paddingBottom: 30,
 	},
 	header: {
-		fontFamily: 'OpenSansBold',
-		fontSize: 18,
 		marginBottom: 15,
 		marginTop: 20,
 	},
 	addition: {
-		fontFamily: 'OpenSansBold',
 		fontSize: 14,
 		marginTop: -10,
 		marginBottom: 10,

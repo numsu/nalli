@@ -8,7 +8,6 @@ import {
 	Alert,
 	Linking,
 	StyleSheet,
-	Text,
 	TouchableOpacity,
 	View,
 } from 'react-native';
@@ -17,6 +16,7 @@ import Modal from 'react-native-modal';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 
 import layout from '../constants/layout';
+import NalliText, { ETextSize } from './text.component';
 
 interface QRCodeScannerProps {
 	onQRCodeScanned: (params: BarCodeEvent) => boolean;
@@ -84,9 +84,9 @@ export default class QRCodeScanner extends React.Component<QRCodeScannerProps, Q
 							animationOutTiming={150}
 							onBackButtonPress={this.close}>
 						<View style={styles.header}>
-							<Text style={styles.text}>
+							<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 								Scan a Nano address
-							</Text>
+							</NalliText>
 							<TouchableOpacity
 									onPress={this.close}>
 								<MaterialIcons
@@ -124,7 +124,6 @@ const styles = StyleSheet.create({
 		marginBottom: 5,
 	},
 	text: {
-		fontSize: 20,
 		color: 'white',
 		marginRight: 'auto',
 		alignSelf: 'center',

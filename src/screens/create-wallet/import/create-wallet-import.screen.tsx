@@ -1,13 +1,13 @@
 import React from 'react';
 import {
 	StyleSheet,
-	Text,
 	View,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { HeaderBackButton } from 'react-navigation';
 
 import NalliButton from '../../../components/nalli-button.component';
+import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 
 export default class CreateWalletImportMnemonic extends React.Component<any, any> {
@@ -17,7 +17,9 @@ export default class CreateWalletImportMnemonic extends React.Component<any, any
 	}
 
 	static navigationOptions = ({ navigation }) => ({
+		headerStyle: { height: 60 },
 		headerLeft: <HeaderBackButton tintColor={Colors.main} onPress={() => navigation.goBack(undefined)} />,
+		headerLeftContainerStyle: { marginTop: 15 },
 	})
 
 	onRecoveryPress = () => {
@@ -32,30 +34,32 @@ export default class CreateWalletImportMnemonic extends React.Component<any, any
 		return (
 			<View style={styles.container}>
 				<ScrollView contentContainerStyle={styles.content}>
-					<Text style={styles.h1}>
+					<NalliText size={ETextSize.H1} style={styles.h1}>
 						Import wallet
-					</Text>
-					<Text style={styles.text}>
+					</NalliText>
+					<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 						To import your wallet, you will need to either input your recovery (mnemonic) phrase or wallet seed.
-					</Text>
-					<Text style={styles.text}>
+					</NalliText>
+					<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 						We will encrypt your seed to your device. Your device handles all transaction signing operations,
 						this means that your seed will never be compromised by sending it out of your device.
-					</Text>
+					</NalliText>
 				</ScrollView>
 				<View style={styles.actions}>
+					<View style={styles.action}>
 					<NalliButton
 							text="Write recovery phrase"
 							icon="ios-paper"
 							solid={true}
-							style={styles.action}
 							onPress={this.onRecoveryPress} />
+					</View>
+					<View style={styles.action}>
 					<NalliButton
 							text="Write seed manually"
 							icon="md-key"
 							solid={true}
-							style={styles.action}
 							onPress={this.onManualPress} />
+					</View>
 				</View>
 			</View>
 		);
@@ -74,13 +78,10 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	h1: {
-		fontSize: 30,
-		fontWeight: '600',
 		marginBottom: 20,
 		color: Colors.main,
 	},
 	text: {
-		fontSize: 20,
 		width: '80%',
 		textAlign: 'center',
 		marginBottom: 12,
@@ -91,9 +92,9 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-end',
 		paddingHorizontal: 20,
 		marginBottom: 30,
-		marginTop: 30,
+		marginTop: 15,
 	},
 	action: {
-		marginTop: 15,
+		paddingTop: 15,
 	},
 });

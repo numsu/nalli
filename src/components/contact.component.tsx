@@ -1,7 +1,6 @@
 import React from 'react';
 import {
 	StyleSheet,
-	Text,
 	TouchableOpacity,
 	View,
 } from 'react-native';
@@ -10,6 +9,7 @@ import { Avatar } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 
 import colors from '../constants/colors';
+import NalliText, { ETextSize } from './text.component';
 
 interface ContactProps {
 	onSelectContact: (contact: any) => void;
@@ -39,12 +39,12 @@ export default class Contact extends React.Component<ContactProps, ContactState>
 						containerStyle={{ marginRight: 15 }}
 						overlayContainerStyle={{ backgroundColor: colors.main }} />
 				<View>
-					<Text style={styles.contactName}>
+					<NalliText size={ETextSize.H2} style={styles.contactName}>
 						{contact.name}
-					</Text>
-					<Text style={styles.contactText}>
+					</NalliText>
+					<NalliText>
 						{contact.formattedNumber}
-					</Text>
+					</NalliText>
 				</View>
 				<Ionicons
 						style={styles.contactSelectArrow}
@@ -65,12 +65,8 @@ const styles = StyleSheet.create({
 		borderBottomColor: colors.borderColor,
 	},
 	contactName: {
-		fontSize: 18,
-		fontWeight: '600',
 		color: colors.main,
 		marginBottom: 5,
-	},
-	contactText: {
 	},
 	contactSelectArrow: {
 		color: colors.main,

@@ -1,21 +1,24 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import {
 	KeyboardAvoidingView,
 	Platform,
 	StyleSheet,
-	Text,
 	View,
 } from 'react-native';
 import { Avatar } from 'react-native-elements';
+import { ScrollView } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
 
 import Colors from '../constants/colors';
 import layout from '../constants/layout';
+import NalliText, { ETextSize } from './text.component';
 
 interface ModalProps {
 	isOpen: boolean;
 	onClose: () => void;
 	header: string;
+	noScroll?: boolean;
 	size?: EModalSize;
 }
 
@@ -38,37 +41,67 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 		return null;
 	}
 
-	close = () => {
-		this.props.onClose();
-	}
-
 	render = () => {
-		const { isOpen, header, children, size } = this.props;
+		const { isOpen, header, children, size, noScroll, onClose } = this.props;
 
 		return (
 			<Modal
 					propagateSwipe
+					avoidKeyboard={true}
+					hideModalContentWhileAnimating={true}
 					animationIn={'zoomIn'}
 					animationOut={'zoomOut'}
-					animationInTiming={200}
-					animationOutTiming={200}
+					animationInTiming={150}
+					animationOutTiming={150}
 					isVisible={isOpen}
-					onBackdropPress={this.close}
-					onBackButtonPress={this.close}
-					useNativeDriver={false}>
-				<KeyboardAvoidingView enabled={Platform.OS == 'android'} behavior={'height'} style={size == EModalSize.MINI ? styles.containerMini : styles.containerBig}>
+					onBackdropPress={onClose}
+					onBackButtonPress={onClose}
+					useNativeDriverForBackdrop={true}
+					useNativeDriver={true}>
+				<KeyboardAvoidingView
+						enabled={Platform.OS == 'android'}
+						behavior={'height'}
+						style={[styles.containerBase, size == EModalSize.MINI
+							? styles.containerMini
+							: size == EModalSize.LARGE
+								? styles.containerLarge
+								: styles.containerMedium]}>
 					<View style={styles.headerContainer}>
-						<Text style={styles.header}>
-							{header}
-						</Text>
-						<Avatar
-							rounded={true}
-							onPress={this.close}
-							icon={{ name: 'close', type: 'material' }}
-							size="small"
-							overlayContainerStyle={{ backgroundColor: Colors.main }} />
+						<LinearGradient
+								colors={['white', 'rgba(255, 255, 255, 0.0)']}
+								style={styles.topContainerBackground}
+								start={{ x: 0.5, y: 0.5 }}
+								end={{ x: 0.5, y: 1 }} />
+						<View style={styles.headerContentContainer}>
+							<NalliText size={ETextSize.H1}>
+								{header}
+							</NalliText>
+							<Avatar
+									rounded={true}
+									onPress={onClose}
+									icon={{ name: 'close', type: 'material' }}
+									size="small"
+									overlayContainerStyle={{ backgroundColor: Colors.main }} />
+						</View>
 					</View>
-					{children}
+					{noScroll &&
+						<View style={styles.contentContainer}>
+							<View style={styles.pushTop} />
+							{children}
+						</View>
+					}
+					{!noScroll &&
+						<ScrollView style={styles.contentContainer}>
+							<View style={styles.pushTop} />
+							{children}
+						</ScrollView>
+					}
+
+					<LinearGradient
+								colors={['rgba(255, 255, 255, 0.0)', 'white']}
+								style={styles.bottomContainerBackground}
+								start={{ x: 0.5, y: 0 }}
+								end={{ x: 0.5, y: 1 }} />
 				</KeyboardAvoidingView>
 			</Modal>
 		);
@@ -77,57 +110,92 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 }
 
 export enum EModalSize {
-	BIG,
+	LARGE,
+	MEDIUM,
 	MINI,
 }
 
 const styles = StyleSheet.create({
-	containerBig: {
+	containerLarge: {
+		top: layout.window.height * 0.12,
 		...Platform.select({
 			android: {
-				height: layout.window.height * 0.8,
+				height: layout.window.height * 0.7,
 			},
 			ios: {
-				height: layout.window.height * 0.85,
+				height: layout.window.height * 0.7,
 			},
 		}),
-		backgroundColor: 'white',
-		paddingHorizontal: 15,
-		paddingVertical: 15,
-		borderRadius: 15,
-		position: 'absolute',
-		top: 30,
-		right: 0,
-		left: 0,
-		overflow: 'scroll',
+	},
+	containerMedium: {
+		top: layout.window.height * 0.25,
+		...Platform.select({
+			android: {
+				height: layout.window.height * 0.5,
+			},
+			ios: {
+				height: layout.window.height * 0.5,
+			},
+		}),
 	},
 	containerMini: {
+		top: layout.window.height * 0.18,
 		...Platform.select({
 			android: {
-				height: layout.window.height * 0.36,
+				height: 230,
 			},
 			ios: {
-				height: layout.window.height * 0.35,
+				height: 230,
 			},
 		}),
+	},
+	containerBase: {
 		backgroundColor: 'white',
-		paddingHorizontal: 15,
-		paddingVertical: 15,
 		borderRadius: 15,
 		position: 'absolute',
-		top: 30,
 		right: 0,
 		left: 0,
+		marginHorizontal: 15,
 		overflow: 'scroll',
 	},
 	headerContainer: {
+		backgroundColor: 'transparent',
+		position: 'absolute',
+		top: 0,
+		height: 78,
+		width: '100%',
+		zIndex: 100,
+	},
+	topContainerBackground: {
+		position: 'absolute',
+		left: 0,
+		right: 0,
+		top: 0,
+		width: '100%',
+		height: '100%',
+		borderRadius: 15,
+	},
+	bottomContainerBackground: {
+		position: 'absolute',
+		left: 0,
+		right: 0,
+		bottom: 0,
+		width: '100%',
+		height: 40,
+		borderRadius: 15,
+	},
+	headerContentContainer: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		marginBottom: 15,
+		paddingHorizontal: 15,
+		paddingTop: 15,
 	},
-	header: {
-		fontSize: 25,
-		fontFamily: 'OpenSansBold',
+	contentContainer: {
+		paddingHorizontal: 15,
+		flex: 1,
+	},
+	pushTop: {
+		paddingTop: 70,
 	},
 });

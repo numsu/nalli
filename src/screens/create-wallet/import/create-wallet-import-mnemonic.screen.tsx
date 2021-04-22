@@ -3,7 +3,6 @@ import React from 'react';
 import {
 	Alert,
 	StyleSheet,
-	Text,
 	View,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -13,6 +12,7 @@ import { HeaderBackButton } from 'react-navigation';
 import Loading from '../../../components/loading.component';
 import MnemonicWord from '../../../components/mnemonic-word.component';
 import NalliButton from '../../../components/nalli-button.component';
+import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 import PhoneNumberSigner from '../../../crypto/phone-number-signer';
 import VariableStore, { NalliVariable } from '../../../service/variable-store';
@@ -34,7 +34,9 @@ export default class CreateWalletImport extends React.Component<any, any> {
 	}
 
 	static navigationOptions = ({ navigation }) => ({
+		headerStyle: { height: 60 },
 		headerLeft: <HeaderBackButton tintColor={Colors.main} onPress={() => navigation.goBack(undefined)} />,
+		headerLeftContainerStyle: { marginTop: 15 },
 	})
 
 	onChangeText = (wordIndex, val) => {
@@ -139,12 +141,12 @@ export default class CreateWalletImport extends React.Component<any, any> {
 				<Loading show={process} />
 				<KeyboardAwareScrollView>
 					<ScrollView contentContainerStyle={styles.content}>
-						<Text style={styles.h1}>
+						<NalliText size={ETextSize.H1} style={styles.h1}>
 							Recovery phrase
-						</Text>
-						<Text style={styles.text}>
+						</NalliText>
+						<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 							Write down 24 words of your recovery phrase.
-						</Text>
+						</NalliText>
 						<View style={styles.wordsContainer}>
 							{words.map(word => (
 								<MnemonicWord
@@ -183,13 +185,10 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	h1: {
-		fontSize: 30,
-		fontWeight: '600',
 		marginBottom: 20,
 		color: Colors.main,
 	},
 	text: {
-		fontSize: 20,
 		width: '80%',
 		textAlign: 'center',
 		marginBottom: 12,

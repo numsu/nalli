@@ -1,11 +1,11 @@
 import React from 'react';
 import {
 	StyleSheet,
-	Text,
 	View,
 } from 'react-native';
 
 import Colors from '../constants/colors';
+import NalliText, { ETextSize } from './text.component';
 
 interface CardProps {
 	title: string;
@@ -25,7 +25,11 @@ export default class Card extends React.Component<CardProps, CardState> {
 		const { title, style, children } = this.props;
 		return (
 			<View style={[style, styles.card]}>
-				<Text style={styles.h2}>{title}</Text>
+				<NalliText
+						size={ETextSize.H1}
+						style={styles.header}>
+					{title}
+				</NalliText>
 				{children}
 			</View>
 		);
@@ -44,10 +48,8 @@ const styles = StyleSheet.create({
 		borderRadius: 15,
 		padding: 15,
 	},
-	h2: {
-		fontSize: 25,
+	header: {
 		marginBottom: 10,
 		marginTop: -5,
-		fontFamily: 'OpenSansBold',
 	},
 });

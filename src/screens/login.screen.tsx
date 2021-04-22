@@ -4,7 +4,6 @@ import React from 'react';
 import {
 	Alert,
 	StyleSheet,
-	Text,
 	TextInput,
 	View,
 } from 'react-native';
@@ -13,6 +12,7 @@ import DismissKeyboardView from '../components/dismiss-keyboard-hoc.component';
 import Loading from '../components/loading.component';
 import NalliNumberPad from '../components/nalli-number-pad.component';
 import NalliLogo from '../components/svg/nalli-logo';
+import NalliText, { ETextSize } from '../components/text.component';
 import Colors from '../constants/colors';
 import PhoneNumberSigner from '../crypto/phone-number-signer';
 import AuthStore from '../service/auth-store';
@@ -132,9 +132,9 @@ export default class Login extends React.Component<any, LoginState> {
 				{/* <TouchableOpacity onPress={this.clearWalletInfo}> */}
 					<NalliLogo width={150} height={60} color="white" />
 				{/* </TouchableOpacity> */}
-				<Text style={styles.text}>
+				<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 					Enter pin
-				</Text>
+				</NalliText>
 				<View style={styles.numberPadContainer}>
 					<View style={styles.numberPadPinContainer}>
 						<TextInput
@@ -160,12 +160,8 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	text: {
-		fontSize: 20,
-		fontWeight: '400',
-		color: Colors.borderColor,
+		color: 'white',
 		paddingTop: 10,
-		alignSelf: 'center',
-		textAlign: 'center',
 	},
 	numberPadContainer: {
 		flex: 1,

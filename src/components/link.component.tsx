@@ -3,12 +3,12 @@ import {
 	Alert,
 	Linking,
 	StyleSheet,
-	Text,
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
 
 import Colors from '../constants/colors';
+import NalliText from './text.component';
 
 interface LinkProps {
 	url: string;
@@ -24,7 +24,7 @@ export default class Link extends React.Component<LinkProps, LinkState> {
 		super(props);
 	}
 
-	open = (url) => {
+	open = () => {
 		Alert.alert(
 			'Leave Nalli?',
 			'This link will take you outside of the application. Are you sure?',
@@ -35,7 +35,7 @@ export default class Link extends React.Component<LinkProps, LinkState> {
 					style: 'cancel',
 				}, {
 					text: 'Open',
-					onPress: () => Linking.openURL(url),
+					onPress: () => Linking.openURL(this.props.url),
 					style: 'default',
 				},
 			]
@@ -43,13 +43,13 @@ export default class Link extends React.Component<LinkProps, LinkState> {
 	}
 
 	render = () => {
-		const { url, style, children } = this.props;
+		const { style, children } = this.props;
 		return (
-			<Text
+			<NalliText
 					style={[styles.link, style ? style : undefined]}
-					onPress={() => this.open(url)}>
+					onPress={this.open}>
 				<Ionicons name='ios-link' size={15} />&nbsp;{children}
-			</Text>
+			</NalliText>
 		);
 	}
 
@@ -58,6 +58,5 @@ export default class Link extends React.Component<LinkProps, LinkState> {
 const styles = StyleSheet.create({
 	link: {
 		color: Colors.main,
-		fontFamily: 'OpenSans',
 	},
 });

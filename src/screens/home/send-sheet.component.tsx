@@ -7,7 +7,6 @@ import {
 	Keyboard,
 	Platform,
 	StyleSheet,
-	Text,
 	TouchableOpacity,
 	View,
 } from 'react-native';
@@ -21,6 +20,7 @@ import DismissKeyboardView from '../../components/dismiss-keyboard-hoc.component
 import NalliButton from '../../components/nalli-button.component';
 import NalliInput from '../../components/nalli-input.component';
 import QRCodeScanner from '../../components/qrcode-scanner.component';
+import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
 import layout from '../../constants/layout';
 import ClientService from '../../service/client.service';
@@ -349,19 +349,19 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 							<TouchableOpacity
 									style={[styles.switchButton, (tab == SendSheetTab.CONTACT ? styles.selected : undefined)]}
 									onPress={() => this.onSwitchModePress(SendSheetTab.CONTACT)}>
-								<Text style={styles.switchButtonText}>Contact</Text>
+								<NalliText size={ETextSize.H2} style={styles.switchButtonText}>Contact</NalliText>
 							</TouchableOpacity>
 
 							<TouchableOpacity
 									style={[styles.switchButton, (tab == SendSheetTab.PHONE ? styles.selected : undefined)]}
 									onPress={() => this.onSwitchModePress(SendSheetTab.PHONE)}>
-								<Text style={styles.switchButtonText}>Number</Text>
+								<NalliText size={ETextSize.H2} style={styles.switchButtonText}>Number</NalliText>
 							</TouchableOpacity>
 
 							<TouchableOpacity
 									style={[styles.switchButton, (tab == SendSheetTab.ADDRESS ? styles.selected : undefined)]}
 									onPress={() => this.onSwitchModePress(SendSheetTab.ADDRESS)}>
-								<Text style={styles.switchButtonText}>Wallet</Text>
+								<NalliText size={ETextSize.H2} style={styles.switchButtonText}>Wallet</NalliText>
 							</TouchableOpacity>
 						</View>
 					}
@@ -382,12 +382,12 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 									containerStyle={{ marginRight: 15 }}
 									overlayContainerStyle={{ backgroundColor: Colors.main }} />
 							<View>
-								<Text style={styles.contactName}>
+								<NalliText size={ETextSize.H2} style={styles.contactName}>
 									{recipient.name}
-								</Text>
-								<Text style={styles.contactText}>
+								</NalliText>
+								<NalliText>
 									{recipient.formattedNumber}
-								</Text>
+								</NalliText>
 							</View>
 							<TouchableOpacity
 									onPress={this.onSelectRecipientPress}
@@ -415,12 +415,12 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 									containerStyle={{ marginRight: 15 }}
 									overlayContainerStyle={{ backgroundColor: Colors.main }} />
 							<View>
-								<Text style={styles.contactName}>
+								<NalliText size={ETextSize.H2} style={styles.contactName}>
 									{recipient.name}
-								</Text>
-								<Text style={styles.contactText}>
+								</NalliText>
+								<NalliText>
 									{recipient.formattedNumber}
-								</Text>
+								</NalliText>
 							</View>
 							<TouchableOpacity
 									onPress={this.onSelectInputNumberPress}
@@ -473,12 +473,12 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 									containerStyle={{ marginRight: 15 }}
 									overlayContainerStyle={{ backgroundColor: Colors.main }} />
 							<View>
-								<Text style={styles.contactName}>
+								<NalliText size={ETextSize.H2} style={styles.contactName}>
 									Nalli donation
-								</Text>
-								<Text style={styles.contactText}>
+								</NalliText>
+								<NalliText>
 									We really appreciate your help!
-								</Text>
+								</NalliText>
 							</View>
 							<TouchableOpacity
 									onPress={() => this.toggleDonate(false)}
@@ -501,10 +501,10 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 				<ContactsModal
 						isOpen={contactsModalOpen}
 						contacts={contacts}
-						onSelectContact={(contact) => this.onConfirmRecipient(contact)} />
+						onSelectContact={this.onConfirmRecipient} />
 				<PhoneNumberInputModal
 						isOpen={inputPhoneNumberModalOpen}
-						onConfirmNumber={(number) => this.onConfirmNumber(number)} />
+						onConfirmNumber={this.onConfirmNumber} />
 			</MyBottomSheet>
 		);
 	}
@@ -531,8 +531,7 @@ const styles = StyleSheet.create({
 		marginRight: 4,
 	},
 	switchButtonText: {
-		fontSize: 24,
-		fontFamily: 'OpenSans',
+		fontSize: 20,
 	},
 	selected: {
 		borderColor: Colors.main,
@@ -546,12 +545,8 @@ const styles = StyleSheet.create({
 		borderBottomColor: Colors.borderColor,
 	},
 	contactName: {
-		fontSize: 18,
-		fontWeight: '600',
 		color: Colors.main,
 		marginBottom: 5,
-	},
-	contactText: {
 	},
 	contactSelectArrow: {
 		color: Colors.main,

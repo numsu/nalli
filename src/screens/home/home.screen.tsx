@@ -49,6 +49,7 @@ interface HomeScreenState {
 	hasMoreTransactions: boolean;
 	isMenuOpen: boolean;
 	walletIsOpen: boolean;
+	process: boolean;
 }
 
 export default class HomeScreen extends React.Component<HomeScreenProps, HomeScreenState> {
@@ -71,27 +72,28 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 			hasMoreTransactions: false,
 			isMenuOpen: false,
 			walletIsOpen: true,
+			process: false,
 		};
 	}
 
 	static navigationOptions = () => ({
 		header: null,
-	})
+	});
 
-	componentDidMount() {
+	componentDidMount = () => {
 		this.init();
 		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.CURRENCY, () => this.getCurrentPrice()));
 		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.ACCOUNTS_BALANCES, () => this.fetchTransactions(true)));
 	}
 
-	async init() {
+	init = async () => {
 		this.getCurrentPrice();
 		this.handleForegroundPushNotifications();
 		this.fetchTransactions();
 		AppState.addEventListener('change', this.handleAppChangeState);
 	}
 
-	componentWillUnmount() {
+	componentWillUnmount = () => {
 		try {
 			AppState.removeEventListener('change', this.handleAppChangeState);
 			this.pushNotificationSubscription.remove();
@@ -112,7 +114,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		}
 	}
 
-	async handleForegroundPushNotifications() {
+	handleForegroundPushNotifications = async () => {
 		this.pushNotificationSubscription = await NotificationService
 				.listenForPushNotifications((notification: Notification) => {
 			if (notification.data.data == 'receive') {
@@ -142,7 +144,11 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		}
 	}
 
-	addNewAccount = async (index: number) => {
+	addNewAccount = async (index: number): Promise<boolean> => {
+		if (this.state.process) {
+			return false;
+		}
+		this.setState({ process: true });
 		const storedWallet = await WalletStore.getWallet();
 
 		// If account not already present and all previous indexes are present
@@ -160,13 +166,17 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 			WalletHandler.getAccountsBalancesAndHandlePending();
 			this.onChangeAccount(index, false);
 		}
+		this.setState({ process: false });
+		return true;
 	}
 
-	hideAccount = async (index: number) => {
-		const storedWallet = await WalletStore.getWallet();
-
-		// If account exists and the account is the last one
-		if (storedWallet.accounts[index] && storedWallet.accounts.length === index + 1) {
+	hideAccount = async (index: number): Promise<boolean> => {
+		if (this.state.process) {
+			return false;
+		}
+		this.setState({ process: true });
+		if (index > 0) {
+			const storedWallet = await WalletStore.getWallet();
 			const accounts = storedWallet.accounts;
 			const newWallet = { ...storedWallet };
 			const removed = accounts.pop();
@@ -176,6 +186,8 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 			WalletHandler.getAccountsBalancesAndHandlePending();
 			this.onChangeAccount(index - 1, false);
 		}
+		this.setState({ process: false });
+		return true;
 	}
 
 	async fetchTransactions(force = false) {
@@ -184,14 +196,14 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		}
 	}
 
-	async getCurrentPrice() {
+	getCurrentPrice = async () => {
 		const currency = await VariableStore.getVariable(NalliVariable.CURRENCY, 'usd');
 		const price = await CurrencyService.getCurrentPrice('xrb', currency);
 		this.setState({ price });
 		return price;
 	}
 
-	async getTransactions() {
+	getTransactions = async () => {
 		const res = await WalletService.getWalletTransactions(25, 0);
 		this.setState({
 			transactions: res.sort((a, b) => b.timestamp - a.timestamp),
@@ -269,7 +281,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 						<DismissKeyboardView style={styles.container}>
 							<SafeAreaView edges={['top']}>
 								<View style={styles.header}>
-									<TouchableOpacity style={styles.menuIconContainer} onPress={() => this.openMenu()}>
+									<TouchableOpacity style={styles.menuIconContainer} onPress={this.openMenu}>
 										<Ionicons style={styles.menuIcon} name="ios-menu" size={40} />
 									</TouchableOpacity>
 									<NalliLogo style={styles.headerLogo} width={90} height={30} />

@@ -49,6 +49,13 @@ export default class ContactsService {
 			const defaultCountry = await this.getClientCountry();
 			const contacts = data
 					.filter(item => item.phoneNumbers && item.phoneNumbers.length != 0)
+					.sort((a, b) => {
+						const sortValueA = (a.lastName || '') + (a.firstName || '');
+						const sortValueB = (b.lastName || '') + (b.firstName || '');
+						if (sortValueA < sortValueB) return -1;
+						if (sortValueA > sortValueB) return 1;
+						return 0;
+					})
 					.map(item => {
 						const items = new Map();
 						item.phoneNumbers
@@ -80,7 +87,8 @@ export default class ContactsService {
 									}
 								});
 						return [...items.values()];
-					}).flat();
+					})
+					.flat();
 			this.saved = contacts;
 			return contacts;
 		} else {

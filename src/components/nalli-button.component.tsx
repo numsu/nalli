@@ -1,13 +1,13 @@
 import React from 'react';
 import {
 	StyleSheet,
-	Text,
 	TouchableOpacity,
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
 
 import Colors from '../constants/colors';
+import NalliText, { ETextSize } from './text.component';
 
 interface NalliButtonProps {
 	disabled?: boolean;
@@ -36,11 +36,11 @@ export default class NalliButton extends React.Component<NalliButtonProps, Nalli
 					disabled={disabled}
 					style={[styles.action, (solid ? styles.solidAction : styles.transparent), style, disabled ? styles.disabled : {}]}
 					onPress={onPress}>
-				<Text style={[styles.actionText, (solid ? styles.solidText : styles.transparent), textStyle]}>
+				<NalliText size={ETextSize.BUTTON} style={[(solid ? styles.solidText : styles.transparent), textStyle]}>
 					{icon && <Ionicons style={styles.icon} name={icon} size={20} />}
 					{icon && '\xa0\xa0'}
 					{text}
-				</Text>
+				</NalliText>
 			</TouchableOpacity>
 		);
 	}
@@ -74,10 +74,6 @@ const styles = StyleSheet.create({
 	transparent: {
 		backgroundColor: 'transparent',
 		color: Colors.main,
-	},
-	actionText: {
-		fontSize: 20,
-		fontFamily: 'OpenSans',
 	},
 	disabled: {
 		opacity: 0.5,

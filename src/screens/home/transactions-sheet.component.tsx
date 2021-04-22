@@ -2,13 +2,13 @@ import moment from 'moment';
 import React from 'react';
 import {
 	StyleSheet,
-	Text,
 	TouchableOpacity,
 	View,
 } from 'react-native';
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import NalliButton from '../../components/nalli-button.component';
+import NalliText, { ETextSize } from '../../components/text.component';
 import colors from '../../constants/colors';
 import ContactsService from '../../service/contacts.service';
 import { EPendingStatus, WalletTransaction } from '../../service/wallet.service';
@@ -94,26 +94,26 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 				<TouchableOpacity onPress={() => this.openTransaction(item)}>
 					<View style={styles.transactionRow}>
 						{item.type == 'send'
-							? <Text style={styles.transactionTitle}>Sent</Text>
+							? <NalliText size={ETextSize.H2}>Sent</NalliText>
 							: item.pendingStatus == EPendingStatus.RETURNED
-								? <Text style={styles.transactionTitle}>Returned</Text>
-								: <Text style={styles.transactionTitle}>Received</Text>
+								? <NalliText size={ETextSize.H2}>Returned</NalliText>
+								: <NalliText size={ETextSize.H2}>Received</NalliText>
 						}
-						<Text style={styles.transactionName}>
+						<NalliText>
 							{this.getRelativeTime(item.timestamp)}
-						</Text>
+						</NalliText>
 					</View>
 					<View style={styles.transactionRow}>
-						<Text style={styles.transactionName}>
+						<NalliText style={styles.transactionTarget}>
 							{this.getContactName(item)}
-						</Text>
+						</NalliText>
 						{item.type == 'send' ?
-							<Text style={styles.transactionAmount}>
+							<NalliText style={styles.transactionAmount}>
 								- {item.amount}
-							</Text> :
-							<Text style={[styles.transactionAmount, { color: colors.main }]}>
+							</NalliText> :
+							<NalliText style={{ color: colors.main, ...styles.transactionAmount }}>
 								+ {item.amount}
-							</Text>
+							</NalliText>
 						}
 					</View>
 				</TouchableOpacity>
@@ -122,12 +122,12 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 
 		return (
 			<MyBottomSheet
-					initialSnap={2}
-					snapPoints={['87.5%', '68%', '25%']}
+					initialSnap={1}
+					snapPoints={['87.5%', '25%']}
 					enabledInnerScrolling={true}
 					header="Transactions">
 				<View style={styles.transactionList}>
-					{!hasTransactions && <Text>No transactions so far</Text>}
+					{!hasTransactions && <NalliText style={styles.noMoreText}>No transactions so far</NalliText>}
 					{transactionListElements}
 					{selectedTransaction ?
 						<TransactionModal
@@ -143,7 +143,7 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 								onPress={onFetchMore} />
 					}
 					{hasTransactions && !hasMoreTransactions &&
-						<Text style={styles.noMoreText}>Nothing more to see here</Text>
+						<NalliText style={styles.noMoreText}>Nothing more to see here</NalliText>
 					}
 				</View>
 			</MyBottomSheet>
@@ -168,23 +168,21 @@ const styles = StyleSheet.create({
 	transactionRow: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		paddingVertical: 3,
-	},
-	transactionName: {
-		fontSize: 16,
+		paddingTop: -3,
+		paddingBottom: 3,
 	},
 	transactionAmount: {
 		fontSize: 20,
 		fontFamily: 'OpenSansBold',
 	},
-	transactionTitle: {
+	transactionTarget: {
+		marginTop: 4,
 		fontSize: 16,
-		fontFamily: 'OpenSansBold',
+		lineHeight: 20,
+		fontFamily: 'OpenSans',
 	},
 	noMoreText: {
-		fontSize: 16,
-		fontFamily: 'OpenSans',
 		alignSelf: 'center',
-		marginTop: 20,
+		marginTop: 30,
 	},
 });

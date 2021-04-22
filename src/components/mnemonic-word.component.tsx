@@ -1,12 +1,12 @@
 import React, { RefObject } from 'react';
 import {
 	StyleSheet,
-	Text,
 	TextInput,
 	View,
 } from 'react-native';
 
 import Colors from '../constants/colors';
+import NalliText from './text.component';
 
 interface MnemonicWordProps {
 	editable?: boolean;
@@ -29,12 +29,12 @@ export default class MnemonicWord extends React.Component<MnemonicWordProps, Mne
 		const { children, editable, index, onChangeText, reference, value } = this.props;
 		return (
 			<View style={styles.container}>
-				<Text style={styles.index}>
+				<NalliText style={styles.index}>
 					{index}
-				</Text>
+				</NalliText>
 				{!editable &&
 					<View style={styles.word}>
-						<Text>{children}</Text>
+						<NalliText>{children}</NalliText>
 					</View>
 				}
 				{editable &&
