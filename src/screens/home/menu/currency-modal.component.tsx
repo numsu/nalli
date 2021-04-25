@@ -48,29 +48,25 @@ export default class CurrencyModal extends React.Component<CurrencyModalProps, C
 
 		const currencies = currencyList.sort((a, b) => a.name.localeCompare(b.name));
 
-		if (isOpen) {
-			return (
-				<NalliModal
-						noScroll={true}
-						isOpen={isOpen}
-						onClose={close}
-						header='Select currency'>
-					<FlatList
-							data={currencies}
-							keyExtractor={item => item.iso}
-							renderItem={({ item }) => (
-								<TouchableOpacity onPress={() => this.selectCurrency(item)}>
-									<View style={styles.currencyItem}>
-										<NalliText size={ETextSize.P_LARGE} style={styles.currencyIcon}>{item.icon}</NalliText>
-										<NalliText style={styles.currencyText}>{item.name} ({item.iso})</NalliText>
-									</View>
-								</TouchableOpacity>
-							)} />
-				</NalliModal>
-			);
-		} else {
-			return (<></>);
-		}
+		return (
+			<NalliModal
+					noScroll={true}
+					isOpen={isOpen}
+					onClose={close}
+					header='Select currency'>
+				<FlatList
+						data={currencies}
+						keyExtractor={item => item.iso}
+						renderItem={({ item }) => (
+							<TouchableOpacity onPress={() => this.selectCurrency(item)}>
+								<View style={styles.currencyItem}>
+									<NalliText size={ETextSize.P_LARGE} style={styles.currencyIcon}>{item.icon}</NalliText>
+									<NalliText style={styles.currencyText}>{item.name} ({item.iso})</NalliText>
+								</View>
+							</TouchableOpacity>
+						)} />
+			</NalliModal>
+		);
 	}
 
 }

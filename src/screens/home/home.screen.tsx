@@ -34,6 +34,7 @@ import WalletHandler from '../../service/wallet-handler.service';
 import WalletStore, { WalletType } from '../../service/wallet-store';
 import WalletService, { WalletTransaction } from '../../service/wallet.service';
 import NalliMenu from './menu/nalli-menu.component';
+import PrivacyShield, { NalliAppState } from './privacy-shield.component';
 import ReceiveSheet from './receive-sheet.component';
 import SendSheet from './send-sheet.component';
 import TransactionsSheet from './transactions-sheet.component';
@@ -44,7 +45,6 @@ interface HomeScreenProps {
 
 interface HomeScreenState {
 	price: number;
-	appState: AppStateStatus;
 	transactions: WalletTransaction[];
 	hasMoreTransactions: boolean;
 	isMenuOpen: boolean;
@@ -67,7 +67,6 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		this.receiveSheetRef = React.createRef();
 		this.state = {
 			price: undefined,
-			appState: AppState.currentState,
 			transactions: undefined,
 			hasMoreTransactions: false,
 			isMenuOpen: false,
@@ -90,12 +89,10 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		this.getCurrentPrice();
 		this.handleForegroundPushNotifications();
 		this.fetchTransactions();
-		AppState.addEventListener('change', this.handleAppChangeState);
 	}
 
 	componentWillUnmount = () => {
 		try {
-			AppState.removeEventListener('change', this.handleAppChangeState);
 			this.pushNotificationSubscription.remove();
 			this.subscriptions.forEach(VariableStore.unwatchVariable);
 		} catch {
@@ -103,14 +100,10 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		}
 	}
 
-	handleAppChangeState = (nextAppState) => {
-		if (this.state.appState == 'inactive' && nextAppState == 'active') {
-			this.setState({ appState: 'active' });
+	handleAppChangeState = (nextState: NalliAppState) => {
+		if (nextState == NalliAppState.ACTIVE) {
 			this.getCurrentPrice();
 			ContactsService.clearCache();
-		} else if (this.state.appState == 'active'
-				&& nextAppState.match(/inactive|background|suspended/)) {
-			this.setState({ appState: 'inactive' });
 		}
 	}
 
@@ -254,84 +247,78 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 
 	render = () => {
 		const {
-			appState,
 			price,
 			transactions,
 			hasMoreTransactions,
 			walletIsOpen,
 		} = this.state;
 
-		if (appState == 'inactive') {
-			return (
-				<View style={styles.inactiveOverlay}>
-					<NalliLogo width={200} height={80} color="white" />
-				</View>
-			);
-		}
-
 		return (
-			<SideMenu
-					ref={menu => this.sidemenuRef = menu}
-					menu={<NalliMenu onDonatePress={this.onDonatePress} />}
-					bounceBackOnOverdraw={false}
-					toleranceX={20}
-					autoClosing={false}>
-				<ScrollView scrollEnabled={false}>
-					<KeyboardAvoidingView>
-						<DismissKeyboardView style={styles.container}>
-							<SafeAreaView edges={['top']}>
-								<View style={styles.header}>
-									<TouchableOpacity style={styles.menuIconContainer} onPress={this.openMenu}>
-										<Ionicons style={styles.menuIcon} name="ios-menu" size={40} />
-									</TouchableOpacity>
-									<NalliLogo style={styles.headerLogo} width={90} height={30} />
-									<Avatar
-											rounded={true}
-											onPress={this.logout}
-											icon={{ name: 'lock', type: 'font-awesome' }}
-											size="small"
-											containerStyle={{ marginRight: 20, marginTop: 15 }}
-											overlayContainerStyle={{ backgroundColor: Colors.main }} />
+			<PrivacyShield
+					onAppStateChange={this.handleAppChangeState}>
+				<SideMenu
+						ref={menu => this.sidemenuRef = menu}
+						menu={<NalliMenu onDonatePress={this.onDonatePress} />}
+						bounceBackOnOverdraw={false}
+						toleranceX={20}
+						autoClosing={false}>
+					<ScrollView scrollEnabled={false}>
+						<KeyboardAvoidingView>
+							<DismissKeyboardView style={styles.container}>
+								<SafeAreaView edges={['top']}>
+									<View style={styles.header}>
+										<TouchableOpacity style={styles.menuIconContainer} onPress={this.openMenu}>
+											<Ionicons style={styles.menuIcon} name="ios-menu" size={40} />
+										</TouchableOpacity>
+										<NalliLogo style={styles.headerLogo} width={90} height={30} />
+										<Avatar
+												rounded={true}
+												onPress={this.logout}
+												icon={{ name: 'lock', type: 'font-awesome' }}
+												size="small"
+												containerStyle={{ marginRight: 20, marginTop: 15 }}
+												overlayContainerStyle={{ backgroundColor: Colors.main }} />
+									</View>
+								</SafeAreaView>
+								<View style={styles.content}>
+									<View style={{ height: 230 }}>
+										<NalliCarousel
+												onChangeAccount={this.onChangeAccount}
+												onAddNewAccount={this.addNewAccount}
+												onHideAccount={this.hideAccount}
+												price={price} />
+									</View>
+									<View style={[styles.row, styles.actions]}>
+										<NalliButton
+												text="Send"
+												solid={true}
+												icon="md-arrow-up"
+												style={styles.action}
+												onPress={this.onSendPress}
+												disabled={!walletIsOpen} />
+										<NalliButton
+												text="Receive"
+												solid={true}
+												icon="md-arrow-down"
+												style={styles.action}
+												onPress={this.onReceivePress}
+												disabled={!walletIsOpen} />
+									</View>
 								</View>
-							</SafeAreaView>
-							<View style={styles.content}>
-								<View style={{ height: 230 }}>
-									<NalliCarousel
-											onChangeAccount={this.onChangeAccount}
-											onAddNewAccount={this.addNewAccount}
-											onHideAccount={this.hideAccount}
-											price={price} />
-								</View>
-								<View style={[styles.row, styles.actions]}>
-									<NalliButton
-											text="Send"
-											solid={true}
-											icon="md-arrow-up"
-											style={styles.action}
-											onPress={this.onSendPress}
-											disabled={!walletIsOpen} />
-									<NalliButton
-											text="Receive"
-											solid={true}
-											icon="md-arrow-down"
-											style={styles.action}
-											onPress={this.onReceivePress}
-											disabled={!walletIsOpen} />
-								</View>
-							</View>
-							<TransactionsSheet
-									transactions={transactions}
-									hasMoreTransactions={hasMoreTransactions}
-									onFetchMore={this.getMoreTransactions} />
-							<SendSheet
-									ref={c => this.sendRef = c}
-									reference={this.sendSheetRef}
-									onSendSuccess={this.onSendSuccess} />
-							<ReceiveSheet reference={this.receiveSheetRef} />
-						</DismissKeyboardView>
-					</KeyboardAvoidingView>
-				</ScrollView>
-			</SideMenu>
+								<TransactionsSheet
+										transactions={transactions}
+										hasMoreTransactions={hasMoreTransactions}
+										onFetchMore={this.getMoreTransactions} />
+								<SendSheet
+										ref={c => this.sendRef = c}
+										reference={this.sendSheetRef}
+										onSendSuccess={this.onSendSuccess} />
+								<ReceiveSheet reference={this.receiveSheetRef} />
+							</DismissKeyboardView>
+						</KeyboardAvoidingView>
+					</ScrollView>
+				</SideMenu>
+			</PrivacyShield>
 		);
 	}
 

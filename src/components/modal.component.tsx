@@ -1,6 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import {
+	EmitterSubscription,
 	KeyboardAvoidingView,
 	Platform,
 	StyleSheet,
@@ -11,7 +12,10 @@ import { ScrollView } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
 
 import Colors from '../constants/colors';
+import { sleep } from '../constants/globals';
 import layout from '../constants/layout';
+import { NalliAppState } from '../screens/home/privacy-shield.component';
+import VariableStore, { NalliVariable } from '../service/variable-store';
 import NalliText, { ETextSize } from './text.component';
 
 interface ModalProps {
@@ -23,88 +27,113 @@ interface ModalProps {
 }
 
 interface ModalState {
+	isOpen: boolean;
+	isRendered: boolean;
+	appState: NalliAppState;
 }
 
 export default class NalliModal extends React.Component<ModalProps, ModalState> {
+
+	static animationDelay = 200;
 
 	constructor(props) {
 		super(props);
 		this.state = {
 			isOpen: props.isOpen,
+			isRendered: props.isOpen,
+			appState: NalliAppState.ACTIVE,
 		};
 	}
 
-	static getDerivedStateFromProps(nextProps, prevState) {
-		if (prevState.isOpen != nextProps.isOpen) {
-			return { isOpen: nextProps.isOpen };
+	subscriptions: EmitterSubscription[] = [];
+
+	componentDidMount = () => {
+		this.subscriptions.push(VariableStore.watchVariable<NalliAppState>(NalliVariable.APP_STATE, appState => this.setState({ appState })));
+	}
+
+	componentWillUnmount = () => {
+		this.subscriptions.forEach(VariableStore.unwatchVariable);
+	}
+
+	componentDidUpdate = async () => {
+		if (this.props.isOpen != this.state.isOpen) {
+			this.setState({ isOpen: this.props.isOpen });
+			if (this.props.isOpen == false) {
+				await sleep(NalliModal.animationDelay);
+			}
+			this.setState({ isRendered: this.props.isOpen });
 		}
-		return null;
 	}
 
 	render = () => {
-		const { isOpen, header, children, size, noScroll, onClose } = this.props;
+		const { header, children, size, noScroll, onClose } = this.props;
+		const { isOpen, isRendered, appState } = this.state;
 
-		return (
-			<Modal
-					propagateSwipe
-					avoidKeyboard={true}
-					hideModalContentWhileAnimating={true}
-					animationIn={'zoomIn'}
-					animationOut={'zoomOut'}
-					animationInTiming={150}
-					animationOutTiming={150}
-					isVisible={isOpen}
-					onBackdropPress={onClose}
-					onBackButtonPress={onClose}
-					useNativeDriverForBackdrop={true}
-					useNativeDriver={true}>
-				<KeyboardAvoidingView
-						enabled={Platform.OS == 'android'}
-						behavior={'height'}
-						style={[styles.containerBase, size == EModalSize.MINI
-							? styles.containerMini
-							: size == EModalSize.LARGE
-								? styles.containerLarge
-								: styles.containerMedium]}>
-					<View style={styles.headerContainer}>
+		if (isRendered) {
+			return (
+				<Modal
+						propagateSwipe
+						avoidKeyboard={true}
+						hideModalContentWhileAnimating={true}
+						animationIn={'zoomIn'}
+						animationOut={'fadeOut'}
+						animationInTiming={NalliModal.animationDelay}
+						animationOutTiming={NalliModal.animationDelay}
+						isVisible={isOpen && appState == NalliAppState.ACTIVE}
+						onBackdropPress={onClose}
+						onBackButtonPress={onClose}
+						useNativeDriverForBackdrop={true}
+						useNativeDriver={true}>
+					<KeyboardAvoidingView
+							enabled={Platform.OS == 'android'}
+							behavior={'height'}
+							style={[styles.containerBase, size == EModalSize.MINI
+								? styles.containerMini
+								: size == EModalSize.LARGE
+									? styles.containerLarge
+									: styles.containerMedium]}>
+						<View style={styles.headerContainer}>
+							<LinearGradient
+									colors={['white', 'rgba(255, 255, 255, 0.0)']}
+									style={styles.topContainerBackground}
+									start={{ x: 0.5, y: 0.5 }}
+									end={{ x: 0.5, y: 1 }} />
+							<View style={styles.headerContentContainer}>
+								<NalliText size={ETextSize.H1}>
+									{header}
+								</NalliText>
+								<Avatar
+										rounded={true}
+										onPress={onClose}
+										icon={{ name: 'close', type: 'material' }}
+										size="small"
+										overlayContainerStyle={{ backgroundColor: Colors.main }} />
+							</View>
+						</View>
+						{noScroll &&
+							<View style={styles.contentContainer}>
+								<View style={styles.pushTop} />
+								{children}
+							</View>
+						}
+						{!noScroll &&
+							<ScrollView style={styles.contentContainer}>
+								<View style={styles.pushTop} />
+								{children}
+							</ScrollView>
+						}
+
 						<LinearGradient
-								colors={['white', 'rgba(255, 255, 255, 0.0)']}
-								style={styles.topContainerBackground}
-								start={{ x: 0.5, y: 0.5 }}
-								end={{ x: 0.5, y: 1 }} />
-						<View style={styles.headerContentContainer}>
-							<NalliText size={ETextSize.H1}>
-								{header}
-							</NalliText>
-							<Avatar
-									rounded={true}
-									onPress={onClose}
-									icon={{ name: 'close', type: 'material' }}
-									size="small"
-									overlayContainerStyle={{ backgroundColor: Colors.main }} />
-						</View>
-					</View>
-					{noScroll &&
-						<View style={styles.contentContainer}>
-							<View style={styles.pushTop} />
-							{children}
-						</View>
-					}
-					{!noScroll &&
-						<ScrollView style={styles.contentContainer}>
-							<View style={styles.pushTop} />
-							{children}
-						</ScrollView>
-					}
-
-					<LinearGradient
-								colors={['rgba(255, 255, 255, 0.0)', 'white']}
-								style={styles.bottomContainerBackground}
-								start={{ x: 0.5, y: 0 }}
-								end={{ x: 0.5, y: 1 }} />
-				</KeyboardAvoidingView>
-			</Modal>
-		);
+									colors={['rgba(255, 255, 255, 0.0)', 'white']}
+									style={styles.bottomContainerBackground}
+									start={{ x: 0.5, y: 0 }}
+									end={{ x: 0.5, y: 1 }} />
+					</KeyboardAvoidingView>
+				</Modal>
+			);
+		} else {
+			return (<></>);
+		}
 	}
 
 }

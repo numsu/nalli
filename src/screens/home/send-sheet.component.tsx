@@ -27,7 +27,7 @@ import ClientService from '../../service/client.service';
 import ContactsService, { FormattedNumber } from '../../service/contacts.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 import WalletStore from '../../service/wallet-store';
-import WalletService from '../../service/wallet.service';
+import WalletService, { EBlockSubType } from '../../service/wallet.service';
 import ContactsModal from './contacts-modal.component';
 import PhoneNumberInputModal from './number-input-modal.component';
 
@@ -298,7 +298,10 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 		}, wallet.accounts[selectedAccountIndex].privateKey);
 
 		try {
-			await WalletService.publishTransaction(signedBlock);
+			await WalletService.publishTransaction({
+				subtype: EBlockSubType.SEND,
+				block: signedBlock,
+			});
 		} catch {
 			this.setState({ process: false });
 			return;

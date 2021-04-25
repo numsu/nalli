@@ -7,9 +7,11 @@ import {
 } from 'react-native';
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
+import NalliModal from '../../components/modal.component';
 import NalliButton from '../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../components/text.component';
 import colors from '../../constants/colors';
+import { sleep } from '../../constants/globals';
 import ContactsService from '../../service/contacts.service';
 import { EPendingStatus, WalletTransaction } from '../../service/wallet.service';
 import TransactionModal from './transaction-modal.component';
@@ -33,7 +35,7 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 		this.state = {
 			contacts: new Map<string, string>(),
 			transactionModalOpen: false,
-			selectedTransaction: undefined,
+			selectedTransaction: {} as WalletTransaction,
 		};
 	}
 
@@ -80,8 +82,10 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 		this.setState({ selectedTransaction, transactionModalOpen: true });
 	}
 
-	closeTransaction = () => {
-		this.setState({ selectedTransaction: undefined, transactionModalOpen: false });
+	closeTransaction = async () => {
+		this.setState({ transactionModalOpen: false });
+		await sleep(NalliModal.animationDelay);
+		this.setState({ selectedTransaction: {} as WalletTransaction });
 	}
 
 	render = () => {
@@ -129,14 +133,11 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 				<View style={styles.transactionList}>
 					{!hasTransactions && <NalliText style={styles.noMoreText}>No transactions so far</NalliText>}
 					{transactionListElements}
-					{selectedTransaction ?
-						<TransactionModal
-								isOpen={transactionModalOpen}
-								transaction={selectedTransaction}
-								contactName={this.getContactName(selectedTransaction)}
-								onClose={this.closeTransaction} />
-						: undefined
-					}
+					<TransactionModal
+							isOpen={selectedTransaction && transactionModalOpen}
+							transaction={selectedTransaction}
+							contactName={this.getContactName(selectedTransaction)}
+							onClose={this.closeTransaction} />
 					{hasTransactions && hasMoreTransactions &&
 						<NalliButton
 								text='Fetch more...'

@@ -72,4 +72,5 @@ export enum NalliVariable {
 	SHOW_FIAT_DEFAULT = 'showFiatDefault',
 	ACCOUNTS_BALANCES = 'accountsBalances',
 	PROCESSING_PENDING = 'processingPending',
+	APP_STATE = 'appState',
 }

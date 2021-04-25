@@ -66,32 +66,28 @@ export default class PhoneNumberInputModal extends React.Component<NumberInputMo
 	render = () => {
 		const { number, isOpen } = this.state;
 
-		if (isOpen) {
-			return (
-				<NalliModal
-						noScroll={true}
-						isOpen={isOpen}
-						onClose={this.hide}
-						header='Phone number'
-						size={EModalSize.MINI}>
-					<View>
-						<PhoneNumberInput
-								value={number}
-								onChangeNumber={this.onChangeNumber}
-								onChangeCountry={this.onChangeCountry}
-								countryInputContainerStyle={styles.input}
-								countryTextInputStyle={styles.input}
-								countryInputTextStyle={styles.countryInputText} />
-						<NalliButton
-								text='Confirm'
-								solid={true}
-								onPress={() => this.onConfirmNumber(number)} />
-					</View>
-				</NalliModal>
-			);
-		} else {
-			return (<></>);
-		}
+		return (
+			<NalliModal
+					noScroll={true}
+					isOpen={isOpen}
+					onClose={this.hide}
+					header='Phone number'
+					size={EModalSize.MINI}>
+				<View>
+					<PhoneNumberInput
+							value={number}
+							onChangeNumber={this.onChangeNumber}
+							onChangeCountry={this.onChangeCountry}
+							countryInputContainerStyle={styles.input}
+							countryTextInputStyle={styles.input}
+							countryInputTextStyle={styles.countryInputText} />
+					<NalliButton
+							text='Confirm'
+							solid={true}
+							onPress={() => this.onConfirmNumber(number)} />
+				</View>
+			</NalliModal>
+		);
 	}
 
 }

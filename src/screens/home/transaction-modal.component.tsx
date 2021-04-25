@@ -23,6 +23,7 @@ export interface TransactionModalProps {
 
 export interface TransactionModalState {
 	isOpen: boolean;
+	transaction: WalletTransaction;
 }
 
 export default class TransactionModal extends React.Component<TransactionModalProps, TransactionModalState> {
@@ -31,6 +32,7 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 		super(props);
 		this.state = {
 			isOpen: props.isOpen,
+			transaction: props.transaction,
 		};
 	}
 
@@ -38,14 +40,17 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 		if (prevState.isOpen != nextProps.isOpen) {
 			return { isOpen: nextProps.isOpen };
 		}
-		if (prevState.transaction != nextProps.transaction) {
-			return { transaction: nextProps.transaction };
-		}
 		return null;
 	}
 
 	close = () => {
 		this.props.onClose();
+	}
+
+	componentDidUpdate = () => {
+		if (this.props.transaction != this.state.transaction) {
+			this.setState({ transaction: this.props.transaction });
+		}
 	}
 
 	returnPendingSend = async () => {
@@ -70,8 +75,8 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 	}
 
 	render = () => {
-		const { transaction, contactName } = this.props;
-		const { isOpen } = this.state;
+		const { contactName } = this.props;
+		const { isOpen, transaction } = this.state;
 
 		return (
 			<NalliModal
@@ -202,7 +207,6 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 										solid={true}
 										style={styles.cancelButton}
 										onPress={this.returnPendingSend} />
-										{/* disabled={!moment().subtract(24, 'hours').isBefore(moment.unix(transaction.timestamp))} */}
 							</View>
 							: undefined
 						}

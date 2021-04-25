@@ -87,12 +87,13 @@ export default class WalletInfoModal extends React.Component<WalletInfoModallPro
 	render = () => {
 		const { isOpen, isUnlocked, pin, walletInfo } = this.state;
 
-		if (isOpen && walletInfo) {
+		let words, privateKeys;
+		if (isUnlocked) {
 			let i = 0;
-			const words = walletInfo.mnemonic.split(' ').map(word => (
+			words = walletInfo.mnemonic.split(' ').map(word => (
 				<MnemonicWord key={i} index={++i}>{word}</MnemonicWord>
 			));
-			const privateKeys = walletInfo.accounts.map(account => (
+			privateKeys = walletInfo.accounts.map(account => (
 				<View style={{ alignItems: "center" }} key={account.accountIndex}>
 					<NalliText size={ETextSize.H2} style={styles.header}>{`Account #${account.accountIndex} private key`}</NalliText>
 					<ShowHide allowCopy={true} copyValue={account.privateKey} confirmCopy={true}>
@@ -100,47 +101,45 @@ export default class WalletInfoModal extends React.Component<WalletInfoModallPro
 					</ShowHide>
 				</View>
 			));
-			return (
-				<NalliModal
-						size={EModalSize.LARGE}
-						isOpen={isOpen}
-						onClose={this.closeAndLock}
-						header='Wallet'>
-					{isUnlocked &&
-						<ScrollView contentContainerStyle={styles.container}>
-							<NalliText>This information is everything needed to access your wallet and spend your funds. Keep a copy of this information in a safe place in case your phone breaks or you lose it and never share it with anyone.</NalliText>
-							<NalliText size={ETextSize.H2} style={styles.header}>Recovery phrase</NalliText>
-							<NalliText style={styles.addition}>Wallet type: {walletInfo.type == WalletType.HD_WALLET ? 'HD Wallet' : 'Legacy wallet'}</NalliText>
-							<ShowHide allowCopy={true} copyValue={walletInfo.mnemonic} confirmCopy={true}>
-								<View style={styles.wordsContainer}>
-									{words}
-								</View>
-							</ShowHide>
-							<NalliText size={ETextSize.H2} style={styles.header}>Wallet seed</NalliText>
-							<ShowHide allowCopy={true} copyValue={walletInfo.seed} confirmCopy={true}>
-								<Text>{walletInfo.seed}</Text>
-							</ShowHide>
-							{privateKeys}
-						</ScrollView>
-					}
-					{!isUnlocked &&
-						<View style={styles.pinContainer}>
-							<NalliText size={ETextSize.H2} style={styles.header}>Enter pin to view</NalliText>
-							<TextInput
-									style={styles.numberPadPin}
-									value={pin}
-									secureTextEntry={true} />
-							<NalliNumberPad
-									style={styles.numberPad}
-									pin={pin}
-									onChangeText={this.validatePin} />
-						</View>
-					}
-				</NalliModal>
-			);
-		} else {
-			return (<></>);
 		}
+		return (
+			<NalliModal
+					size={EModalSize.LARGE}
+					isOpen={isOpen}
+					onClose={this.closeAndLock}
+					header='Wallet'>
+				{isUnlocked &&
+					<ScrollView contentContainerStyle={styles.container}>
+						<NalliText>This information is everything needed to access your wallet and spend your funds. Keep a copy of this information in a safe place in case your phone breaks or you lose it and never share it with anyone.</NalliText>
+						<NalliText size={ETextSize.H2} style={styles.header}>Recovery phrase</NalliText>
+						<NalliText style={styles.addition}>Wallet type: {walletInfo.type == WalletType.HD_WALLET ? 'HD Wallet' : 'Legacy wallet'}</NalliText>
+						<ShowHide allowCopy={true} copyValue={walletInfo.mnemonic} confirmCopy={true}>
+							<View style={styles.wordsContainer}>
+								{words}
+							</View>
+						</ShowHide>
+						<NalliText size={ETextSize.H2} style={styles.header}>Wallet seed</NalliText>
+						<ShowHide allowCopy={true} copyValue={walletInfo.seed} confirmCopy={true}>
+							<Text>{walletInfo.seed}</Text>
+						</ShowHide>
+						{privateKeys}
+					</ScrollView>
+				}
+				{!isUnlocked &&
+					<View style={styles.pinContainer}>
+						<NalliText size={ETextSize.H2} style={styles.header}>Enter pin to view</NalliText>
+						<TextInput
+								style={styles.numberPadPin}
+								value={pin}
+								secureTextEntry={true} />
+						<NalliNumberPad
+								style={styles.numberPad}
+								pin={pin}
+								onChangeText={this.validatePin} />
+					</View>
+				}
+			</NalliModal>
+		);
 	}
 
 }
