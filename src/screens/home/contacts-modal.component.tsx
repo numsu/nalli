@@ -77,37 +77,33 @@ export default class ContactsModal extends React.Component<ContactsModalProps, C
 	render = () => {
 		const { filtered, isOpen } = this.state;
 
-		if (isOpen) {
-			return (
-				<NalliModal
-						size={EModalSize.LARGE}
-						isOpen={isOpen}
-						onClose={this.hide}
-						header='Select contact'
-						noScroll={true}>
-					<NalliInput
-							reference={this.contactsSearchRef}
-							placeholder="Search..."
-							keyboardType="default"
-							onChangeText={this.filterContacts} />
-					<FlatList
-							style={{ height: '100%' }}
-							contentContainerStyle={{ paddingBottom: 40 }}
-							data={filtered}
-							keyExtractor={item => item.id}
-							ListEmptyComponent={() => (
-								<NalliText style={styles.text}>No contacts</NalliText>
-							)}
-							renderItem={({ item }) => (
-								<Contact
-										contact={item}
-										onSelectContact={this.onSelectContact} />
-							)} />
-				</NalliModal>
-			);
-		} else {
-			return (<></>);
-		}
+		return (
+			<NalliModal
+					size={EModalSize.LARGE}
+					isOpen={isOpen}
+					onClose={this.hide}
+					header='Select contact'
+					noScroll={true}>
+				<NalliInput
+						reference={this.contactsSearchRef}
+						placeholder="Search..."
+						keyboardType="default"
+						onChangeText={this.filterContacts} />
+				<FlatList
+						style={{ height: '100%' }}
+						contentContainerStyle={{ paddingBottom: 40 }}
+						data={filtered}
+						keyExtractor={item => item.id}
+						ListEmptyComponent={() => (
+							<NalliText style={styles.text}>No contacts</NalliText>
+						)}
+						renderItem={({ item }) => (
+							<Contact
+									contact={item}
+									onSelectContact={this.onSelectContact} />
+						)} />
+			</NalliModal>
+		);
 	}
 
 }

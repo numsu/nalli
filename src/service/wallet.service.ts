@@ -47,8 +47,8 @@ export default class WalletService {
 		return HttpService.get<boolean>(`${this.uri}/opened/${address}`);
 	}
 
-	static publishTransaction(block: SignedBlock) {
-		return HttpService.post<string>(`${this.uri}/publish`, block);
+	static publishTransaction(block: BlockProcess) {
+		return HttpService.post<string>(`${this.uri}/publish/v2`, block);
 	}
 
 	static createPendingSend(phone: string) {
@@ -111,6 +111,11 @@ export interface WalletTransaction {
 	custodialHash: string;
 }
 
+export interface BlockProcess {
+	subtype: EBlockSubType;
+	block: SignedBlock;
+}
+
 export interface SignedBlock {
     type: 'state';
     account: string;
@@ -130,9 +135,16 @@ export interface PendingSend {
 }
 
 export enum EPendingStatus {
-	X0 = "X0",
-	CREATED = "CREATED",
-	FILLED = "FILLED",
-	RETURNED = "RETURNED",
-	SETTLED = "SETTLED",
+	X0 = 'X0',
+	CREATED = 'CREATED',
+	FILLED = 'FILLED',
+	RETURNED = 'RETURNED',
+	SETTLED = 'SETTLED',
+}
+
+export enum EBlockSubType {
+	SEND = 'send',
+	RECEIVE = 'receive',
+	// OPEN = 'open', backend will handle open subtype
+	CHANGE = 'change',
 }

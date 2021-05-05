@@ -71,31 +71,27 @@ export default class NotificationModal extends React.Component<NotificationModal
 		const { close } = this.props;
 		const { isOpen } = this.state;
 
-		if (isOpen) {
-			return (
-				<NalliModal
-						isOpen={isOpen}
-						onClose={close}
-						header='Notifications'>
-					<View style={styles.container}>
-						<View>
-							<NalliText style={styles.text}>Nalli will send you notifications about incoming payments and when someone that you've sent Nano via SMS has registered and claimed them.</NalliText>
-							<NalliText style={styles.text}>Do you want to receive these notifications in the future?</NalliText>
-						</View>
-						<NalliButton
-								text="Yes"
-								solid={true}
-								style={{ marginBottom: 10 }}
-								onPress={() => this.selectNotificationState(true)} />
-						<NalliButton
-								text="No"
-								onPress={() => this.selectNotificationState(false)} />
+		return (
+			<NalliModal
+					isOpen={isOpen}
+					onClose={close}
+					header='Notifications'>
+				<View style={styles.container}>
+					<View>
+						<NalliText style={styles.text}>Nalli will send you notifications about incoming payments and when someone that you've sent Nano via SMS has registered and claimed them.</NalliText>
+						<NalliText style={styles.text}>Do you want to receive these notifications in the future?</NalliText>
 					</View>
-				</NalliModal>
-			);
-		} else {
-			return (<></>);
-		}
+					<NalliButton
+							text="Yes"
+							solid={true}
+							style={{ marginBottom: 10 }}
+							onPress={() => this.selectNotificationState(true)} />
+					<NalliButton
+							text="No"
+							onPress={() => this.selectNotificationState(false)} />
+				</View>
+			</NalliModal>
+		);
 	}
 
 }

@@ -3,7 +3,7 @@ import { block, tools } from 'nanocurrency-web';
 import CurrencyService from './currency.service';
 import VariableStore, { NalliVariable } from './variable-store';
 import WalletStore from './wallet-store';
-import WalletService, { Account, ReceivedPendingBlock } from './wallet.service';
+import WalletService, { Account, EBlockSubType, ReceivedPendingBlock } from './wallet.service';
 
 export interface NalliAccount extends Account {
 	balance: string;
@@ -45,7 +45,10 @@ export default class WalletHandler {
 						walletBalanceRaw: walletInfo.balance,
 						work: walletInfo.work,
 					}, storedWallet.accounts[account.accountIndex].privateKey);
-					await WalletService.publishTransaction(signedBlock);
+					await WalletService.publishTransaction({
+						subtype: EBlockSubType.RECEIVE,
+						block: signedBlock
+					});
 
 					let balance = +account.balance;
 					balance += Number(tools.convert(pending.amount, 'RAW', 'NANO'));
