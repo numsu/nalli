@@ -2,8 +2,6 @@ import { Notification } from 'expo/build/Notifications/Notifications.types';
 import { wallet } from 'nanocurrency-web';
 import React, { RefObject } from 'react';
 import {
-	AppState,
-	AppStateStatus,
 	EmitterSubscription,
 	Keyboard,
 	KeyboardAvoidingView,
