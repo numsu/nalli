@@ -1,9 +1,12 @@
 import React from 'react';
 import { AppState, StyleSheet, View } from 'react-native';
+import { NavigationInjectedProps, withNavigation } from 'react-navigation';
 
 import NalliLogo from '../../components/svg/nalli-logo';
 import Colors from '../../constants/colors';
 import layout from '../../constants/layout';
+import AuthStore from '../../service/auth-store';
+import ClientService from '../../service/client.service';
 import ContactsService from '../../service/contacts.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 
@@ -12,20 +15,24 @@ export enum NalliAppState {
 	INACTIVE = 'inactive',
 }
 
-interface PrivacyShieldProps {
+interface PrivacyShieldProps extends NavigationInjectedProps {
 	onAppStateChange: (state: NalliAppState) => any;
 }
 
 interface PrivacyShieldState {
 	appState: NalliAppState;
+	sessionExpiresTime: string;
+	inactivationTime: string;
 }
 
-export default class PrivacyShield extends React.Component<PrivacyShieldProps, PrivacyShieldState> {
+class PrivacyShield extends React.Component<PrivacyShieldProps, PrivacyShieldState> {
 
 	constructor(props) {
 		super(props);
 		this.state = {
 			appState: NalliAppState.ACTIVE,
+			sessionExpiresTime: undefined,
+			inactivationTime: undefined,
 		};
 	}
 
@@ -45,17 +52,26 @@ export default class PrivacyShield extends React.Component<PrivacyShieldProps, P
 		AppState.addEventListener('change', this.handleAppChangeState);
 	}
 
-	handleAppChangeState = (nextAppState) => {
+	handleAppChangeState = async (nextAppState) => {
 		if (this.state.appState == 'inactive' && nextAppState == 'active') {
+			if (new Date(this.state.sessionExpiresTime) < new Date()) {
+				await AuthStore.clearAuthentication();
+				AuthStore.clearExpires();
+				this.props.navigation.navigate('Login');
+			} else if (new Date(this.state.inactivationTime) < new Date(new Date().getTime() - 60000)) {
+				ClientService.refresh();
+			}
+
 			VariableStore.setVariable(NalliVariable.APP_STATE, NalliAppState.ACTIVE);
 			this.props.onAppStateChange(NalliAppState.ACTIVE);
-			this.setState({ appState: NalliAppState.ACTIVE });
+			this.setState({ appState: NalliAppState.ACTIVE, sessionExpiresTime: '', inactivationTime: '' });
 			ContactsService.clearCache();
 		} else if (this.state.appState == NalliAppState.ACTIVE
 				&& nextAppState.match(/inactive|background|suspended/)) {
 			VariableStore.setVariable(NalliVariable.APP_STATE, NalliAppState.INACTIVE);
 			this.props.onAppStateChange(NalliAppState.INACTIVE);
-			this.setState({ appState: NalliAppState.INACTIVE });
+			const expiresTime = await AuthStore.getExpires();
+			this.setState({ appState: NalliAppState.INACTIVE, sessionExpiresTime: expiresTime, inactivationTime: new Date().toISOString() });
 		}
 	}
 
@@ -75,6 +91,8 @@ export default class PrivacyShield extends React.Component<PrivacyShieldProps, P
 	}
 
 }
+
+export default withNavigation(PrivacyShield);
 
 const styles = StyleSheet.create({
 	container: {

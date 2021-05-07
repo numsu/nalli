@@ -66,10 +66,16 @@ export default class HttpService {
 			await AuthStore.setAuthentication(res.headers.get('Refresh-Token'));
 		}
 
+		const expires = res.headers.get('Token-Expires');
+		if (expires) {
+			await AuthStore.setExpires(expires);
+		}
+
 		if (!res.ok) {
 			if (res.status == 401) {
 				NavigationService.navigate('Login');
 				await AuthStore.clearAuthentication();
+				AuthStore.clearExpires();
 			} else if (res.status == 400) {
 				throw new HttpError(+res.headers.get('x-nalli-error'));
 			}

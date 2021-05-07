@@ -10,10 +10,12 @@ export default class AuthStore {
 	static authKey = 'NalliAuthorization';
 	static pinKey = 'NalliPin';
 	static clientKey = 'NalliClient';
+	static expiresKey = 'NalliExpires';
 
 	static client: Client;
 	static authentication: string;
 	static pin: string;
+	static expires: string;
 
 	static async getClient(): Promise<Client> {
 		try {
@@ -119,6 +121,40 @@ export default class AuthStore {
 		} catch (err) {
 			console.error(err);
 			throw new Error('Error clearing authentication from storage');
+		}
+	}
+
+	static async getExpires(): Promise<string> {
+		try {
+			if (!this.expires) {
+				this.expires = await AsyncStorage.getItem(this.expiresKey);
+			}
+			return this.expires;
+		} catch (err) {
+			console.error(err);
+			throw new Error('Error getting expires from storage');
+		}
+	}
+
+	static async setExpires(value: string): Promise<void> {
+		try {
+			this.expires = value;
+			return await AsyncStorage.setItem(this.expiresKey, value);
+		} catch (err) {
+			console.error(err);
+			throw new Error('Error saving expires to storage');
+		}
+	}
+
+	static async clearExpires(): Promise<void> {
+		try {
+			this.expires = undefined;
+			return await AsyncStorage.removeItem(this.expiresKey, () => (
+				console.log('Expires cleared')
+			));
+		} catch (err) {
+			console.error(err);
+			throw new Error('Error clearing expires from storage');
 		}
 	}
 

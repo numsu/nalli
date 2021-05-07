@@ -25,6 +25,10 @@ export default class ClientService {
 		return HttpService.get<boolean>(`${this.uri}/push-status`);
 	}
 
+	static refresh() {
+		return HttpService.get<void>(`${this.uri}/refresh`);
+	}
+
 }
 
 export interface Client {

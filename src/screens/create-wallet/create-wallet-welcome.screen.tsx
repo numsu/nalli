@@ -36,6 +36,7 @@ export default class CreateWalletWelcome extends React.Component<any, any> {
 
 	onLogoutPress = async () => {
 		await AuthStore.clearAuthentication();
+		AuthStore.clearExpires();
 		this.props.navigation.navigate('Login');
 	}
 
