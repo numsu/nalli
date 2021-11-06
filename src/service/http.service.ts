@@ -6,8 +6,8 @@ import VariableStore, { NalliVariable } from './variable-store';
 
 export default class HttpService {
 
-	// static endpoint = 'http://192.168.1.100:8080/api';
-	static endpoint = 'https://api.nalli.app/api';
+	static endpoint = 'http://192.168.1.100:8080/api';
+	// static endpoint = 'https://api.nalli.app/api';
 
 	static get = async <T> (uri: string): Promise<T> => {
 		const that = HttpService;

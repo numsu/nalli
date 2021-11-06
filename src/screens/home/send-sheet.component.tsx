@@ -3,13 +3,13 @@ import { block, tools } from 'nanocurrency-web';
 import React, { RefObject } from 'react';
 import {
 	Alert,
-	Clipboard,
 	Keyboard,
 	Platform,
 	StyleSheet,
 	TouchableOpacity,
 	View,
 } from 'react-native';
+import { Clipboard } from 'react-native'
 import { Avatar } from 'react-native-elements';
 
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
@@ -96,6 +96,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 		const tab = await VariableStore.getVariable(NalliVariable.SEND_TAB, SendSheetTab.CONTACT);
 		const contacts = await ContactsService.getContacts(false);
 		this.setState({ tab, contacts });
+		console.log(Clipboard.getString());
 	}
 
 	toggleDonate = async (enable: boolean) => {
@@ -396,7 +397,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 									onPress={this.onSelectRecipientPress}
 									style={styles.contactSelectArrow}>
 								<Ionicons
-										name="ios-swap"
+										name="ios-swap-horizontal"
 										style={styles.contactSelectArrow}
 										size={32} />
 							</TouchableOpacity>
@@ -429,7 +430,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 									onPress={this.onSelectInputNumberPress}
 									style={styles.contactSelectArrow}>
 								<Ionicons
-										name="ios-swap"
+										name="ios-swap-horizontal"
 										style={styles.contactSelectArrow}
 										size={32} />
 							</TouchableOpacity>

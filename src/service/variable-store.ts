@@ -1,5 +1,7 @@
 import { Map } from 'core-js';
-import { AsyncStorage, DeviceEventEmitter, EmitterSubscription } from 'react-native';
+import { DeviceEventEmitter, EmitterSubscription } from 'react-native';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default class VariableStore {
 
@@ -41,7 +43,7 @@ export default class VariableStore {
 	}
 
 	static unwatchVariable(subscription: EmitterSubscription) {
-		return DeviceEventEmitter.removeSubscription(subscription);
+		subscription.remove();
 	}
 
 	static async clearVariables() {
@@ -54,9 +56,13 @@ export default class VariableStore {
 	}
 
 	private static async populate() {
-		const storageVariables = await AsyncStorage.getItem(this.variablesKey);
-		if (storageVariables) {
-			this.variables = new Map(JSON.parse(storageVariables));
+		try {
+			const storageVariables = await AsyncStorage.getItem(this.variablesKey);
+			if (storageVariables) {
+				this.variables = new Map(JSON.parse(storageVariables));
+			}
+		} catch {
+			this.variables = new Map();
 		}
 	}
 

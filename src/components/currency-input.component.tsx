@@ -78,7 +78,7 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 		} else {
 			this.setState({ currency: currency, convertedCurrency: 'xrb' });
 		}
-		await CurrencyService.convert(0, this.state.currency, this.state.convertedCurrency);
+		await CurrencyService.convert('0', this.state.currency, this.state.convertedCurrency);
 	}
 
 	onChangeText = async (val: string) => {
@@ -150,7 +150,7 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 							onPress={this.onCurrencySwitchPress}>
 						<Ionicons
 								style={styles.switchIcon}
-								name="ios-swap"
+								name="ios-swap-horizontal"
 								size={32} />
 					</TouchableHighlight>
 					<View style={[styles.inputConvertedCurrencyContainer, { borderTopColor: borderColor }]}>

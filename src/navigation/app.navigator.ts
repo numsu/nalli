@@ -1,4 +1,5 @@
-import { createAppContainer, createStackNavigator, createSwitchNavigator } from 'react-navigation';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 
 import Colors from '../constants/colors';
 import AuthLoadingScreen from '../screens/auth-loading.screen';

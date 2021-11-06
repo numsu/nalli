@@ -30,11 +30,9 @@ export default class WelcomeScreen extends React.Component<NavigationInjectedPro
 		super(props);
 	}
 
-	static navigationOptions = () => {
-		return {
-			headerStyle: { height: 75, backgroundColor: Colors.main, borderBottomColor: Colors.main, elevation: 0, shadowOpacity: 0 },
-		};
-	}
+	static navigationOptions = () => ({
+		headerShown: false,
+	})
 
 	onChangeText = (key, val) => {
 		this.setState({ [key]: val });
@@ -120,7 +118,7 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.main,
 		flex: 1,
 		paddingHorizontal: 20,
-		paddingTop: 10,
+		paddingTop: 70,
 	},
 	text: {
 		fontSize: 20,

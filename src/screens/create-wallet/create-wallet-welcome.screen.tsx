@@ -19,7 +19,7 @@ export default class CreateWalletWelcome extends React.Component<any, any> {
 	}
 
 	static navigationOptions = () => ({
-		header: null,
+		headerShown: false,
 	})
 
 	onChangeText = (key, val) => {
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'white',
 	},
 	logout: {
-		marginTop: 40,
+		marginTop: 50,
 		marginLeft: 20,
 	},
 	content: {

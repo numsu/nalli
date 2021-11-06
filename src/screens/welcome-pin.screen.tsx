@@ -30,7 +30,7 @@ export default class WelcomePinScreen extends React.Component<any, WelcomPinScre
 	}
 
 	static navigationOptions = () => ({
-		header: null,
+		headerShown: false,
 	})
 
 	onChangeNumberPad = (val: string) => {

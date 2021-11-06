@@ -1,25 +1,30 @@
-import { Notifications } from 'expo';
-import * as Permissions from 'expo-permissions';
-import { Notification } from 'expo/build/Notifications/Notifications.types';
+import { PermissionStatus } from 'expo-modules-core';
+import { Notification, addNotificationReceivedListener, getExpoPushTokenAsync, getPermissionsAsync, requestPermissionsAsync } from 'expo-notifications';
+
+import AuthService from './auth.service';
 
 export default class NotificationService {
 
-	static async registerForPushNotifications(): Promise<string> {
-		let { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-		if (status != Permissions.PermissionStatus.GRANTED) {
-			let askStatus = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+	static async registerForPushNotifications(): Promise<boolean> {
+		let { status } = await getPermissionsAsync();
+		if (status != PermissionStatus.GRANTED) {
+			let askStatus = await requestPermissionsAsync();
 			status = askStatus.status;
 		}
-		if (status == Permissions.PermissionStatus.GRANTED) {
-			return await Notifications.getExpoPushTokenAsync();
+		if (status == PermissionStatus.GRANTED) {
+			const token = await getExpoPushTokenAsync();
+			if (token) {
+				await AuthService.registerPush({ token: token.data });
+				return true;
+			}
 		}
-		return '';
+		return false;
 	}
 
-	static async listenForPushNotifications(listener: (notification: Notification) => unknown): Promise<any> {
-		const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-		if (status == Permissions.PermissionStatus.GRANTED) {
-			return Notifications.addListener(listener);
+	static async listenForPushNotifications(listener: (event: Notification) => void): Promise<any> {
+		let { status } = await getPermissionsAsync();
+		if (status == PermissionStatus.GRANTED) {
+			return addNotificationReceivedListener(listener);
 		}
 	}
 

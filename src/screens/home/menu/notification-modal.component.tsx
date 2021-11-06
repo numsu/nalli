@@ -39,10 +39,8 @@ export default class NotificationModal extends React.Component<NotificationModal
 
 	selectNotificationState = async (notificationsEnabled: boolean) => {
 		if (notificationsEnabled) {
-			const token = await NotificationService.registerForPushNotifications();
-			if (token) {
-				await AuthService.registerPush({ token });
-			} else {
+			const success = await NotificationService.registerForPushNotifications();
+			if (!success) {
 				Alert.alert(
 					'No permission',
 					'You haven\'t given us a permission to send you notifications. Please allow Nalli to send notifications in your settings.',

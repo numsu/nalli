@@ -7,9 +7,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
-	HeaderBackButton,
 	NavigationInjectedProps,
 } from 'react-navigation';
+import { HeaderBackButton } from 'react-navigation-stack';
 
 import NalliText, { ETextSize } from '../components/text.component';
 import Colors from '../constants/colors';
@@ -43,11 +43,10 @@ export default class WelcomeOtpScreen extends React.Component<WelcomeOtpScreenPr
 		setTimeout(() => this.codeInputRef.current.focus());
 	}
 
-	static navigationOptions = ({ navigation }) => {
+	static navigationOptions = () => {
 		return {
 			headerStyle: { height: 75, backgroundColor: Colors.main, borderBottomColor: Colors.main, elevation: 0, shadowOpacity: 0 },
 			headerTitle: 'Verify',
-			headerLeft: <HeaderBackButton tintColor={'white'} onPress={() => navigation.goBack()} />,
 		};
 	}
 

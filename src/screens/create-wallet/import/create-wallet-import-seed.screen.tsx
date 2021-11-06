@@ -6,7 +6,6 @@ import {
 	View,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
-import { HeaderBackButton } from 'react-navigation';
 
 import DismissKeyboardView from '../../../components/dismiss-keyboard-hoc.component';
 import Loading from '../../../components/loading.component';
@@ -32,11 +31,12 @@ export default class CreateWalletImportSeed extends React.Component<any, any> {
 		};
 	}
 
-	static navigationOptions = ({ navigation }) => ({
-		headerStyle: { height: 60 },
-		headerLeft: <HeaderBackButton tintColor={Colors.main} onPress={() => navigation.goBack(undefined)} />,
-		headerLeftContainerStyle: { marginTop: 15 },
-	})
+	static navigationOptions = () => {
+		return {
+			headerStyle: { height: 75, elevation: 0, shadowOpacity: 0 },
+			headerTitle: 'Seed',
+		};
+	}
 
 	onChangeText = (text) => {
 		// Clear all non hex characters

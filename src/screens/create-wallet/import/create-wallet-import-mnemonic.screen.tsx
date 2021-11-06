@@ -7,7 +7,6 @@ import {
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
-import { HeaderBackButton } from 'react-navigation';
 
 import Loading from '../../../components/loading.component';
 import MnemonicWord from '../../../components/mnemonic-word.component';
@@ -33,11 +32,12 @@ export default class CreateWalletImport extends React.Component<any, any> {
 		};
 	}
 
-	static navigationOptions = ({ navigation }) => ({
-		headerStyle: { height: 60 },
-		headerLeft: <HeaderBackButton tintColor={Colors.main} onPress={() => navigation.goBack(undefined)} />,
-		headerLeftContainerStyle: { marginTop: 15 },
-	})
+	static navigationOptions = () => {
+		return {
+			headerStyle: { height: 75, elevation: 0, shadowOpacity: 0 },
+			headerTitle: 'Recovery phrase',
+		};
+	}
 
 	onChangeText = (wordIndex, val) => {
 		if (val.endsWith(' ')) {

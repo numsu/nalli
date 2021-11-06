@@ -5,7 +5,6 @@ import {
 	View,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { HeaderBackButton } from 'react-navigation';
 
 import Loading from '../../../components/loading.component';
 import MnemonicWord from '../../../components/mnemonic-word.component';
@@ -31,11 +30,12 @@ export default class CreateWalletMnemonic extends React.Component<any, any> {
 		};
 	}
 
-	static navigationOptions = ({ navigation }) => ({
-		headerStyle: { height: 60 },
-		headerLeft: <HeaderBackButton tintColor={Colors.main} onPress={() => navigation.goBack(undefined)} />,
-		headerLeftContainerStyle: { marginTop: 15 },
-	})
+	static navigationOptions = () => {
+		return {
+			headerStyle: { height: 75, elevation: 0, shadowOpacity: 0 },
+			headerTitle: 'New wallet',
+		};
+	}
 
 	onChangeText = (key, val) => {
 		this.setState({ [key]: val });
@@ -84,10 +84,11 @@ export default class CreateWalletMnemonic extends React.Component<any, any> {
 							Your wallet
 						</NalliText>
 						<NalliText size={ETextSize.P_LARGE} style={styles.text}>
-							Your wallet has now been created. It will be encrypted on your device.
+							Your wallet has now been created and stored securely on this device.
 						</NalliText>
 						<NalliText size={ETextSize.P_LARGE} style={styles.text}>
-							Next, you will be provided with the keys to your wallet. Make sure that nobody else than you can see the key.
+							By clicking continue, you will be provided with the recovery phrase to your wallet.
+							Make sure that nobody else than you can see it.
 						</NalliText>
 						<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 							Losing or sharing the key will cause loss of assets.
@@ -115,12 +116,12 @@ export default class CreateWalletMnemonic extends React.Component<any, any> {
 						<NalliText size={ETextSize.H1} style={styles.h1}>
 							Recovery phrase
 						</NalliText>
-						<NalliText size={ETextSize.P_LARGE} style={styles.text}>
-							These 24 words are your key. These can be used to control your wallet if you don't have access to this phone or this application.
-						</NalliText>
 						<View style={styles.wordsContainer}>
 							{words}
 						</View>
+						<NalliText size={ETextSize.P_LARGE} style={styles.text}>
+							These words can be used to control your wallet if you no longer can access Nalli on this phone.
+						</NalliText>
 						<View style={styles.actions}>
 							<NalliButton
 									text="Finish"
@@ -170,5 +171,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		flexWrap: 'wrap',
 		justifyContent: 'space-evenly',
+		paddingBottom: 20,
 	},
 });

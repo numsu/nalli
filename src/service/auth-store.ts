@@ -1,7 +1,8 @@
 //@ts-ignore
 import { blake2b } from 'blakejs';
 import * as SecureStore from 'expo-secure-store';
-import { AsyncStorage } from 'react-native';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Convert from '../crypto/convert';
 

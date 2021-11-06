@@ -7,7 +7,7 @@ import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 
 interface NalliMenuPreferenceProps {
-	icon: string;
+	icon: any;
 	header: string;
 	subheader: string;
 	onPress?: () => void;

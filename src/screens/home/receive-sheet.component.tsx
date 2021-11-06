@@ -1,11 +1,11 @@
 import React, { RefObject } from 'react';
 import {
-	Clipboard,
 	EmitterSubscription,
 	StyleSheet,
 	Text,
 	View,
 } from 'react-native';
+import { Clipboard } from 'react-native'
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import NalliButton from '../../components/nalli-button.component';

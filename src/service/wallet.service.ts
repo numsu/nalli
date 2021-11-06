@@ -124,7 +124,7 @@ export interface SignedBlock {
     balance: string;
     link: string;
     signature: string;
-    work: string;
+    work?: string;
 }
 
 export interface PendingSend {

@@ -1,4 +1,4 @@
-import { Notification } from 'expo/build/Notifications/Notifications.types';
+import { Notification } from 'expo-notifications';
 import { wallet } from 'nanocurrency-web';
 import React, { RefObject } from 'react';
 import {
@@ -74,7 +74,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	}
 
 	static navigationOptions = () => ({
-		header: null,
+		headerShown: false,
 	});
 
 	componentDidMount = () => {
@@ -108,11 +108,12 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	handleForegroundPushNotifications = async () => {
 		this.pushNotificationSubscription = await NotificationService
 				.listenForPushNotifications((notification: Notification) => {
-			if (notification.data.data == 'receive') {
-				WalletHandler.getAccountsBalancesAndHandlePending();
-			} else if (notification.data.data == 'pendingReceived') {
-				this.getTransactions();
-			}
+			console.log(notification);
+			// if (notification.data.data == 'receive') {
+			// 	WalletHandler.getAccountsBalancesAndHandlePending();
+			// } else if (notification.data.data == 'pendingReceived') {
+			// 	this.getTransactions();
+			// }
 		});
 	}
 

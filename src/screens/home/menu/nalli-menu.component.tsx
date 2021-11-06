@@ -1,6 +1,5 @@
-import { Linking } from 'expo';
 import React from 'react';
-import { Alert, EmitterSubscription, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, EmitterSubscription, Linking, ScrollView, StyleSheet, View } from 'react-native';
 
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';

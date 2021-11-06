@@ -11,7 +11,7 @@ import NalliText, { ETextSize } from './text.component';
 
 interface NalliButtonProps {
 	disabled?: boolean;
-	icon?: string;
+	icon?: any;
 	text?: string;
 	textStyle?: any;
 	style?: any;

@@ -5,7 +5,6 @@ import {
 	View,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { HeaderBackButton } from 'react-navigation';
 
 import NalliButton from '../../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
@@ -21,11 +20,12 @@ export default class CreateWalletNew extends React.Component<any, any> {
 		};
 	}
 
-	static navigationOptions = ({ navigation }) => ({
-		headerStyle: { height: 60 },
-		headerLeft: <HeaderBackButton tintColor={Colors.main} onPress={() => navigation.goBack(undefined)} />,
-		headerLeftContainerStyle: { marginTop: 15 },
-	})
+	static navigationOptions = () => {
+		return {
+			headerStyle: { height: 75, elevation: 0, shadowOpacity: 0 },
+			headerTitle: 'New wallet',
+		};
+	}
 
 	onChangeText = (key, val) => {
 		this.setState({ [key]: val });
@@ -46,15 +46,21 @@ export default class CreateWalletNew extends React.Component<any, any> {
 					<NalliText size={ETextSize.H1} style={styles.h1}>
 						New wallet
 					</NalliText>
-					<NalliText size={ETextSize.P_LARGE} style={styles.text}>
-						A cryptocurrency wallet is basically just a long cryptographic key.
-						The assets are not stored inside your phone, but on the blockchain. Using the key, you will be able to access
-						your assets even though you don't have access to your phone or this application.
-						Whoever holds the key will also be able to control the assets inside the wallet.
+					<NalliText size={ETextSize.H2} style={styles.h1}>
+						Please read carefully.
 					</NalliText>
 					<NalliText size={ETextSize.P_LARGE} style={styles.text}>
-						We will generate a secure key for you. This key is a list of 24 words.
-						You should write it down and place it in a secure place.
+						You are solely responsible in securely storing the recovery phrase. If you lose it and
+						cannot access your phone, you will lose your assets forever.
+					</NalliText>
+					<NalliText size={ETextSize.P_LARGE} style={styles.text}>
+						A recovery phrase will be generated for you by this device. This is a list of 24 words.
+						You should write it down and place it in a secure place. This is the key to your assets.
+					</NalliText>
+					<NalliText size={ETextSize.P_LARGE} style={styles.text}>
+						Your assets are not stored in your phone. They are in the Nano network.
+						Using the key, you (and anyone else) will be able to control your assets in the network
+						even if you no longer have access to this application.
 					</NalliText>
 					<View style={styles.actions}>
 						<NalliButton

@@ -5,6 +5,7 @@ import {
 	Alert,
 	StyleSheet,
 	TextInput,
+	TouchableOpacity,
 	View,
 } from 'react-native';
 
@@ -129,9 +130,9 @@ export default class Login extends React.Component<any, LoginState> {
 			<DismissKeyboardView style={styles.container}>
 				<StatusBar translucent={true} style="light" />
 				<Loading lighter={true} show={process} />
-				{/* <TouchableOpacity onPress={this.clearWalletInfo}> */}
+				<TouchableOpacity onPress={this.clearWalletInfo}>
 					<NalliLogo width={150} height={60} color="white" />
-				{/* </TouchableOpacity> */}
+				</TouchableOpacity>
 				<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 					Enter pin
 				</NalliText>
