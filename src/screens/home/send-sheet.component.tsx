@@ -96,7 +96,6 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 		const tab = await VariableStore.getVariable(NalliVariable.SEND_TAB, SendSheetTab.CONTACT);
 		const contacts = await ContactsService.getContacts(false);
 		this.setState({ tab, contacts });
-		console.log(Clipboard.getString());
 	}
 
 	toggleDonate = async (enable: boolean) => {
@@ -335,9 +334,10 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 
 		return (
 			<MyBottomSheet
-					initialSnap={0}
+					initialSnap={-1}
 					reference={reference}
-					snapPoints={layout.isSmallDevice ? [0, '88%'] : [0, '68%']}
+					enablePanDownToClose={true}
+					snapPoints={layout.isSmallDevice ? ['88%'] : ['68%']}
 					header="Send">
 				<DismissKeyboardView style={styles.transactionSheetContent}>
 					<View style={styles.transactionMoneyInputContainer}>

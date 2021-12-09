@@ -74,7 +74,7 @@ export default class CurrencyModal extends React.Component<CurrencyModalProps, C
 const styles = StyleSheet.create({
 	currencyItem: {
 		flexDirection: 'row',
-		paddingVertical: 20,
+		paddingVertical: 10,
 		borderBottomColor: Colors.borderColor,
 		borderBottomWidth: 1,
 	},

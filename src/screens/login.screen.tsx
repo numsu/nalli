@@ -1,4 +1,3 @@
-import Constants from 'expo-constants';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import {
@@ -54,10 +53,10 @@ export default class Login extends React.Component<any, LoginState> {
 		const client = await AuthStore.getClient();
 
 		if (wallet) {
-			VariableStore.getVariable(NalliVariable.SELECTED_ACCOUNT).then(acc => {
+			VariableStore.getVariable(NalliVariable.SELECTED_ACCOUNT).then(async acc => {
 				if (!acc) {
-					VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT, wallet.accounts[0].address);
-					VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT_INDEX, 0);
+					await VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT, wallet.accounts[0].address);
+					await VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT_INDEX, 0);
 				}
 			});
 		}
@@ -88,7 +87,7 @@ export default class Login extends React.Component<any, LoginState> {
 		let signature = '';
 		const wallet = await WalletStore.getWallet();
 		if (!wallet) {
-			signature = Constants.deviceId;
+			signature = await VariableStore.getVariable(NalliVariable.DEVICE_ID);
 		} else {
 			signature = await this.phoneNumberSigner.sign();
 		}

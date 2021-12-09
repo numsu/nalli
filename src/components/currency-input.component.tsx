@@ -13,7 +13,6 @@ import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/colors';
 import CurrencyService from '../service/currency.service';
 import VariableStore, { NalliVariable } from '../service/variable-store';
-import NanoLogo from './svg/nano-logo';
 
 interface CurrencyInputProps {
 	reference: RefObject<any>;
@@ -169,11 +168,9 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 		switch (currency) {
 			case 'xrb':
 				return (
-					<NanoLogo
-							style={[styles.nanoMark]}
-							width="40"
-							height="20"
-							color={(converted ? Colors.inputPlaceholder : Colors.main)} />
+					<Text style={styles.asciiMark}>
+						Ӿ
+					</Text>
 				);
 			default:
 				const icon = CurrencyService.getCurrencyByISO(currency).icon;

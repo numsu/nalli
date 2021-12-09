@@ -1,4 +1,3 @@
-import { Notification } from 'expo-notifications';
 import { wallet } from 'nanocurrency-web';
 import React, { RefObject } from 'react';
 import {
@@ -26,11 +25,11 @@ import layout from '../../constants/layout';
 import AuthStore from '../../service/auth-store';
 import ContactsService from '../../service/contacts.service';
 import CurrencyService from '../../service/currency.service';
-import NotificationService from '../../service/notification.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 import WalletHandler from '../../service/wallet-handler.service';
 import WalletStore, { WalletType } from '../../service/wallet-store';
 import WalletService, { WalletTransaction } from '../../service/wallet.service';
+import WsService, { EWebSocketNotificationType } from '../../service/ws.service';
 import NalliMenu from './menu/nalli-menu.component';
 import PrivacyShield, { NalliAppState } from './privacy-shield.component';
 import ReceiveSheet from './receive-sheet.component';
@@ -85,12 +84,13 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 
 	init = async () => {
 		this.getCurrentPrice();
-		this.handleForegroundPushNotifications();
+		this.subscribeToNotifications();
 		this.fetchTransactions();
 	}
 
 	componentWillUnmount = () => {
 		try {
+			WsService.unsubscribe();
 			this.pushNotificationSubscription.remove();
 			this.subscriptions.forEach(VariableStore.unwatchVariable);
 		} catch {
@@ -100,20 +100,20 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 
 	handleAppChangeState = (nextState: NalliAppState) => {
 		if (nextState == NalliAppState.ACTIVE) {
+			this.subscribeToNotifications();
 			this.getCurrentPrice();
 			ContactsService.clearCache();
+			WalletHandler.getAccountsBalancesAndHandlePending();
 		}
 	}
 
-	handleForegroundPushNotifications = async () => {
-		this.pushNotificationSubscription = await NotificationService
-				.listenForPushNotifications((notification: Notification) => {
-			console.log(notification);
-			// if (notification.data.data == 'receive') {
-			// 	WalletHandler.getAccountsBalancesAndHandlePending();
-			// } else if (notification.data.data == 'pendingReceived') {
-			// 	this.getTransactions();
-			// }
+	subscribeToNotifications = () => {
+		WsService.subscribe(event => {
+			if (event.type == EWebSocketNotificationType.CONFIRMATION_RECEIVE) {
+				WalletHandler.getAccountsBalancesAndHandlePending();
+			} else if (event.type == EWebSocketNotificationType.PENDING_RECEIVED) {
+				this.getTransactions();
+			}
 		});
 	}
 
@@ -222,17 +222,17 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	}
 
 	onSendPress = () => {
-		this.sendSheetRef.current.snapTo(1);
+		this.sendSheetRef.current.snapToIndex(0);
 	}
 
 	onReceivePress = () => {
-		this.receiveSheetRef.current.snapTo(1);
+		this.receiveSheetRef.current.snapToIndex(0);
 	}
 
 	onSendSuccess = () => {
 		WalletHandler.getAccountsBalancesAndHandlePending();
 		Keyboard.dismiss();
-		this.sendSheetRef.current.snapTo(0);
+		this.sendSheetRef.current.close();
 	}
 
 	onDonatePress = () => {
@@ -329,12 +329,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: 'white',
 		height: layout.window.height,
-	},
-	inactiveOverlay: {
-		flex: 1,
-		backgroundColor: Colors.main,
-		justifyContent: 'center',
-		alignItems: 'center',
 	},
 	header: {
 		flexDirection: 'row',

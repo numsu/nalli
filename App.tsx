@@ -6,6 +6,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { setCustomText } from 'react-native-global-props';
 import { enableScreens } from 'react-native-screens';
+import * as encoding from 'text-encoding';
 
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 
@@ -68,6 +69,11 @@ export default class App extends React.Component<any, any> {
 				fontFamily: 'OpenSans',
 			});
 		});
+
+		if (TextEncoder == undefined || typeof TextEncoder !== 'function') {
+			TextEncoder = encoding.TextEncoder;
+			TextDecoder = encoding.TextDecoder;
+		}
 	}
 
 	private handleLoadingError = error => {

@@ -6,6 +6,8 @@ import {
 	View,
 } from 'react-native';
 
+import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import NalliModal from '../../components/modal.component';
 import NalliButton from '../../components/nalli-button.component';
@@ -126,11 +128,10 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 
 		return (
 			<MyBottomSheet
-					initialSnap={1}
-					snapPoints={['87.5%', '25%']}
-					enabledInnerScrolling={true}
+					initialSnap={0}
+					snapPoints={['25%', '87.5%']}
 					header="Transactions">
-				<View style={styles.transactionList}>
+				<BottomSheetScrollView style={styles.transactionList}>
 					{!hasTransactions && <NalliText style={styles.noMoreText}>No transactions so far</NalliText>}
 					{transactionListElements}
 					<TransactionModal
@@ -146,7 +147,7 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 					{hasTransactions && !hasMoreTransactions &&
 						<NalliText style={styles.noMoreText}>Nothing more to see here</NalliText>
 					}
-				</View>
+				</BottomSheetScrollView>
 			</MyBottomSheet>
 		);
 	}

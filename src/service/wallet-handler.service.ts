@@ -14,6 +14,11 @@ export interface NalliAccount extends Account {
 export default class WalletHandler {
 
 	static async getAccountsBalancesAndHandlePending(): Promise<NalliAccount[]> {
+		const alreadyProcessing = await VariableStore.getVariable(NalliVariable.PROCESSING_PENDING);
+		if (alreadyProcessing) {
+			return await VariableStore.getVariable<NalliAccount[]>(NalliVariable.ACCOUNTS_BALANCES, []);
+		}
+
 		await VariableStore.setVariable(NalliVariable.PROCESSING_PENDING, true);
 		const storedWallet = await WalletStore.getWallet();
 		const addresses = storedWallet.accounts.map(acc => acc.address);

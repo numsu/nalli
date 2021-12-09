@@ -5,7 +5,6 @@ import { FontAwesome5, Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 import Card from '../../components/card.component';
 import NalliButton from '../../components/nalli-button.component';
-import NanoLogo from '../../components/svg/nano-logo';
 import Colors from '../../constants/colors';
 import CurrencyService from '../../service/currency.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
@@ -119,10 +118,10 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 					}
 					<View style={styles.balancewrapper}>
 						{(displayedCurrency == 'nano' || displayedCurrency == 'hidden') &&
-							<NanoLogo style={styles.nanomark} />
+							<Text style={styles.currencyMark}>Ӿ</Text>
 						}
 						{displayedCurrency == 'fiat' &&
-							<Text style={styles.usdmark}>{currency}</Text>
+							<Text style={styles.currencyMark}>{currency}</Text>
 						}
 						<Text style={styles.balance}>
 							{displayedCurrency == 'nano' &&
@@ -192,7 +191,7 @@ const styles = StyleSheet.create({
 		fontSize: 40,
 		fontFamily: 'OpenSans',
 	},
-	usdmark: {
+	currencyMark: {
 		fontSize: 36,
 		marginRight: 20,
 		marginTop: 2,

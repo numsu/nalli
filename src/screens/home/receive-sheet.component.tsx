@@ -63,9 +63,10 @@ export default class ReceiveSheet extends React.Component<ReceiveSheetProps, Rec
 
 		return (
 			<MyBottomSheet
-					initialSnap={0}
+					initialSnap={-1}
 					reference={reference}
-					snapPoints={layout.isSmallDevice ? [0, '88%'] : [0, '68%']}
+					enablePanDownToClose={true}
+					snapPoints={layout.isSmallDevice ? ['88%'] : ['68%']}
 					header="Receive">
 				<View style={styles.transactionSheetContent}>
 					<Text>Scan the QR-code below to send funds to this wallet</Text>
