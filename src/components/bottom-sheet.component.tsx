@@ -1,9 +1,11 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { ReactNode, RefObject } from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
 import BottomSheet from '@gorhom/bottom-sheet';
 
 import Colors from '../constants/colors';
+import NalliLinearGradient from './linear-gradient.component';
 import NalliText, { ETextSize } from './text.component';
 
 interface BottomSheetProps {
@@ -13,6 +15,7 @@ interface BottomSheetProps {
 	initialSnap: number;
 	reference?: RefObject<any>;
 	snapPoints: (string | number)[];
+	enableLinearGradient?: boolean;
 }
 
 interface BottomSheetState {
@@ -27,6 +30,7 @@ export default class MyBottomSheet extends React.Component<BottomSheetProps, Bot
 	render = () => {
 		const {
 			children,
+			enableLinearGradient,
 			enablePanDownToClose,
 			header,
 			initialSnap,
@@ -45,9 +49,13 @@ export default class MyBottomSheet extends React.Component<BottomSheetProps, Bot
 				<NalliText
 						size={ETextSize.H1}
 						style={styles.header}>
-					{ header }
+					{header}
 				</NalliText>
-				{ children }
+				<View style={{ height: '100%' }}>
+					{enableLinearGradient && <NalliLinearGradient />}
+					{children}
+				</View>
+				{enableLinearGradient && <NalliLinearGradient bottom={true} />}
 			</BottomSheet>
 		);
 	}
@@ -59,8 +67,8 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.borderColor,
 	},
 	header: {
-		marginBottom: 10,
 		paddingHorizontal: 15,
+		marginBottom: -5,
 	},
 	shadow: {
 		shadowOffset: { width: 0, height: -5 },

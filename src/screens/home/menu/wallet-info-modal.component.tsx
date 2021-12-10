@@ -80,7 +80,7 @@ export default class WalletInfoModal extends React.Component<WalletInfoModallPro
 	}
 
 	closeAndLock = () => {
-		setTimeout(() => this.setState({ isUnlocked: false }), 200); // Wait for animation
+		setTimeout(() => this.setState({ isUnlocked: false }), NalliModal.animationDelay); // Wait for animation
 		this.props.close();
 	}
 

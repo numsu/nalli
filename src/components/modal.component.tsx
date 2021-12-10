@@ -16,6 +16,7 @@ import { sleep } from '../constants/globals';
 import layout from '../constants/layout';
 import { NalliAppState } from '../screens/home/privacy-shield.component';
 import VariableStore, { NalliVariable } from '../service/variable-store';
+import NalliLinearGradient from './linear-gradient.component';
 import NalliText, { ETextSize } from './text.component';
 
 interface ModalProps {
@@ -34,7 +35,7 @@ interface ModalState {
 
 export default class NalliModal extends React.Component<ModalProps, ModalState> {
 
-	static animationDelay = 200;
+	static animationDelay = 150;
 
 	constructor(props) {
 		super(props);
@@ -93,11 +94,7 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 									? styles.containerLarge
 									: styles.containerMedium]}>
 						<View style={styles.headerContainer}>
-							<LinearGradient
-									colors={['white', 'rgba(255, 255, 255, 0.0)']}
-									style={styles.topContainerBackground}
-									start={{ x: 0.5, y: 0.5 }}
-									end={{ x: 0.5, y: 1 }} />
+							<NalliLinearGradient style={{ height: '100%' }} start={0.5} />
 							<View style={styles.headerContentContainer}>
 								<NalliText size={ETextSize.H1}>
 									{header}
@@ -122,12 +119,7 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 								{children}
 							</ScrollView>
 						}
-
-						<LinearGradient
-									colors={['rgba(255, 255, 255, 0.0)', 'white']}
-									style={styles.bottomContainerBackground}
-									start={{ x: 0.5, y: 0 }}
-									end={{ x: 0.5, y: 1 }} />
+						<NalliLinearGradient bottom={true} />
 					</KeyboardAvoidingView>
 				</Modal>
 			);
@@ -195,30 +187,13 @@ const styles = StyleSheet.create({
 		width: '100%',
 		zIndex: 100,
 	},
-	topContainerBackground: {
-		position: 'absolute',
-		left: 0,
-		right: 0,
-		top: 0,
-		width: '100%',
-		height: '100%',
-		borderRadius: 15,
-	},
-	bottomContainerBackground: {
-		position: 'absolute',
-		left: 0,
-		right: 0,
-		bottom: 0,
-		width: '100%',
-		height: 40,
-		borderRadius: 15,
-	},
 	headerContentContainer: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		paddingHorizontal: 15,
 		paddingTop: 15,
+		zIndex: 2,
 	},
 	contentContainer: {
 		paddingHorizontal: 15,

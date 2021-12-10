@@ -109,10 +109,10 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 						</NalliText>
 						{transaction.type == 'send' ?
 							<NalliText>
-								- {transaction.amount} NANO
+								Ӿ {transaction.amount}
 							</NalliText> :
 							<NalliText>
-								+ {transaction.amount} NANO
+								Ӿ {transaction.amount}
 							</NalliText>
 						}
 					</View>

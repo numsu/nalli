@@ -108,9 +108,9 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	}
 
 	subscribeToNotifications = () => {
-		WsService.subscribe(event => {
+		WsService.subscribe(async event => {
 			if (event.type == EWebSocketNotificationType.CONFIRMATION_RECEIVE) {
-				WalletHandler.getAccountsBalancesAndHandlePending();
+				await WalletHandler.getAccountsBalancesAndHandlePending();
 			} else if (event.type == EWebSocketNotificationType.PENDING_RECEIVED) {
 				this.getTransactions();
 			}

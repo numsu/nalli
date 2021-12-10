@@ -15,6 +15,7 @@ interface NalliButtonProps {
 	text?: string;
 	textStyle?: any;
 	style?: any;
+	small?: boolean;
 	solid?: boolean;
 	onPress?: () => void;
 }
@@ -29,15 +30,37 @@ export default class NalliButton extends React.Component<NalliButtonProps, Nalli
 	}
 
 	render = () => {
-		const { disabled, icon, text, textStyle, style, solid, onPress } = this.props;
+		const { disabled, icon, text, textStyle, small, style, solid, onPress } = this.props;
 		return (
 			<TouchableOpacity
 					activeOpacity={disabled ? 1 : 0.7}
 					disabled={disabled}
-					style={[styles.action, (solid ? styles.solidAction : styles.transparent), style, disabled ? styles.disabled : {}]}
+					style={[
+						styles.action,
+						solid
+							? styles.solidAction
+							: styles.transparent,
+						style,
+						disabled
+							? styles.disabled
+							: {},
+						small
+							? styles.small
+							: {}
+					]}
 					onPress={onPress}>
-				<NalliText size={ETextSize.BUTTON} style={[(solid ? styles.solidText : styles.transparent), textStyle]}>
-					{icon && <Ionicons style={styles.icon} name={icon} size={20} />}
+				<NalliText
+						size={ETextSize.BUTTON}
+						style={[
+							solid
+								? styles.solidText
+								: styles.transparent,
+							textStyle,
+							small
+								? styles.smallText
+								: {}
+						]}>
+					{icon && <Ionicons style={styles.icon} name={icon} size={small ? 15 : 20} />}
 					{icon && '\xa0\xa0'}
 					{text}
 				</NalliText>
@@ -71,12 +94,18 @@ const styles = StyleSheet.create({
 	solidText: {
 		color: 'white',
 	},
+	smallText: {
+		fontSize: 16,
+	},
 	transparent: {
 		backgroundColor: 'transparent',
 		color: Colors.main,
 	},
 	disabled: {
 		opacity: 0.5,
+	},
+	small: {
+		padding: 5,
 	},
 	icon: {
 		alignSelf: 'flex-end',

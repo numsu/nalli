@@ -13,12 +13,9 @@ export interface NalliAccount extends Account {
 
 export default class WalletHandler {
 
-	static async getAccountsBalancesAndHandlePending(): Promise<NalliAccount[]> {
-		const alreadyProcessing = await VariableStore.getVariable(NalliVariable.PROCESSING_PENDING);
-		if (alreadyProcessing) {
-			return await VariableStore.getVariable<NalliAccount[]>(NalliVariable.ACCOUNTS_BALANCES, []);
-		}
+	static lock: boolean = false;
 
+	static async getAccountsBalancesAndHandlePending(): Promise<NalliAccount[]> {
 		await VariableStore.setVariable(NalliVariable.PROCESSING_PENDING, true);
 		const storedWallet = await WalletStore.getWallet();
 		const addresses = storedWallet.accounts.map(acc => acc.address);
@@ -37,8 +34,13 @@ export default class WalletHandler {
 		}
 
 		await VariableStore.setVariable<NalliAccount[]>(NalliVariable.ACCOUNTS_BALANCES, accounts);
+		if (this.lock) {
+			return accounts;
+		}
+
 		for (const account of accounts) {
 			if (account.pendingBlocks) {
+				this.lock = true;
 				for (const pending of account.pendingBlocks) {
 					const walletInfo = await WalletService.getWalletInfoAddress(account.address);
 					const signedBlock = block.receive({
@@ -64,6 +66,7 @@ export default class WalletHandler {
 		}
 
 		await VariableStore.setVariable(NalliVariable.PROCESSING_PENDING, false);
+		this.lock = false;
 		return accounts;
 	}
 
