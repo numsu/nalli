@@ -14,7 +14,6 @@ import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/colors';
 import CurrencyService from '../service/currency.service';
 import VariableStore, { NalliVariable } from '../service/variable-store';
-import { NalliAccount } from '../service/wallet-handler.service';
 import WalletService from '../service/wallet.service';
 import NalliText from './text.component';
 
@@ -115,7 +114,7 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 	onSendMaxButton = async () => {
 		const selectedAccount = await VariableStore.getVariable<string>(NalliVariable.SELECTED_ACCOUNT);
 		const walletInfo = await WalletService.getWalletInfoAddress(selectedAccount);
-		const balance = Number(tools.convert(walletInfo.balance, 'RAW', 'NANO')).toString();
+		const balance = Number(tools.convert(walletInfo.balance, 'RAW', 'NANO')).toString(); // Strip insignificant zeroes
 		if (this.state.currency != 'xno') {
 			let convertedValue = await CurrencyService.convert(balance, this.state.convertedCurrency, this.state.currency);
 			if (isNaN(+convertedValue)) {
@@ -255,7 +254,7 @@ const styles = StyleSheet.create({
 		borderRadius: 30,
 		alignSelf: 'center',
 		position: 'absolute',
-		top: 16,
+		top: 10,
 		right: -1,
 		zIndex: 200,
 	},
@@ -268,7 +267,7 @@ const styles = StyleSheet.create({
 		borderRadius: 30,
 		alignSelf: 'center',
 		position: 'absolute',
-		top: 76,
+		top: 74,
 		right: -1,
 		zIndex: 200,
 	},
@@ -285,6 +284,7 @@ const styles = StyleSheet.create({
 	},
 	inputConvertedCurrencyContainer: {
 		borderTopWidth: 1,
+		width: '100%',
 		marginLeft: 1,
 		flexDirection: 'row',
 		justifyContent: 'space-between',

@@ -14,12 +14,15 @@ import { Avatar } from 'react-native-elements';
 
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
+import NalliBadge from '../../components/badge.component';
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import CurrencyInput from '../../components/currency-input.component';
 import DismissKeyboardView from '../../components/dismiss-keyboard-hoc.component';
+import Link from '../../components/link.component';
 import NalliButton from '../../components/nalli-button.component';
 import NalliInput from '../../components/nalli-input.component';
 import QRCodeScanner from '../../components/qrcode-scanner.component';
+import ShowHide from '../../components/show-hide.component';
 import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
 import layout from '../../constants/layout';
@@ -37,17 +40,18 @@ export interface SendSheetProps {
 }
 
 export interface SendSheetState {
-	sendAmount: string;
-	convertedAmount: string;
-	currency: string;
-	recipient: SendSheetRecipient;
-	recipientAddress: string;
-	walletAddress: string;
-	tab: SendSheetTab;
 	contacts: any[];
 	contactsModalOpen: boolean;
+	convertedAmount: string;
+	currency: string;
 	inputPhoneNumberModalOpen: boolean;
+	isNalliUser: boolean;
 	process: boolean;
+	recipient: SendSheetRecipient;
+	recipientAddress: string;
+	sendAmount: string;
+	tab: SendSheetTab;
+	walletAddress: string;
 }
 
 interface SendSheetRecipient {
@@ -74,17 +78,18 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 		super(props);
 		this.sendAmountRef = React.createRef();
 		this.state = {
-			sendAmount: undefined,
-			convertedAmount: '0',
-			currency: 'xno',
-			recipient: undefined,
-			recipientAddress: undefined,
-			walletAddress: '',
-			tab: 1,
 			contacts: [],
 			contactsModalOpen: false,
+			convertedAmount: '0',
+			currency: 'xno',
 			inputPhoneNumberModalOpen: false,
+			isNalliUser: false,
 			process: false,
+			recipient: undefined,
+			recipientAddress: undefined,
+			sendAmount: undefined,
+			tab: 1,
+			walletAddress: '',
 		};
 	}
 
@@ -162,18 +167,24 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 	onConfirmRecipient = async (contact) => {
 		Keyboard.dismiss();
 		if (contact) {
-			let address = await ClientService.getClientAddress(contact.fullNumber);
+			const recipientAddress = await ClientService.getClientAddress(contact.fullNumber);
+			let address;
+			let isNalliUser = false;
 
 			// If client is not registered, create a pending send to a custodial account
-			if (!address) {
+			if (!recipientAddress) {
 				const pendingSend = await WalletService.createPendingSend(contact.fullNumber);
 				address = pendingSend.address;
+			} else {
+				address = recipientAddress.address;
+				isNalliUser = recipientAddress.nalliUser;
 			}
 
 			this.setState({
+				contactsModalOpen: false,
 				recipient: contact,
 				recipientAddress: address,
-				contactsModalOpen: false,
+				isNalliUser,
 			});
 		} else {
 			this.clearRecipient();
@@ -188,12 +199,17 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 	onConfirmNumber = async (number: FormattedNumber) => {
 		Keyboard.dismiss();
 		if (number) {
-			let address = await ClientService.getClientAddress(number.full);
+			const recipientAddress = await ClientService.getClientAddress(number.full);
+			let address;
+			let isNalliUser = false;
 
 			// If no registered user found for address, create a pending send to a custodial account
-			if (!address) {
+			if (!recipientAddress) {
 				const pendingSend = await WalletService.createPendingSend(number.full);
 				address = pendingSend.address;
+			} else {
+				address = recipientAddress.address;
+				isNalliUser = recipientAddress.nalliUser;
 			}
 
 			this.setState({
@@ -205,6 +221,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 				},
 				recipientAddress: address,
 				inputPhoneNumberModalOpen: false,
+				isNalliUser,
 			});
 		} else {
 			this.clearRecipient();
@@ -213,11 +230,12 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 
 	clearRecipient = () => {
 		this.setState({
+			contactsModalOpen: false,
+			inputPhoneNumberModalOpen: false,
+			isNalliUser: false,
 			recipient: undefined,
 			recipientAddress: undefined,
 			walletAddress: undefined,
-			contactsModalOpen: false,
-			inputPhoneNumberModalOpen: false,
 		});
 	}
 
@@ -321,15 +339,17 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 	render = () => {
 		const { reference } = this.props;
 		const {
+			contacts,
+			contactsModalOpen,
+			convertedAmount,
+			inputPhoneNumberModalOpen,
+			isNalliUser,
+			process,
+			recipient,
+			recipientAddress,
 			sendAmount,
 			tab,
 			walletAddress,
-			recipient,
-			contactsModalOpen,
-			contacts,
-			convertedAmount,
-			inputPhoneNumberModalOpen,
-			process,
 		} = this.state;
 
 		return (
@@ -386,9 +406,23 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 									containerStyle={{ marginRight: 15 }}
 									overlayContainerStyle={{ backgroundColor: Colors.main }} />
 							<View>
-								<NalliText size={ETextSize.H2} style={styles.contactName}>
-									{recipient.name}
-								</NalliText>
+								<View style={{ flexDirection: 'row' }}>
+									<NalliText size={ETextSize.H2} style={styles.contactName}>
+										{recipient.name}
+									</NalliText>
+									{isNalliUser &&
+										<NalliBadge>
+											<View style={styles.online}></View>
+											<NalliText>Nalli user</NalliText>
+										</NalliBadge>
+									}
+									{!isNalliUser &&
+										<NalliBadge>
+											<View style={styles.offline}></View>
+											<NalliText>New user</NalliText>
+										</NalliBadge>
+									}
+								</View>
 								<NalliText>
 									{recipient.formattedNumber}
 								</NalliText>
@@ -419,9 +453,23 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 									containerStyle={{ marginRight: 15 }}
 									overlayContainerStyle={{ backgroundColor: Colors.main }} />
 							<View>
-								<NalliText size={ETextSize.H2} style={styles.contactName}>
-									{recipient.name}
-								</NalliText>
+								<View style={{ flexDirection: 'row' }}>
+									<NalliText size={ETextSize.H2} style={styles.contactName}>
+										{recipient.name}
+									</NalliText>
+									{isNalliUser &&
+										<NalliBadge>
+											<View style={styles.online}></View>
+											<NalliText>Nalli user</NalliText>
+										</NalliBadge>
+									}
+									{!isNalliUser &&
+										<NalliBadge>
+											<View style={styles.offline}></View>
+											<NalliText>New user</NalliText>
+										</NalliBadge>
+									}
+								</View>
 								<NalliText>
 									{recipient.formattedNumber}
 								</NalliText>
@@ -494,13 +542,29 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 						</View>
 					}
 
-					<View style={styles.sendTransactionButton}>
-						<NalliButton
-								text="Send"
+					{!!recipient && (tab == SendSheetTab.CONTACT || tab == SendSheetTab.PHONE) &&
+						<View style={{ marginTop: 10 }}>
+							<ShowHide showText='Show details' hideText='Hide details'>
+								<View>
+									<NalliText size={ETextSize.H2}>Recipient address</NalliText>
+									<Link url={`https://nanolooker.com/account/${recipientAddress}`}>{recipientAddress}</Link>
+									{!isNalliUser &&
+										<NalliText>This is a temporary address. The amount will be transferred to the recipient when they register an account. You are able to cancel the transaction if the recipient doesn't register.</NalliText>
+									}
+								</View>
+							</ShowHide>
+						</View>
+					}
+
+					{recipient &&
+						<View style={styles.sendTransactionButton}>
+							<NalliButton
+								text={isNalliUser ? 'Send' : 'Invite new user'}
 								solid={true}
 								onPress={this.confirm}
 								disabled={(!recipient && !walletAddress) || !sendAmount || process} />
-					</View>
+						</View>
+					}
 				</DismissKeyboardView>
 				<ContactsModal
 						isOpen={contactsModalOpen}
@@ -531,7 +595,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 	},
 	switchButton: {
-		padding: 8,
+		paddingHorizontal: 13,
+		paddingVertical: 5,
 		marginRight: 4,
 	},
 	switchButtonText: {
@@ -550,7 +615,20 @@ const styles = StyleSheet.create({
 	},
 	contactName: {
 		color: Colors.main,
-		marginBottom: 5,
+	},
+	online: {
+		backgroundColor: 'forestgreen',
+		width: 6,
+		height: 6,
+		marginRight: 3,
+		borderRadius: 30,
+	},
+	offline: {
+		backgroundColor: Colors.main,
+		width: 6,
+		height: 6,
+		marginRight: 3,
+		borderRadius: 30,
 	},
 	contactSelectArrow: {
 		color: Colors.main,

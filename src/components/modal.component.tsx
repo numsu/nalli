@@ -118,7 +118,7 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 							</View>
 							{headerComponent}
 						</View>
-						<NalliLinearGradient style={{ height: 40, top: 50, ...linearGradientTopStyle }} start={!linearGradientTopStart || linearGradientTopStart == 0 ? 0 : 0.1} />
+						<NalliLinearGradient style={{ height: 30, top: 50, ...linearGradientTopStyle }} start={!linearGradientTopStart || linearGradientTopStart == 0 ? 0 : 0.1} />
 						{noScroll &&
 							<View style={styles.contentContainer}>
 
