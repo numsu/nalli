@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import {
 	EmitterSubscription,
@@ -23,6 +22,9 @@ interface ModalProps {
 	isOpen: boolean;
 	onClose: () => void;
 	header: string;
+	headerComponent?: any;
+	linearGradientTopStyle?: any;
+	linearGradientTopStart?: number;
 	noScroll?: boolean;
 	size?: EModalSize;
 }
@@ -67,7 +69,16 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 	}
 
 	render = () => {
-		const { header, children, size, noScroll, onClose } = this.props;
+		const {
+			children,
+			header,
+			headerComponent,
+			linearGradientTopStyle,
+			linearGradientTopStart,
+			size,
+			noScroll,
+			onClose,
+		} = this.props;
 		const { isOpen, isRendered, appState } = this.state;
 
 		if (isRendered) {
@@ -94,7 +105,6 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 									? styles.containerLarge
 									: styles.containerMedium]}>
 						<View style={styles.headerContainer}>
-							<NalliLinearGradient style={{ height: '100%' }} start={0.5} />
 							<View style={styles.headerContentContainer}>
 								<NalliText size={ETextSize.H1}>
 									{header}
@@ -106,9 +116,12 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 										size="small"
 										overlayContainerStyle={{ backgroundColor: Colors.main }} />
 							</View>
+							{headerComponent}
 						</View>
+						<NalliLinearGradient style={{ height: 40, top: 50, ...linearGradientTopStyle }} start={!linearGradientTopStart || linearGradientTopStart == 0 ? 0 : 0.1} />
 						{noScroll &&
 							<View style={styles.contentContainer}>
+
 								<View style={styles.pushTop} />
 								{children}
 							</View>
@@ -180,10 +193,10 @@ const styles = StyleSheet.create({
 		overflow: 'scroll',
 	},
 	headerContainer: {
-		backgroundColor: 'transparent',
+		backgroundColor: 'white',
 		position: 'absolute',
 		top: 0,
-		height: 78,
+		height: 50,
 		width: '100%',
 		zIndex: 100,
 	},

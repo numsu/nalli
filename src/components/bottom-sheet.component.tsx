@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { ReactNode, RefObject } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 

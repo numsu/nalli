@@ -25,6 +25,7 @@ import layout from '../../constants/layout';
 import AuthStore from '../../service/auth-store';
 import ContactsService from '../../service/contacts.service';
 import CurrencyService from '../../service/currency.service';
+import NotificationService from '../../service/notification.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 import WalletHandler from '../../service/wallet-handler.service';
 import WalletStore, { WalletType } from '../../service/wallet-store';
@@ -55,7 +56,6 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	sendSheetRef: RefObject<any>;
 	receiveSheetRef: RefObject<any>;
 	sidemenuRef: SideMenu;
-	pushNotificationSubscription;
 	subscriptions: EmitterSubscription[] = [];
 
 	constructor(props) {
@@ -86,12 +86,12 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		this.getCurrentPrice();
 		this.subscribeToNotifications();
 		this.fetchTransactions();
+		NotificationService.checkPushNotificationRegistrationStatusAndRenewIfNecessary();
 	}
 
 	componentWillUnmount = () => {
 		try {
 			WsService.unsubscribe();
-			this.pushNotificationSubscription.remove();
 			this.subscriptions.forEach(VariableStore.unwatchVariable);
 		} catch {
 			// nothing
@@ -190,7 +190,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 
 	getCurrentPrice = async () => {
 		const currency = await VariableStore.getVariable(NalliVariable.CURRENCY, 'usd');
-		const price = await CurrencyService.getCurrentPrice('xrb', currency);
+		const price = await CurrencyService.getCurrentPrice('xno', currency);
 		this.setState({ price });
 		return price;
 	}

@@ -129,7 +129,7 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 					<NalliMenuPreference
 							icon="bell"
 							header="Notifications"
-							onPress={this.toggleSelectNotification}
+							onPress={() => this.toggleSelectNotification()}
 							subheader={pushEnabled ? "On" : "Off"} />
 				</View>
 				<View style={styles.content}>
@@ -164,7 +164,8 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 						close={this.toggleSelectCurrency} />
 				<NotificationModal
 						isOpen={notificationModalOpen}
-						close={this.toggleSelectNotification} />
+						enabled={pushEnabled}
+						close={(status) => this.toggleSelectNotification(status)} />
 				<WalletInfoModal
 						isOpen={walletInfoModalOpen}
 						close={this.toggleWalletInfo} />

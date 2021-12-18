@@ -61,9 +61,9 @@ export default class ReceiveSheet extends React.Component<ReceiveSheetProps, Rec
 		const { reference } = this.props;
 		const { address, showCopiedText } = this.state;
 
-		const addressPart1 = address.substring(0, 10);
-		const addressPart2 = address.substring(11, 59);
-		const addressPart3 = address.substring(60, 65);
+		const addressPart1 = address.substring(0, 12);
+		const addressPart2 = address.substring(13, 57);
+		const addressPart3 = address.substring(58, 65);
 
 		return (
 			<MyBottomSheet

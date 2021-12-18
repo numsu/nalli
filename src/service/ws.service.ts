@@ -1,6 +1,6 @@
-import { Client, StompSubscription } from "@stomp/stompjs";
+import { Client, StompSubscription } from '@stomp/stompjs';
 
-import AuthStore from "./auth-store";
+import AuthStore from './auth-store';
 
 export default class WsService {
 

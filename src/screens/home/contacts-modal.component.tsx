@@ -1,4 +1,5 @@
 import React, { RefObject } from 'react';
+import { View } from 'react-native';
 import {
 	FlatList,
 	StyleSheet,
@@ -42,7 +43,11 @@ export default class ContactsModal extends React.Component<ContactsModalProps, C
 
 	static getDerivedStateFromProps(nextProps: ContactsModalProps, prevState: ContactsModalState) {
 		if (prevState.isOpen != nextProps.isOpen) {
-			return { isOpen: nextProps.isOpen, filtered: nextProps.contacts };
+			if (nextProps.isOpen) {
+				return { isOpen: nextProps.isOpen, filtered: nextProps.contacts };
+			} else {
+				return { isOpen: nextProps.isOpen };
+			}
 		}
 		return null;
 	}
@@ -68,9 +73,10 @@ export default class ContactsModal extends React.Component<ContactsModalProps, C
 
 	onSelectContact = async (contact) => {
 		if (!this.state.process) {
-			this.setState({ process: true });
-			await this.props.onSelectContact(contact);
-			this.setState({ process: false });
+			this.setState({ process: true }, async () => {
+				await this.props.onSelectContact(contact);
+				this.setState({ process: false });
+			});
 		}
 	}
 
@@ -83,14 +89,21 @@ export default class ContactsModal extends React.Component<ContactsModalProps, C
 					isOpen={isOpen}
 					onClose={this.hide}
 					header='Select contact'
+					linearGradientTopStyle={{ height: 20, top: 109 }}
+					linearGradientTopStart={0}
+					headerComponent={
+						<View style={{ width: '100%', backgroundColor: 'white', marginTop: 10 }}>
+							<NalliInput
+									style={{ width: '92%', height: 40, alignSelf: 'center' }}
+									reference={this.contactsSearchRef}
+									placeholder="Search..."
+									keyboardType="default"
+									onChangeText={this.filterContacts} />
+						</View>
+					}
 					noScroll={true}>
-				<NalliInput
-						reference={this.contactsSearchRef}
-						placeholder="Search..."
-						keyboardType="default"
-						onChangeText={this.filterContacts} />
 				<FlatList
-						style={{ height: '100%' }}
+						style={{ height: '100%', paddingTop: 40 }}
 						contentContainerStyle={{ paddingBottom: 40 }}
 						data={filtered}
 						keyExtractor={item => item.id}

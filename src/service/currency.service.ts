@@ -7,7 +7,7 @@ export default class CurrencyService {
 
 	static async convert(amount: string, from: string, to: string): Promise<string> {
 		const price = await this.getCurrentPrice(from, to);
-		const convertToFiat = to.toLowerCase() != 'xrb';
+		const convertToFiat = to.toLowerCase() != 'xno';
 
 		if (!amount) {
 			amount = '0';
@@ -22,7 +22,7 @@ export default class CurrencyService {
 
 	static async getCurrentPrice(from: string, to: string): Promise<number> {
 		await this.updateCache();
-		const convertToFiat = to.toLowerCase() != 'xrb';
+		const convertToFiat = to.toLowerCase() != 'xno';
 		const fiat = convertToFiat ? to : from;
 		return this.cachedResponse.res.filter(c => c.currency == fiat)[0].price;
 	}

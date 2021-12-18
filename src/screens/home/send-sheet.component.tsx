@@ -76,7 +76,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 		this.state = {
 			sendAmount: undefined,
 			convertedAmount: '0',
-			currency: 'xrb',
+			currency: 'xno',
 			recipient: undefined,
 			recipientAddress: undefined,
 			walletAddress: '',
@@ -222,7 +222,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 	}
 
 	confirm = () => {
-		const sendAmount = this.state.currency == 'xrb'
+		const sendAmount = this.state.currency == 'xno'
 				? this.state.sendAmount
 				: this.state.convertedAmount;
 
@@ -266,7 +266,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			recipientAddress = this.state.walletAddress;
 		}
 
-		const sendAmount = this.state.currency == 'xrb'
+		const sendAmount = this.state.currency == 'xno'
 				? this.state.sendAmount
 				: this.state.convertedAmount;
 
@@ -365,7 +365,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 							<TouchableOpacity
 									style={[styles.switchButton, (tab == SendSheetTab.ADDRESS ? styles.selected : undefined)]}
 									onPress={() => this.onSwitchModePress(SendSheetTab.ADDRESS)}>
-								<NalliText size={ETextSize.H2} style={styles.switchButtonText}>Wallet</NalliText>
+								<NalliText size={ETextSize.H2} style={styles.switchButtonText}>Address</NalliText>
 							</TouchableOpacity>
 						</View>
 					}

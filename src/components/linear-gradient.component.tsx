@@ -34,7 +34,7 @@ export default class NalliLinearGradient extends React.Component<LinearGradientP
 				<LinearGradient
 						colors={[ 'white', 'rgba(255, 255, 255, 0.0)' ]}
 						style={[ styles.topContainerBackground, style ]}
-						start={{ x: 0.5, y: start ?? 0.1 }}
+						start={{ x: 0.5, y: start ?? 0 }}
 						end={{ x: 0.5, y: 1 }} />
 			);
 		}
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
 		right: 0,
 		top: 0,
 		width: '100%',
-		height: 40,
+		height: 25,
 		zIndex: 1,
 	},
 	bottomContainerBackground: {
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
 		right: 0,
 		bottom: 0,
 		width: '100%',
-		height: 50,
+		height: 30,
 		zIndex: 1,
 	},
 });
