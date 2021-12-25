@@ -27,7 +27,8 @@
 			"supportsTablet": false,
 			"infoPlist": {
 				"NSCameraUsageDescription": "Nalli will use your camera to read QR codes containing Nano addresses or other related information.",
-				"NSContactsUsageDescription": "Nalli will use your contacts to allow you to send assets to them."
+				"NSContactsUsageDescription": "Nalli will use your contacts to allow you to send assets to them.",
+				"NSFaceIDUsageDescription": "Nalli will use Face ID to authenticate the user and confirm transactions"
 			}
 		},
 		"android": {

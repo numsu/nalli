@@ -5,13 +5,16 @@ import {
 	View,
 } from 'react-native';
 
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import layout from '../constants/layout';
+import { EBiometricsType } from '../service/biometrics.service';
+import VariableStore, { NalliVariable } from '../service/variable-store';
 import NalliText, { ETextSize } from './text.component';
 
 interface NalliNumberPadProps {
 	onChangeText: (pin: string) => any;
+	onBiometricLoginPress: () => void;
 	style?: any;
 	maxLength?: number;
 	pin?: string;
@@ -19,6 +22,7 @@ interface NalliNumberPadProps {
 
 interface NalliNumberPadState {
 	pin: string;
+	biometricsType: EBiometricsType;
 }
 
 export default class NalliNumberPad extends React.Component<NalliNumberPadProps, NalliNumberPadState> {
@@ -29,6 +33,7 @@ export default class NalliNumberPad extends React.Component<NalliNumberPadProps,
 		super(props);
 		this.state = {
 			pin: '',
+			biometricsType: EBiometricsType.NO_BIOMETRICS,
 		};
 	}
 
@@ -37,6 +42,17 @@ export default class NalliNumberPad extends React.Component<NalliNumberPadProps,
 			return { pin: '' };
 		}
 		return null;
+	}
+
+	componentDidMount = () => {
+		this.init();
+	}
+
+	init = async () => {
+		const biometricsType = await VariableStore.getVariable(NalliVariable.BIOMETRICS_TYPE, EBiometricsType.NO_BIOMETRICS);
+		this.setState({
+			biometricsType,
+		});
 	}
 
 	onChangeText = (val: string, callback) => {
@@ -54,7 +70,8 @@ export default class NalliNumberPad extends React.Component<NalliNumberPadProps,
 	}
 
 	render = () => {
-		const { style, onChangeText } = this.props;
+		const { style, onChangeText, onBiometricLoginPress } = this.props;
+		const { biometricsType } = this.state;
 
 		const numberElements = [...this.numbers].map(n => (
 			<TouchableOpacity
@@ -70,7 +87,17 @@ export default class NalliNumberPad extends React.Component<NalliNumberPadProps,
 		return (
 			<View style={styles.container}>
 				{numberElements}
-				<View style={{ flexBasis: '33%' }} />
+				{biometricsType != EBiometricsType.NO_BIOMETRICS &&
+					<TouchableOpacity
+						key={20}
+						style={[styles.number, style, { borderWidth: 0 }]}
+						onPress={onBiometricLoginPress}>
+						<MaterialCommunityIcons style={styles.biometricsIcon} name={EBiometricsType.getBiometricsTypeIcon(biometricsType)} />
+					</TouchableOpacity>
+				}
+				{biometricsType == EBiometricsType.NO_BIOMETRICS &&
+					<View style={{ flexBasis: '33%' }}></View>
+				}
 				<TouchableOpacity
 						key={0}
 						style={[styles.number, style]}
@@ -111,6 +138,10 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 		marginRight: 10,
 		opacity: 0.8,
+	},
+	biometricsIcon: {
+		fontSize: 40,
+		color: 'white',
 	},
 	numberText: {
 		color: 'white',

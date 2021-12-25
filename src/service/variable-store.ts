@@ -64,10 +64,12 @@ export default class VariableStore {
 export enum NalliVariable {
 	ACCOUNTS_BALANCES = 'accountsBalances',
 	APP_STATE = 'appState',
+	BIOMETRICS_TYPE = 'biometricsType',
 	COUNTRY = 'country',
 	CURRENCY = 'currency',
 	DEVICE_ID = 'deviceId',
 	DISPLAYED_CURRENCY = 'displayedCurrency',
+	NO_AUTOLOGIN = 'noAutologin',
 	PROCESSING_PENDING = 'processingPending',
 	SELECTED_ACCOUNT = 'selectedAccount',
 	SELECTED_ACCOUNT_INDEX = 'selectedAccountIndex',

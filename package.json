@@ -33,6 +33,7 @@
 		"expo-font": "10.0.3",
 		"expo-intent-launcher": "10.0.3",
 		"expo-linear-gradient": "10.0.3",
+		"expo-local-authentication": "~12.0.1",
 		"expo-localization": "11.0.0",
 		"expo-notifications": "0.13.3",
 		"expo-permissions": "13.0.3",

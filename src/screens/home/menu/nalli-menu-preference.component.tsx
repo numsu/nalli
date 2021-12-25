@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
 	},
 	preferenceIcon: {
 		color: Colors.main,
-		fontSize: 30,
-		marginTop: 3,
+		fontSize: 20,
+		marginTop: 4,
 	},
 });

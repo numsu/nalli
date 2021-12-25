@@ -218,6 +218,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	logout = async () => {
 		await AuthStore.clearAuthentication();
 		AuthStore.clearExpires();
+		await VariableStore.setVariable(NalliVariable.NO_AUTOLOGIN, true);
 		this.props.navigation.navigate('Login');
 	}
 
