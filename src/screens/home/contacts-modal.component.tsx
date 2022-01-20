@@ -91,6 +91,7 @@ export default class ContactsModal extends React.Component<ContactsModalProps, C
 					header='Select contact'
 					linearGradientTopStyle={{ height: 20, top: 109 }}
 					linearGradientTopStart={0}
+					headerContainerStyle={{ height: 100 }}
 					headerComponent={
 						<View style={{ width: '100%', backgroundColor: 'white', marginTop: 10 }}>
 							<NalliInput
@@ -103,10 +104,13 @@ export default class ContactsModal extends React.Component<ContactsModalProps, C
 					}
 					noScroll={true}>
 				<FlatList
-						style={{ height: '100%', paddingTop: 40 }}
+						style={{ height: '100%' }}
 						contentContainerStyle={{ paddingBottom: 40 }}
 						data={filtered}
 						keyExtractor={item => item.id}
+						ListHeaderComponent={() => (
+							<View style={{ marginTop: 40 }}></View>
+						)}
 						ListEmptyComponent={() => (
 							<NalliText style={styles.text}>No contacts</NalliText>
 						)}

@@ -23,6 +23,7 @@ interface ModalProps {
 	onClose: () => void;
 	header: string;
 	headerComponent?: any;
+	headerContainerStyle?: any;
 	linearGradientTopStyle?: any;
 	linearGradientTopStart?: number;
 	noScroll?: boolean;
@@ -73,6 +74,7 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 			children,
 			header,
 			headerComponent,
+			headerContainerStyle,
 			linearGradientTopStyle,
 			linearGradientTopStart,
 			size,
@@ -104,7 +106,7 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 								: size == EModalSize.LARGE
 									? styles.containerLarge
 									: styles.containerMedium]}>
-						<View style={styles.headerContainer}>
+						<View style={[styles.headerContainer, headerContainerStyle]}>
 							<View style={styles.headerContentContainer}>
 								<NalliText size={ETextSize.H1}>
 									{header}

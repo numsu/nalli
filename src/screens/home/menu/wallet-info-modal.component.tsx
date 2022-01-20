@@ -76,7 +76,7 @@ export default class WalletInfoModal extends React.Component<WalletInfoModallPro
 			this.setState({ isBiometricProcess: true }, async () => {
 				const success = await BiometricsService.authenticate(`Login with ${EBiometricsType.getBiometricsTypeText(biometricsType)}`);
 				if (success) {
-					this.setState({ isUnlocked: true, pin: '' });
+					this.setState({ isUnlocked: true, pin: '', isBiometricProcess: false });
 				} else {
 					this.setState({ isBiometricProcess: false });
 				}
