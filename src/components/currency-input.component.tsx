@@ -85,7 +85,8 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 
 	onChangeText = async (val: string, strip = true) => {
 		val = val ? val.replace(',', '.') : val;
-		if (strip && val?.split('.')[1]?.length > 6) {
+		const isAddition = val.length > this.state.value?.length;
+		if (strip && isAddition && val?.split('.')[1]?.length > 6) {
 			return;
 		}
 		this.setState({ value: val }, async () => {

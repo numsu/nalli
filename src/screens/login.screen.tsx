@@ -134,7 +134,7 @@ export default class Login extends React.Component<any, LoginState> {
 				this.props.navigation.navigate('Main');
 			}
 		} catch (e) {
-			this.setState({ pin: '', process: false });
+			this.setState({ pin: '', process: false, isBiometricProcess: false });
 			if (e.code == NalliErrorCode.ACCOUNT_DISABLED) {
 				Alert.alert('Error', 'Your account is disabled. Most likely due to someone else registering with the same wallet. Please reinstall the application.');
 			} else {
