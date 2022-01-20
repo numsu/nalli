@@ -83,9 +83,9 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 		await CurrencyService.convert('0', this.state.currency, this.state.convertedCurrency);
 	}
 
-	onChangeText = async (val: string) => {
+	onChangeText = async (val: string, strip = true) => {
 		val = val ? val.replace(',', '.') : val;
-		if (val?.split('.')[1]?.length > 6) {
+		if (strip && val?.split('.')[1]?.length > 6) {
 			return;
 		}
 		this.setState({ value: val }, async () => {
@@ -120,9 +120,9 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 			if (isNaN(+convertedValue)) {
 				convertedValue = '0';
 			}
-			this.onChangeText(convertedValue);
+			this.onChangeText(convertedValue, false);
 		} else {
-			this.onChangeText(balance);
+			this.onChangeText(balance, false);
 		}
 	}
 
