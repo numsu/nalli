@@ -1,3 +1,4 @@
+import { tools } from 'nanocurrency-web';
 import React, { RefObject } from 'react';
 import {
 	EmitterSubscription,
@@ -13,7 +14,8 @@ import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/colors';
 import CurrencyService from '../service/currency.service';
 import VariableStore, { NalliVariable } from '../service/variable-store';
-import NanoLogo from './svg/nano-logo';
+import WalletService from '../service/wallet.service';
+import NalliText from './text.component';
 
 interface CurrencyInputProps {
 	reference: RefObject<any>;
@@ -40,7 +42,7 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 		super(props);
 		this.state = {
 			borderColor: Colors.borderColor,
-			currency: 'xrb',
+			currency: 'xno',
 			convertedCurrency: 'usd',
 			value: props.value,
 			convertedValue: '0',
@@ -74,11 +76,11 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 		const showFiatDefault = await VariableStore.getVariable(NalliVariable.SHOW_FIAT_DEFAULT, false);
 		const currency = await VariableStore.getVariable(NalliVariable.CURRENCY, 'usd');
 		if (showFiatDefault) {
-			this.setState({ currency: 'xrb', convertedCurrency: currency });
+			this.setState({ currency: 'xno', convertedCurrency: currency });
 		} else {
-			this.setState({ currency: currency, convertedCurrency: 'xrb' });
+			this.setState({ currency: currency, convertedCurrency: 'xno' });
 		}
-		await CurrencyService.convert(0, this.state.currency, this.state.convertedCurrency);
+		await CurrencyService.convert('0', this.state.currency, this.state.convertedCurrency);
 	}
 
 	onChangeText = async (val: string) => {
@@ -109,6 +111,21 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 		this.setState({ borderColor: Colors.borderColor });
 	}
 
+	onSendMaxButton = async () => {
+		const selectedAccount = await VariableStore.getVariable<string>(NalliVariable.SELECTED_ACCOUNT);
+		const walletInfo = await WalletService.getWalletInfoAddress(selectedAccount);
+		const balance = Number(tools.convert(walletInfo.balance, 'RAW', 'NANO')).toString(); // Strip insignificant zeroes
+		if (this.state.currency != 'xno') {
+			let convertedValue = await CurrencyService.convert(balance, this.state.convertedCurrency, this.state.currency);
+			if (isNaN(+convertedValue)) {
+				convertedValue = '0';
+			}
+			this.onChangeText(convertedValue);
+		} else {
+			this.onChangeText(balance);
+		}
+	}
+
 	onCurrencySwitchPress = () => {
 		const tempConvertedCurrency = this.state.convertedCurrency;
 		let tempConvertedValue = Number(this.state.convertedValue).toString(); // Strip insignificant zeroes
@@ -116,7 +133,7 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 			tempConvertedValue = undefined;
 		}
 		VariableStore.getVariable(NalliVariable.SHOW_FIAT_DEFAULT, false).then(showFiatDefault => {
-			VariableStore.setVariable(NalliVariable.SHOW_FIAT_DEFAULT, this.state.currency == (showFiatDefault ? this.state.convertedCurrency : 'xrb'));
+			VariableStore.setVariable(NalliVariable.SHOW_FIAT_DEFAULT, this.state.currency == (showFiatDefault ? this.state.convertedCurrency : 'xno'));
 		});
 		this.setState({
 			convertedCurrency: this.state.currency,
@@ -145,12 +162,18 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 								onChangeText={this.onChangeText} />
 					</View>
 					<TouchableHighlight
+							style={styles.sendMaxButton}
+							underlayColor={Colors.borderColor}
+							onPress={this.onSendMaxButton}>
+						<NalliText style={styles.maxIcon}>MAX</NalliText>
+					</TouchableHighlight>
+					<TouchableHighlight
 							style={styles.switchButton}
 							underlayColor={Colors.borderColor}
 							onPress={this.onCurrencySwitchPress}>
 						<Ionicons
 								style={styles.switchIcon}
-								name="ios-swap"
+								name="ios-swap-horizontal"
 								size={32} />
 					</TouchableHighlight>
 					<View style={[styles.inputConvertedCurrencyContainer, { borderTopColor: borderColor }]}>
@@ -167,13 +190,11 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 
 	renderCurrencyMark = (currency, converted) => {
 		switch (currency) {
-			case 'xrb':
+			case 'xno':
 				return (
-					<NanoLogo
-							style={[styles.nanoMark]}
-							width="40"
-							height="20"
-							color={(converted ? Colors.inputPlaceholder : Colors.main)} />
+					<Text style={styles.asciiMark}>
+						Ӿ
+					</Text>
 				);
 			default:
 				const icon = CurrencyService.getCurrencyByISO(currency).icon;
@@ -224,27 +245,46 @@ const styles = StyleSheet.create({
 	convertedMark: {
 		color: Colors.inputPlaceholder,
 	},
-	switchButton: {
+	sendMaxButton: {
 		borderWidth: 1,
 		borderColor: Colors.main,
 		backgroundColor: 'white',
 		paddingHorizontal: 9,
-		paddingVertical: 7,
+		paddingVertical: 13,
 		borderRadius: 30,
 		alignSelf: 'center',
 		position: 'absolute',
-		top: 43,
+		top: 10,
 		right: -1,
 		zIndex: 200,
 	},
+	switchButton: {
+		borderWidth: 1,
+		borderColor: Colors.main,
+		backgroundColor: 'white',
+		paddingHorizontal: 11,
+		paddingVertical: 10,
+		borderRadius: 30,
+		alignSelf: 'center',
+		position: 'absolute',
+		top: 74,
+		right: -1,
+		zIndex: 200,
+	},
+	maxIcon: {
+		fontSize: 11,
+		color: Colors.main,
+		fontFamily: 'OpenSansBold',
+	},
 	switchIcon: {
-		fontSize: 20,
+		fontSize: 18,
 		color: Colors.main,
 		marginRight: 1,
 		transform: [{ rotate: '90deg' }],
 	},
 	inputConvertedCurrencyContainer: {
 		borderTopWidth: 1,
+		width: '100%',
 		marginLeft: 1,
 		flexDirection: 'row',
 		justifyContent: 'space-between',

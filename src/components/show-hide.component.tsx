@@ -1,12 +1,12 @@
 import React from 'react';
 import {
 	Alert,
-	Clipboard,
 	StyleSheet,
 	TouchableOpacity,
 	TouchableWithoutFeedback,
 	View
 } from 'react-native';
+import { Clipboard } from 'react-native'
 
 import { Ionicons } from '@expo/vector-icons';
 

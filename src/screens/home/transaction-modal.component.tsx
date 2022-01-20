@@ -109,10 +109,10 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 						</NalliText>
 						{transaction.type == 'send' ?
 							<NalliText>
-								- {transaction.amount} NANO
+								Ӿ {transaction.amount}
 							</NalliText> :
 							<NalliText>
-								+ {transaction.amount} NANO
+								Ӿ {transaction.amount}
 							</NalliText>
 						}
 					</View>
@@ -167,7 +167,7 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 						{transaction.account ?
 							<View style={styles.row}>
 								<NalliText size={ETextSize.H2}>Account</NalliText>
-								<Link url={`https://nanocrawler.cc/explorer/account/${transaction.account}`}>
+								<Link url={`https://nanolooker.com/account/${transaction.account}`}>
 									{transaction.account}
 								</Link>
 							</View>
@@ -175,14 +175,14 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 						}
 						<View style={styles.row}>
 							<NalliText size={ETextSize.H2}>Hash</NalliText>
-							<Link url={`https://nanocrawler.cc/explorer/block/${transaction.hash}`}>
+							<Link url={`https://nanolooker.com/block/${transaction.hash}`}>
 								{transaction.hash}
 							</Link>
 						</View>
 						{transaction.custodialAccount ?
 							<View style={styles.row}>
 								<NalliText size={ETextSize.H2}>Custodial account</NalliText>
-								<Link url={`https://nanocrawler.cc/explorer/account/${transaction.custodialAccount}`}>
+								<Link url={`https://nanolooker.com/account/${transaction.custodialAccount}`}>
 									{transaction.custodialAccount}
 								</Link>
 							</View>
@@ -191,7 +191,7 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 						{transaction.custodialHash ?
 							<View style={[styles.row]}>
 								<NalliText size={ETextSize.H2}>Custodial hash</NalliText>
-								<Link url={`https://nanocrawler.cc/explorer/block/${transaction.custodialHash}`}>
+								<Link url={`https://nanolooker.com/block/${transaction.custodialHash}`}>
 									{transaction.custodialHash}
 								</Link>
 							</View>

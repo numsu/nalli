@@ -8,12 +8,13 @@ import {
 
 import NalliModal from '../../../components/modal.component';
 import NalliButton from '../../../components/nalli-button.component';
-import NalliText from '../../../components/text.component';
+import NalliText, { ETextSize } from '../../../components/text.component';
 import AuthService from '../../../service/auth.service';
 import NotificationService from '../../../service/notification.service';
 
 interface NotificationModalProps {
 	isOpen: boolean;
+	enabled: boolean;
 	close: (status?: boolean) => void;
 }
 
@@ -38,37 +39,39 @@ export default class NotificationModal extends React.Component<NotificationModal
 	}
 
 	selectNotificationState = async (notificationsEnabled: boolean) => {
-		if (notificationsEnabled) {
-			const token = await NotificationService.registerForPushNotifications();
-			if (token) {
-				await AuthService.registerPush({ token });
+		const promise = new Promise<boolean>(async resolve => {
+			if (notificationsEnabled) {
+				const success = await NotificationService.registerForPushNotifications();
+				if (!success) {
+					Alert.alert(
+						'No permission',
+						'You haven\'t given us a permission to send you notifications. Please allow Nalli to send notifications in your settings.',
+						[
+							{
+								text: 'Don\'t allow',
+								style: 'cancel',
+								onPress: () => resolve(false),
+							}, {
+								text: 'Open settings',
+								style: 'default',
+								onPress: () => (Linking.openURL('app-settings:'), resolve(false)),
+							},
+						],
+					);
+				} else {
+					resolve(true);
+				}
 			} else {
-				Alert.alert(
-					'No permission',
-					'You haven\'t given us a permission to send you notifications. Please allow Nalli to send notifications in your settings.',
-					[
-						{
-							text: 'Don\'t allow',
-							style: 'cancel',
-							onPress: () => undefined,
-						}, {
-							text: 'Open settings',
-							style: 'default',
-							onPress: () => Linking.openURL('app-settings:'),
-						},
-					],
-				);
-				return;
+				AuthService.registerPush({ token: '' });
+				resolve(false);
 			}
-		} else {
-			await AuthService.registerPush({ token: '' });
-		}
+		});
 
-		this.props.close(notificationsEnabled);
+		this.props.close(await promise);
 	}
 
 	render = () => {
-		const { close } = this.props;
+		const { close, enabled } = this.props;
 		const { isOpen } = this.state;
 
 		return (
@@ -78,17 +81,23 @@ export default class NotificationModal extends React.Component<NotificationModal
 					header='Notifications'>
 				<View style={styles.container}>
 					<View>
-						<NalliText style={styles.text}>Nalli will send you notifications about incoming payments and when someone that you've sent Nano via SMS has registered and claimed them.</NalliText>
+						<NalliText size={ETextSize.H2} style={styles.text}>Notifications are currently { enabled ? 'enabled.' : 'disabled.' }</NalliText>
+						<NalliText style={styles.text}>Nalli will send you notifications about incoming payments and when someone you have sent Nano using SMS has registered and claimed it.</NalliText>
 						<NalliText style={styles.text}>Do you want to receive these notifications in the future?</NalliText>
 					</View>
-					<NalliButton
-							text="Yes"
-							solid={true}
-							style={{ marginBottom: 10 }}
-							onPress={() => this.selectNotificationState(true)} />
-					<NalliButton
-							text="No"
-							onPress={() => this.selectNotificationState(false)} />
+					<View style={styles.buttonContainer}>
+						<NalliButton
+								text="No"
+								small={true}
+								style={styles.buttonStyle}
+								onPress={() => this.selectNotificationState(false)} />
+						<NalliButton
+								text="Yes"
+								small={true}
+								solid={true}
+								style={styles.buttonStyle}
+								onPress={() => this.selectNotificationState(true)} />
+					</View>
 				</View>
 			</NalliModal>
 		);
@@ -102,5 +111,12 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		marginBottom: 20,
+	},
+	buttonContainer: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+	},
+	buttonStyle: {
+		width: '48%',
 	},
 });

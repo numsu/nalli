@@ -9,6 +9,7 @@ import AuthStore from '../../service/auth-store';
 import ClientService from '../../service/client.service';
 import ContactsService from '../../service/contacts.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
+import WsService from '../../service/ws.service';
 
 export enum NalliAppState {
 	ACTIVE = 'active',
@@ -48,13 +49,13 @@ class PrivacyShield extends React.Component<PrivacyShieldProps, PrivacyShieldSta
 		}
 	}
 
-	init = async () => {
+	init = () => {
 		AppState.addEventListener('change', this.handleAppChangeState);
 	}
 
 	handleAppChangeState = async (nextAppState) => {
 		if (this.state.appState == 'inactive' && nextAppState == 'active') {
-			if (new Date(this.state.sessionExpiresTime) < new Date()) {
+			if (new Date(this.state.sessionExpiresTime).getTime() < new Date().getTime()) {
 				await AuthStore.clearAuthentication();
 				AuthStore.clearExpires();
 				this.props.navigation.navigate('Login');
@@ -68,6 +69,7 @@ class PrivacyShield extends React.Component<PrivacyShieldProps, PrivacyShieldSta
 			ContactsService.clearCache();
 		} else if (this.state.appState == NalliAppState.ACTIVE
 				&& nextAppState.match(/inactive|background|suspended/)) {
+			WsService.unsubscribe();
 			VariableStore.setVariable(NalliVariable.APP_STATE, NalliAppState.INACTIVE);
 			this.props.onAppStateChange(NalliAppState.INACTIVE);
 			const expiresTime = await AuthStore.getExpires();

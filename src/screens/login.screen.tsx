@@ -1,10 +1,10 @@
-import Constants from 'expo-constants';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import {
 	Alert,
 	StyleSheet,
 	TextInput,
+	TouchableOpacity,
 	View,
 } from 'react-native';
 
@@ -17,12 +17,15 @@ import Colors from '../constants/colors';
 import PhoneNumberSigner from '../crypto/phone-number-signer';
 import AuthStore from '../service/auth-store';
 import AuthService from '../service/auth.service';
+import BiometricsService, { EBiometricsType } from '../service/biometrics.service';
 import ContactsService from '../service/contacts.service';
 import { NalliErrorCode } from '../service/http.service';
 import VariableStore, { NalliVariable } from '../service/variable-store';
 import WalletStore from '../service/wallet-store';
 
 interface LoginState {
+	biometricsType: EBiometricsType,
+	isBiometricProcess: boolean;
 	phoneNumber: string
 	phoneNumberCountry: string;
 	pin: string;
@@ -36,6 +39,8 @@ export default class Login extends React.Component<any, LoginState> {
 	constructor(props) {
 		super(props);
 		this.state = {
+			biometricsType: EBiometricsType.NO_BIOMETRICS,
+			isBiometricProcess: false,
 			phoneNumber: '',
 			phoneNumberCountry: 'us',
 			pin: '',
@@ -49,22 +54,24 @@ export default class Login extends React.Component<any, LoginState> {
 
 	init = async () => {
 		const country = await VariableStore.getVariable<string>(NalliVariable.COUNTRY);
+		const biometricsType = await VariableStore.getVariable<EBiometricsType>(NalliVariable.BIOMETRICS_TYPE);
 		const wallet = await WalletStore.getWallet();
 		const client = await AuthStore.getClient();
 
 		if (wallet) {
-			VariableStore.getVariable(NalliVariable.SELECTED_ACCOUNT).then(acc => {
+			VariableStore.getVariable(NalliVariable.SELECTED_ACCOUNT).then(async acc => {
 				if (!acc) {
-					VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT, wallet.accounts[0].address);
-					VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT_INDEX, 0);
+					await VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT, wallet.accounts[0].address);
+					await VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT_INDEX, 0);
 				}
 			});
 		}
 
 		this.setState({
+			biometricsType,
 			phoneNumberCountry: country,
 			phoneNumber: client ? client.phone : '',
-		});
+		}, this.signInWithBiometrics);
 	}
 
 	onChangeNumberPad = (val) => {
@@ -75,8 +82,24 @@ export default class Login extends React.Component<any, LoginState> {
 		});
 	}
 
+	signInWithBiometrics = async () => {
+		const isBiometricsEnabled = await BiometricsService.isBiometricsEnabled();
+		const isAutologinDisabled = await VariableStore.getVariable<boolean>(NalliVariable.NO_AUTOLOGIN, false);
+		if (isBiometricsEnabled && !isAutologinDisabled) {
+			this.setState({ isBiometricProcess: true }, async () => {
+				const success = await BiometricsService.authenticate(`Login with ${EBiometricsType.getBiometricsTypeText(this.state.biometricsType)}`);
+				if (success) {
+					await this.doLogin();
+				} else {
+					this.setState({ isBiometricProcess: false });
+				}
+			});
+		}
+		await VariableStore.setVariable(NalliVariable.NO_AUTOLOGIN, false);
+	}
+
 	signIn = async () => {
-		const { phoneNumber, phoneNumberCountry, pin } = this.state;
+		const pin = this.state.pin;
 		const valid = await AuthStore.isValidPin(pin);
 		if (!valid) {
 			Alert.alert('Error', 'Invalid pin');
@@ -84,10 +107,15 @@ export default class Login extends React.Component<any, LoginState> {
 			return;
 		}
 
+		await this.doLogin();
+	}
+
+	doLogin = async () => {
+		const { phoneNumber, phoneNumberCountry } = this.state;
 		let signature = '';
 		const wallet = await WalletStore.getWallet();
 		if (!wallet) {
-			signature = Constants.deviceId;
+			signature = await VariableStore.getVariable(NalliVariable.DEVICE_ID);
 		} else {
 			signature = await this.phoneNumberSigner.sign();
 		}
@@ -124,29 +152,31 @@ export default class Login extends React.Component<any, LoginState> {
 	}
 
 	render = () => {
-		const { pin, process } = this.state;
+		const { isBiometricProcess, pin, process } = this.state;
 		return (
 			<DismissKeyboardView style={styles.container}>
 				<StatusBar translucent={true} style="light" />
 				<Loading lighter={true} show={process} />
-				{/* <TouchableOpacity onPress={this.clearWalletInfo}> */}
+				<TouchableOpacity onPress={this.clearWalletInfo}>
 					<NalliLogo width={150} height={60} color="white" />
-				{/* </TouchableOpacity> */}
+				</TouchableOpacity>
 				<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 					Enter pin
 				</NalliText>
-				<View style={styles.numberPadContainer}>
-					<View style={styles.numberPadPinContainer}>
-						<TextInput
-								style={styles.numberPadPin}
-								value={pin}
-								secureTextEntry={true} />
+				{!isBiometricProcess &&
+					<View style={styles.numberPadContainer}>
+						<View style={styles.numberPadPinContainer}>
+							<TextInput
+									style={styles.numberPadPin}
+									value={pin}
+									secureTextEntry={true} />
+						</View>
+						<NalliNumberPad
+								onBiometricLoginPress={this.signInWithBiometrics}
+								onChangeText={this.onChangeNumberPad}
+								maxLength={6} />
 					</View>
-					<NalliNumberPad
-							pin={pin}
-							onChangeText={this.onChangeNumberPad}
-							maxLength={6} />
-				</View>
+				}
 			</DismissKeyboardView>
 		);
 	}
@@ -162,6 +192,15 @@ const styles = StyleSheet.create({
 	text: {
 		color: 'white',
 		paddingTop: 10,
+	},
+	biometricsContainer: {
+		flex: 1,
+		justifyContent: 'flex-end',
+		paddingBottom: 35,
+	},
+	biometricsLoginIcon: {
+		fontSize: 80,
+		color: 'white',
 	},
 	numberPadContainer: {
 		flex: 1,

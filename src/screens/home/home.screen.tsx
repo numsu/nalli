@@ -1,4 +1,3 @@
-import { Notification } from 'expo/build/Notifications/Notifications.types';
 import { wallet } from 'nanocurrency-web';
 import React, { RefObject } from 'react';
 import {
@@ -31,6 +30,7 @@ import VariableStore, { NalliVariable } from '../../service/variable-store';
 import WalletHandler from '../../service/wallet-handler.service';
 import WalletStore, { WalletType } from '../../service/wallet-store';
 import WalletService, { WalletTransaction } from '../../service/wallet.service';
+import WsService, { EWebSocketNotificationType } from '../../service/ws.service';
 import NalliMenu from './menu/nalli-menu.component';
 import PrivacyShield, { NalliAppState } from './privacy-shield.component';
 import ReceiveSheet from './receive-sheet.component';
@@ -56,7 +56,6 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	sendSheetRef: RefObject<any>;
 	receiveSheetRef: RefObject<any>;
 	sidemenuRef: SideMenu;
-	pushNotificationSubscription;
 	subscriptions: EmitterSubscription[] = [];
 
 	constructor(props) {
@@ -74,7 +73,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	}
 
 	static navigationOptions = () => ({
-		header: null,
+		headerShown: false,
 	});
 
 	componentDidMount = () => {
@@ -85,13 +84,14 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 
 	init = async () => {
 		this.getCurrentPrice();
-		this.handleForegroundPushNotifications();
+		this.subscribeToNotifications();
 		this.fetchTransactions();
+		NotificationService.checkPushNotificationRegistrationStatusAndRenewIfNecessary();
 	}
 
 	componentWillUnmount = () => {
 		try {
-			this.pushNotificationSubscription.remove();
+			WsService.unsubscribe();
 			this.subscriptions.forEach(VariableStore.unwatchVariable);
 		} catch {
 			// nothing
@@ -100,17 +100,18 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 
 	handleAppChangeState = (nextState: NalliAppState) => {
 		if (nextState == NalliAppState.ACTIVE) {
+			this.subscribeToNotifications();
 			this.getCurrentPrice();
 			ContactsService.clearCache();
+			WalletHandler.getAccountsBalancesAndHandlePending();
 		}
 	}
 
-	handleForegroundPushNotifications = async () => {
-		this.pushNotificationSubscription = await NotificationService
-				.listenForPushNotifications((notification: Notification) => {
-			if (notification.data.data == 'receive') {
-				WalletHandler.getAccountsBalancesAndHandlePending();
-			} else if (notification.data.data == 'pendingReceived') {
+	subscribeToNotifications = () => {
+		WsService.subscribe(async event => {
+			if (event.type == EWebSocketNotificationType.CONFIRMATION_RECEIVE) {
+				await WalletHandler.getAccountsBalancesAndHandlePending();
+			} else if (event.type == EWebSocketNotificationType.PENDING_RECEIVED) {
 				this.getTransactions();
 			}
 		});
@@ -189,7 +190,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 
 	getCurrentPrice = async () => {
 		const currency = await VariableStore.getVariable(NalliVariable.CURRENCY, 'usd');
-		const price = await CurrencyService.getCurrentPrice('xrb', currency);
+		const price = await CurrencyService.getCurrentPrice('xno', currency);
 		this.setState({ price });
 		return price;
 	}
@@ -217,21 +218,22 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	logout = async () => {
 		await AuthStore.clearAuthentication();
 		AuthStore.clearExpires();
+		await VariableStore.setVariable(NalliVariable.NO_AUTOLOGIN, true);
 		this.props.navigation.navigate('Login');
 	}
 
 	onSendPress = () => {
-		this.sendSheetRef.current.snapTo(1);
+		this.sendSheetRef.current.snapToIndex(0);
 	}
 
 	onReceivePress = () => {
-		this.receiveSheetRef.current.snapTo(1);
+		this.receiveSheetRef.current.snapToIndex(0);
 	}
 
 	onSendSuccess = () => {
 		WalletHandler.getAccountsBalancesAndHandlePending();
 		Keyboard.dismiss();
-		this.sendSheetRef.current.snapTo(0);
+		this.sendSheetRef.current.close();
 	}
 
 	onDonatePress = () => {
@@ -328,12 +330,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: 'white',
 		height: layout.window.height,
-	},
-	inactiveOverlay: {
-		flex: 1,
-		backgroundColor: Colors.main,
-		justifyContent: 'center',
-		alignItems: 'center',
 	},
 	header: {
 		flexDirection: 'row',

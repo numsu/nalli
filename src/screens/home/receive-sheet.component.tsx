@@ -1,15 +1,15 @@
 import React, { RefObject } from 'react';
 import {
-	Clipboard,
 	EmitterSubscription,
 	StyleSheet,
-	Text,
 	View,
 } from 'react-native';
+import { Clipboard } from 'react-native'
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import NalliButton from '../../components/nalli-button.component';
 import QRCode from '../../components/qrcode/qrcode.component';
+import NalliText from '../../components/text.component';
 import Colors from '../../constants/colors';
 import layout from '../../constants/layout';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
@@ -61,14 +61,21 @@ export default class ReceiveSheet extends React.Component<ReceiveSheetProps, Rec
 		const { reference } = this.props;
 		const { address, showCopiedText } = this.state;
 
+		const addressPart1 = address.substring(0, 12);
+		const addressPart2 = address.substring(13, 57);
+		const addressPart3 = address.substring(58, 65);
+
 		return (
 			<MyBottomSheet
-					initialSnap={0}
+					initialSnap={-1}
 					reference={reference}
-					snapPoints={layout.isSmallDevice ? [0, '88%'] : [0, '68%']}
+					enablePanDownToClose={true}
+					snapPoints={layout.isSmallDevice ? ['88%'] : ['68%']}
 					header="Receive">
 				<View style={styles.transactionSheetContent}>
-					<Text>Scan the QR-code below to send funds to this wallet</Text>
+					<NalliText style={styles.text}>
+						Scan the QR-code below to send funds to this wallet
+					</NalliText>
 					<View style={styles.qrcode}>
 						<QRCode
 								value={`nano:${address}`}
@@ -77,9 +84,20 @@ export default class ReceiveSheet extends React.Component<ReceiveSheetProps, Rec
 								quietZone={4}
 								size={200} />
 					</View>
-					<Text>Account:</Text>
-					<Text>{address}</Text>
+					<NalliText style={styles.addressContainer}>
+						<NalliText style={[styles.address, styles.coloredAddress ]}>
+							{ addressPart1 }
+						</NalliText>
+						<NalliText style={styles.address}>
+							{ addressPart2 }
+						</NalliText>
+						<NalliText style={[ styles.address, styles.coloredAddress ]}>
+							{ addressPart3 }
+						</NalliText>
+					</NalliText>
 					<NalliButton
+							small={true}
+							icon='ios-copy'
 							text={showCopiedText ? 'Copied' : 'Copy address'}
 							style={styles.copyButton}
 							onPress={() => this.onCopyPress(address)} />
@@ -95,6 +113,10 @@ const styles = StyleSheet.create({
 		backgroundColor: 'white',
 		height: layout.isSmallDevice ? layout.window.height * 0.79 : layout.window.height * 0.62,
 		paddingHorizontal: 15,
+		paddingTop: 20,
+	},
+	text: {
+		textAlign: 'center',
 	},
 	qrcode: {
 		alignSelf: 'center',
@@ -104,5 +126,22 @@ const styles = StyleSheet.create({
 	},
 	copyButton: {
 		marginTop: 10,
+		width: '50%',
+		alignSelf: 'center',
+	},
+	addressContainer: {
+		borderWidth: 1,
+		borderRadius: 15,
+		borderColor: Colors.borderColor,
+		padding: 10,
+		marginHorizontal: layout.window.width * 0.15,
+		textAlign: 'center',
+	},
+	address: {
+		fontSize: 20,
+	},
+	coloredAddress: {
+		color: Colors.main,
+		fontFamily: 'OpenSansBold',
 	},
 });

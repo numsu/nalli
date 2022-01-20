@@ -1,9 +1,9 @@
-import { Linking } from 'expo';
 import React from 'react';
-import { Alert, EmitterSubscription, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, EmitterSubscription, Linking, ScrollView, StyleSheet, View } from 'react-native';
 
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
+import BiometricsService, { EBiometricsType } from '../../../service/biometrics.service';
 import ClientService from '../../../service/client.service';
 import VariableStore, { NalliVariable } from '../../../service/variable-store';
 import CurrencyModal from './currency-modal.component';
@@ -16,11 +16,13 @@ interface NalliMenuProps {
 }
 
 interface NalliMenuState {
-	invitedCount: number;
-	pushEnabled: boolean;
+	biometricsEnabled: boolean;
 	currency: string;
 	currencyModalOpen: boolean;
+	invitedCount: number;
 	notificationModalOpen: boolean;
+	pushEnabled: boolean;
+	supportedBiometricsType: EBiometricsType;
 	walletInfoModalOpen: boolean;
 }
 
@@ -31,11 +33,13 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 	constructor(props) {
 		super(props);
 		this.state = {
-			invitedCount: 0,
-			pushEnabled: true,
+			biometricsEnabled: false,
 			currency: 'usd',
 			currencyModalOpen: false,
+			invitedCount: 0,
 			notificationModalOpen: false,
+			pushEnabled: true,
+			supportedBiometricsType: EBiometricsType.NO_BIOMETRICS,
 			walletInfoModalOpen: false,
 		};
 	}
@@ -53,8 +57,17 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 
 	initConfig = async () => {
 		const currency = await VariableStore.getVariable(NalliVariable.CURRENCY, 'usd') as string;
+		const supportedBiometricsType = await BiometricsService.getSupportedBiometricsType();
+
+		let biometricsEnabled = false;
+		if (supportedBiometricsType != EBiometricsType.NO_BIOMETRICS) {
+			biometricsEnabled = await BiometricsService.isBiometricsEnabled();
+		}
+
 		this.setState({
+			biometricsEnabled,
 			currency: currency.toUpperCase(),
+			supportedBiometricsType,
 		});
 	}
 
@@ -77,6 +90,25 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 			this.setState({ pushEnabled: status });
 		}
 		this.setState({ notificationModalOpen: !this.state.notificationModalOpen });
+	}
+
+	toggleBiometricsEnabled = async () => {
+		const biometricsType = await VariableStore.getVariable<EBiometricsType>(NalliVariable.BIOMETRICS_TYPE, EBiometricsType.NO_BIOMETRICS);
+		if (biometricsType == EBiometricsType.NO_BIOMETRICS) {
+			const typeText = EBiometricsType.getBiometricsTypeText(this.state.supportedBiometricsType);
+			const success = await BiometricsService.authenticate(`Enable ${typeText} to use instead of PIN`);
+			if (success) {
+				await VariableStore.setVariable(NalliVariable.BIOMETRICS_TYPE, this.state.supportedBiometricsType);
+				this.setState({
+					biometricsEnabled: true,
+				});
+			}
+		} else {
+			await VariableStore.setVariable(NalliVariable.BIOMETRICS_TYPE, EBiometricsType.NO_BIOMETRICS);
+			this.setState({
+				biometricsEnabled: false,
+			});
+		}
 	}
 
 	toggleWalletInfo = () => {
@@ -103,11 +135,13 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 
 	render = () => {
 		const {
+			biometricsEnabled,
 			currency,
 			currencyModalOpen,
 			invitedCount,
 			notificationModalOpen,
 			pushEnabled,
+			supportedBiometricsType,
 			walletInfoModalOpen,
 		} = this.state;
 		const { onDonatePress } = this.props;
@@ -130,8 +164,15 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 					<NalliMenuPreference
 							icon="bell"
 							header="Notifications"
-							onPress={this.toggleSelectNotification}
-							subheader={pushEnabled ? "On" : "Off"} />
+							onPress={() => this.toggleSelectNotification()}
+						subheader={pushEnabled ? "On" : "Off"} />
+					{supportedBiometricsType != EBiometricsType.NO_BIOMETRICS &&
+						<NalliMenuPreference
+								icon={EBiometricsType.getBiometricsTypeIcon(supportedBiometricsType)}
+								header={EBiometricsType.getBiometricsTypeText(supportedBiometricsType)}
+								onPress={() => this.toggleBiometricsEnabled()}
+								subheader={biometricsEnabled ? "On" : "Off"} />
+					}
 				</View>
 				<View style={styles.content}>
 					<NalliText size={ETextSize.H2} style={styles.header}>Manage</NalliText>
@@ -165,7 +206,8 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 						close={this.toggleSelectCurrency} />
 				<NotificationModal
 						isOpen={notificationModalOpen}
-						close={this.toggleSelectNotification} />
+						enabled={pushEnabled}
+						close={(status) => this.toggleSelectNotification(status)} />
 				<WalletInfoModal
 						isOpen={walletInfoModalOpen}
 						close={this.toggleWalletInfo} />

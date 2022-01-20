@@ -1,4 +1,4 @@
-import { createStackNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 
 import CreateWalletWelcome from '../screens/create-wallet/create-wallet-welcome.screen';
 import CreateWalletMnemonic from '../screens/create-wallet/create/create-wallet-mnemonic.screen';

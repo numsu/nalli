@@ -7,7 +7,6 @@ import {
 import NalliButton from '../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
-import AuthService from '../../service/auth.service';
 import ContactsService from '../../service/contacts.service';
 import NotificationService from '../../service/notification.service';
 
@@ -25,15 +24,12 @@ export default class Permissions extends React.Component<any, PermissionsState> 
 	}
 
 	static navigationOptions = () => ({
-		header: null,
+		headerShown: false,
 	})
 
 	onContinuePress = async () => {
 		if (this.state.permission == 1) {
-			const token = await NotificationService.registerForPushNotifications();
-			if (token) {
-				await AuthService.registerPush({ token });
-			}
+			await NotificationService.registerForPushNotifications();
 			this.setState({ permission: 2 });
 		} else {
 			await ContactsService.askPermission()

@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import {
 	EmitterSubscription,
@@ -16,12 +15,17 @@ import { sleep } from '../constants/globals';
 import layout from '../constants/layout';
 import { NalliAppState } from '../screens/home/privacy-shield.component';
 import VariableStore, { NalliVariable } from '../service/variable-store';
+import NalliLinearGradient from './linear-gradient.component';
 import NalliText, { ETextSize } from './text.component';
 
 interface ModalProps {
 	isOpen: boolean;
 	onClose: () => void;
 	header: string;
+	headerComponent?: any;
+	headerContainerStyle?: any;
+	linearGradientTopStyle?: any;
+	linearGradientTopStart?: number;
 	noScroll?: boolean;
 	size?: EModalSize;
 }
@@ -34,7 +38,7 @@ interface ModalState {
 
 export default class NalliModal extends React.Component<ModalProps, ModalState> {
 
-	static animationDelay = 200;
+	static animationDelay = 150;
 
 	constructor(props) {
 		super(props);
@@ -66,7 +70,17 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 	}
 
 	render = () => {
-		const { header, children, size, noScroll, onClose } = this.props;
+		const {
+			children,
+			header,
+			headerComponent,
+			headerContainerStyle,
+			linearGradientTopStyle,
+			linearGradientTopStart,
+			size,
+			noScroll,
+			onClose,
+		} = this.props;
 		const { isOpen, isRendered, appState } = this.state;
 
 		if (isRendered) {
@@ -92,12 +106,7 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 								: size == EModalSize.LARGE
 									? styles.containerLarge
 									: styles.containerMedium]}>
-						<View style={styles.headerContainer}>
-							<LinearGradient
-									colors={['white', 'rgba(255, 255, 255, 0.0)']}
-									style={styles.topContainerBackground}
-									start={{ x: 0.5, y: 0.5 }}
-									end={{ x: 0.5, y: 1 }} />
+						<View style={[styles.headerContainer, headerContainerStyle]}>
 							<View style={styles.headerContentContainer}>
 								<NalliText size={ETextSize.H1}>
 									{header}
@@ -109,9 +118,12 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 										size="small"
 										overlayContainerStyle={{ backgroundColor: Colors.main }} />
 							</View>
+							{headerComponent}
 						</View>
+						<NalliLinearGradient style={{ height: 30, top: 50, ...linearGradientTopStyle }} start={!linearGradientTopStart || linearGradientTopStart == 0 ? 0 : 0.1} />
 						{noScroll &&
 							<View style={styles.contentContainer}>
+
 								<View style={styles.pushTop} />
 								{children}
 							</View>
@@ -122,12 +134,7 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 								{children}
 							</ScrollView>
 						}
-
-						<LinearGradient
-									colors={['rgba(255, 255, 255, 0.0)', 'white']}
-									style={styles.bottomContainerBackground}
-									start={{ x: 0.5, y: 0 }}
-									end={{ x: 0.5, y: 1 }} />
+						<NalliLinearGradient bottom={true} />
 					</KeyboardAvoidingView>
 				</Modal>
 			);
@@ -185,33 +192,15 @@ const styles = StyleSheet.create({
 		right: 0,
 		left: 0,
 		marginHorizontal: 15,
-		overflow: 'scroll',
+		overflow: 'hidden',
 	},
 	headerContainer: {
-		backgroundColor: 'transparent',
+		backgroundColor: 'white',
 		position: 'absolute',
 		top: 0,
-		height: 78,
+		height: 50,
 		width: '100%',
 		zIndex: 100,
-	},
-	topContainerBackground: {
-		position: 'absolute',
-		left: 0,
-		right: 0,
-		top: 0,
-		width: '100%',
-		height: '100%',
-		borderRadius: 15,
-	},
-	bottomContainerBackground: {
-		position: 'absolute',
-		left: 0,
-		right: 0,
-		bottom: 0,
-		width: '100%',
-		height: 40,
-		borderRadius: 15,
 	},
 	headerContentContainer: {
 		flexDirection: 'row',
@@ -219,6 +208,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingHorizontal: 15,
 		paddingTop: 15,
+		zIndex: 2,
 	},
 	contentContainer: {
 		paddingHorizontal: 15,

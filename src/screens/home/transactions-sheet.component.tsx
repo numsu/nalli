@@ -6,6 +6,8 @@ import {
 	View,
 } from 'react-native';
 
+import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import NalliModal from '../../components/modal.component';
 import NalliButton from '../../components/nalli-button.component';
@@ -54,20 +56,37 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 	getRelativeTime = (timestamp) => {
 		const time = moment.unix(timestamp);
 		const now = moment();
-		const diffInDays = time.diff(now, 'days');
+		const diffInDays = now.diff(time, 'days');
+		const diffInWeeks = now.diff(time, 'weeks');
+		const diffInMonths = now.diff(time, 'months');
+		const diffInYears = now.diff(time, 'years');
 
 		let date;
 		if (diffInDays == 0) {
 			date = 'Today';
 		} else if (diffInDays == 1) {
 			date = 'Yesterday';
-		} else if (diffInDays > 200) {
-			date = time.format('D MMM YYYY');
+		} else if (diffInDays < 7) {
+			date = `${diffInDays} days ago`;
+		} else if (diffInWeeks < 2) {
+			date = 'Last week'
+		} else if (diffInWeeks >= 2 && diffInMonths < 1) {
+			date = `${diffInWeeks} weeks ago`;
+		} else if (diffInMonths == 1) {
+			date = 'A month ago';
+		} else if (diffInMonths < 12) {
+			date = `${diffInMonths} months ago`;
+		} else if (diffInYears < 2) {
+			date = 'A year ago';
 		} else {
-			date = time.format('D MMM');
+			date = `${diffInYears} years ago`;
 		}
 
-		return `${date} ${time.format('hh:mm A')}`;
+		if (diffInDays < 7) {
+			return `${date} at ${time.format('hh:mm A')}`;
+		} else {
+			return date;
+		}
 	}
 
 	getContactName = (transaction: WalletTransaction) => {
@@ -126,12 +145,12 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 
 		return (
 			<MyBottomSheet
-					initialSnap={1}
-					snapPoints={['87.5%', '25%']}
-					enabledInnerScrolling={true}
+					initialSnap={0}
+					snapPoints={['25%', '87.5%']}
+					enableLinearGradient={true}
 					header="Transactions">
-				<View style={styles.transactionList}>
-					{!hasTransactions && <NalliText style={styles.noMoreText}>No transactions so far</NalliText>}
+				<BottomSheetScrollView style={styles.transactionList}>
+					{!hasTransactions && <NalliText style={styles.noMoreText}>Your transactions will appear here</NalliText>}
 					{transactionListElements}
 					<TransactionModal
 							isOpen={selectedTransaction && transactionModalOpen}
@@ -140,13 +159,15 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 							onClose={this.closeTransaction} />
 					{hasTransactions && hasMoreTransactions &&
 						<NalliButton
-								text='Fetch more...'
+								style={styles.fetchMoreButton}
+								small={true}
+								text='Fetch more'
 								onPress={onFetchMore} />
 					}
 					{hasTransactions && !hasMoreTransactions &&
 						<NalliText style={styles.noMoreText}>Nothing more to see here</NalliText>
 					}
-				</View>
+				</BottomSheetScrollView>
 			</MyBottomSheet>
 		);
 	}
@@ -157,8 +178,9 @@ const styles = StyleSheet.create({
 	transactionList: {
 		backgroundColor: 'white',
 		paddingHorizontal: 15,
-		paddingBottom: 100,
 		minHeight: '100%',
+		zIndex: -1,
+		paddingTop: 20,
 	},
 	transactionContainer: {
 		justifyContent: 'space-between',
@@ -182,8 +204,15 @@ const styles = StyleSheet.create({
 		lineHeight: 20,
 		fontFamily: 'OpenSans',
 	},
+	fetchMoreButton: {
+		width: '50%',
+		alignSelf: 'center',
+		marginTop: 20,
+		marginBottom: 100,
+	},
 	noMoreText: {
 		alignSelf: 'center',
-		marginTop: 30,
+		marginTop: 20,
+		marginBottom: 100,
 	},
 });

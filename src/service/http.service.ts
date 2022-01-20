@@ -1,43 +1,53 @@
-import Constants from 'expo-constants';
-
 import AuthStore from './auth-store';
 import NavigationService from './navigation.service';
 import VariableStore, { NalliVariable } from './variable-store';
 
 export default class HttpService {
 
-	// static endpoint = 'http://192.168.1.100:8080/api';
-	static endpoint = 'https://api.nalli.app/api';
+	static protocol = process.env.DEV ? 'http://' : 'https://';
+	static host = process.env.API_HOST ?? 'api.nalli.app';
 
-	static get = async <T> (uri: string): Promise<T> => {
-		const that = HttpService;
-		const final = that.endpoint + uri;
-		return await fetch(
-			final,
-			{
-				method: 'GET',
-				headers: await that.getHeaders(),
-			}
-		)
-		.then(async res => await that.handleResponse(res))
-		.catch(err => {
-			console.log(`Error in GET ${final}`, err);
-			throw err;
-		});
+	static promises = new Map<string, Promise<any>>();
+
+	static get = async <T>(uri: string): Promise<T> => {
+		if (this.promises.has(uri)) {
+			return this.promises.get(uri);
+		} else {
+			const promise = new Promise<T>(async (resolve, reject) => {
+				const base = this.protocol + this.host;
+				const final = `${base}/api${uri}`;
+				await fetch(
+						final, {
+							method: 'GET',
+							headers: await this.getHeaders(),
+						}).then(async res => {
+							resolve(await this.handleResponse(res))
+							this.promises.delete(uri);
+						})
+						.catch(err => {
+							console.log(`Error in GET ${final}`, err);
+							reject(err);
+							this.promises.delete(uri);
+						});
+			});
+
+			this.promises.set(uri, promise);
+			return promise;
+		}
 	}
 
 	static post = async <T> (uri: string, body: any): Promise<T> => {
-		const that = HttpService;
-		const final = that.endpoint + uri;
+		const base = this.protocol + this.host;
+		const final = `${base}/api${uri}`;
 		return await fetch(
 			final,
 			{
 				method: 'POST',
-				headers: await that.getHeaders(),
+				headers: await this.getHeaders(),
 				body: JSON.stringify(body),
 			}
 		)
-		.then(async res => await that.handleResponse(res))
+		.then(async res => await this.handleResponse(res))
 		.catch(err => {
 			console.log(`Error in POST ${final}`, err);
 			throw err;
@@ -48,7 +58,7 @@ export default class HttpService {
 		const headers: any = {
 			'Accept': 'application/json',
 			'Content-Type': 'application/json',
-			'Device-Id': Constants.deviceId,
+			'Device-Id': await VariableStore.getVariable(NalliVariable.DEVICE_ID),
 			'Nalli-Account': await VariableStore.getVariable(NalliVariable.SELECTED_ACCOUNT),
 		};
 

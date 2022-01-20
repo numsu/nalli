@@ -1,3 +1,4 @@
+import Constants from 'expo-constants';
 import { StatusBar } from 'expo-status-bar';
 import * as Updates from 'expo-updates'
 import React from 'react';
@@ -7,11 +8,12 @@ import {
 	Text,
 	View,
 } from 'react-native';
+import { v4 as uuidv4 } from 'uuid';
 
 import Colors from '../constants/colors';
-import { sleep } from '../constants/globals';
 import AuthStore from '../service/auth-store';
 import ClientService from '../service/client.service';
+import VariableStore, { NalliVariable } from '../service/variable-store';
 import WalletStore from '../service/wallet-store';
 
 export default class AuthLoadingScreen extends React.Component<any, any> {
@@ -39,12 +41,21 @@ export default class AuthLoadingScreen extends React.Component<any, any> {
 		}
 		this.setState({ status: 3 });
 		this.forceUpdate();
-		await sleep(800);
+
 		const client = await AuthStore.getClient();
+		const deviceId = await VariableStore.getVariable(NalliVariable.DEVICE_ID);
 		if (!client) {
 			// If no client information set, navigate to welcome screen
 			this.props.navigation.navigate('Welcome');
+			if (!deviceId) {
+				await VariableStore.setVariable(NalliVariable.DEVICE_ID, uuidv4());
+			}
 			return;
+		}
+
+		if (!deviceId) {
+			console.error('Shouldnt come here');
+			await VariableStore.setVariable(NalliVariable.DEVICE_ID, Constants.deviceId);
 		}
 
 		try {
@@ -74,39 +85,7 @@ export default class AuthLoadingScreen extends React.Component<any, any> {
 				break;
 			case 3:
 			default:
-				const rnd = Math.floor(Math.random() * 10);
-				switch (rnd) {
-					case 0:
-						statusText = 'Spreading adoption';
-						break;
-					case 1:
-						statusText = 'Looking for fees';
-						break;
-					case 2:
-						statusText = 'Optimizing algorithms';
-						break;
-					case 3:
-						statusText = 'Warming up the PoW machine';
-						break;
-					case 4:
-						statusText = 'Scaling the network';
-						break;
-					case 5:
-						statusText = 'Calculating transaction time';
-						break;
-					case 6:
-						statusText = 'Polishing coins';
-						break;
-					case 7:
-						statusText = 'Pruning the ledger';
-						break;
-					case 8:
-						statusText = 'Validating the blockchain';
-						break;
-					case 9:
-						statusText = 'Loading';
-						break;
-				}
+				statusText = 'Loading';
 				break;
 		}
 

@@ -14,7 +14,7 @@ export default class ClientService {
 	}
 
 	static getClientAddress(phone?: string) {
-		return HttpService.get<string>(`${this.uri}/address/${phone}`);
+		return HttpService.get<RecipientAddress>(`${this.uri}/v2/address/${phone}`);
 	}
 
 	static getInvitedCount() {
@@ -35,4 +35,10 @@ export interface Client {
 	id: string;
 	phone: string;
 	country: string;
+}
+
+export interface RecipientAddress {
+	address: string;
+	nalliUser: boolean;
+	lastTransactionTimestamp: number;
 }

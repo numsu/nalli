@@ -7,7 +7,7 @@ import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 
 interface NalliMenuPreferenceProps {
-	icon: string;
+	icon: any;
 	header: string;
 	subheader: string;
 	onPress?: () => void;
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
 	},
 	preferenceIcon: {
 		color: Colors.main,
-		fontSize: 30,
-		marginTop: 3,
+		fontSize: 20,
+		marginTop: 4,
 	},
 });

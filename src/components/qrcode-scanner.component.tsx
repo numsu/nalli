@@ -1,8 +1,9 @@
-import {
-	BarCodeEvent,
-	BarCodeScanner,
-	PermissionStatus,
-} from 'expo-barcode-scanner';
+// import {
+// 	BarCodeEvent,
+// 	BarCodeScanner,
+// 	PermissionStatus,
+// } from 'expo-barcode-scanner';
+import { BarCodeScanningResult, Camera, PermissionStatus } from 'expo-camera';
 import React from 'react';
 import {
 	Alert,
@@ -19,7 +20,7 @@ import layout from '../constants/layout';
 import NalliText, { ETextSize } from './text.component';
 
 interface QRCodeScannerProps {
-	onQRCodeScanned: (params: BarCodeEvent) => boolean;
+	onQRCodeScanned: (params: BarCodeScanningResult) => boolean;
 }
 
 interface QRCodeScannerState {
@@ -36,7 +37,7 @@ export default class QRCodeScanner extends React.Component<QRCodeScannerProps, Q
 	}
 
 	scan = async () => {
-		const { status } = await BarCodeScanner.requestPermissionsAsync();
+		const { status } = await Camera.requestCameraPermissionsAsync();
 		if (status == PermissionStatus.GRANTED) {
 			this.setState({ open: true });
 		} else {
@@ -62,7 +63,7 @@ export default class QRCodeScanner extends React.Component<QRCodeScannerProps, Q
 		this.setState({ open: false });
 	}
 
-	onQRCodeScanned = (params: BarCodeEvent, callback) => {
+	onQRCodeScanned = (params: BarCodeScanningResult, callback) => {
 		const success = callback(params);
 		if (success) {
 			this.setState({ open: false });
@@ -95,9 +96,12 @@ export default class QRCodeScanner extends React.Component<QRCodeScannerProps, Q
 										size={40} />
 							</TouchableOpacity>
 						</View>
-						<BarCodeScanner
+						<Camera
+							style={styles.container}
+							onBarCodeScanned={(params: BarCodeScanningResult) => this.onQRCodeScanned(params, onQRCodeScanned)} />
+						{/* <BarCodeScanner
 								style={styles.container}
-								onBarCodeScanned={(params: BarCodeEvent) => this.onQRCodeScanned(params, onQRCodeScanned)} />
+								onBarCodeScanned={(params: BarCodeEvent) => this.onQRCodeScanned(params, onQRCodeScanned)} /> */}
 					</Modal>
 				}
 				<TouchableOpacity
