@@ -1,0 +1,22 @@
+{
+	"cli": {
+		"version": ">= 0.45.1"
+	},
+	"build": {
+		"dev": {
+			"developmentClient": true,
+			"distribution": "internal",
+			"releaseChannel": "dev"
+		},
+		"test": {
+			"distribution": "internal",
+			"releaseChannel": "test"
+		},
+		"prod": {
+			"releaseChannel": "prod-v110"
+		}
+	},
+	"submit": {
+		"production": {}
+	}
+}
