@@ -77,9 +77,10 @@ const styles = StyleSheet.create({
 		...Platform.select({
 			android: {
 				borderTopWidth: 3,
-				borderRightWidth: 3,
-				borderLeftWidth: 3,
-				marginHorizontal: -3,
+				borderRightWidth: 7,
+				borderLeftWidth: 7,
+				marginHorizontal: -7,
+				borderRadius: 25,
 			},
 		}),
 		borderColor: 'rgba(0, 0, 0, 0.05)',
