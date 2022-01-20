@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
 		right: 0,
 		left: 0,
 		marginHorizontal: 15,
-		overflow: 'scroll',
+		overflow: 'hidden',
 	},
 	headerContainer: {
 		backgroundColor: 'white',

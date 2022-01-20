@@ -16,6 +16,7 @@ import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 import layout from '../../../constants/layout';
 import AuthStore from '../../../service/auth-store';
+import BiometricsService, { EBiometricsType } from '../../../service/biometrics.service';
 import VariableStore, { NalliVariable } from '../../../service/variable-store';
 import WalletStore, { Wallet, WalletType } from '../../../service/wallet-store';
 
@@ -25,10 +26,11 @@ interface WalletInfoModallProps {
 }
 
 interface WalletInfoModalState {
+	isBiometricProcess: boolean;
 	isOpen: boolean;
 	isUnlocked: boolean;
-	walletInfo: Wallet;
 	pin: string;
+	walletInfo: Wallet;
 }
 
 export default class WalletInfoModal extends React.Component<WalletInfoModallProps, WalletInfoModalState> {
@@ -38,10 +40,11 @@ export default class WalletInfoModal extends React.Component<WalletInfoModallPro
 	constructor(props) {
 		super(props);
 		this.state = {
+			isBiometricProcess: false,
 			isOpen: false,
 			isUnlocked: false,
-			walletInfo: undefined,
 			pin: '',
+			walletInfo: undefined,
 		};
 	}
 
@@ -66,6 +69,21 @@ export default class WalletInfoModal extends React.Component<WalletInfoModallPro
 		this.setState({ walletInfo: wallet });
 	}
 
+	signInWithBiometrics = async () => {
+		const isBiometricsEnabled = await BiometricsService.isBiometricsEnabled();
+		if (isBiometricsEnabled) {
+			const biometricsType = await VariableStore.getVariable<EBiometricsType>(NalliVariable.BIOMETRICS_TYPE);
+			this.setState({ isBiometricProcess: true }, async () => {
+				const success = await BiometricsService.authenticate(`Login with ${EBiometricsType.getBiometricsTypeText(biometricsType)}`);
+				if (success) {
+					this.setState({ isUnlocked: true, pin: '' });
+				} else {
+					this.setState({ isBiometricProcess: false });
+				}
+			});
+		}
+	}
+
 	validatePin = async (pin: string) => {
 		if (pin.length == 6) {
 			const isValid = await AuthStore.isValidPin(pin);
@@ -85,7 +103,13 @@ export default class WalletInfoModal extends React.Component<WalletInfoModallPro
 	}
 
 	render = () => {
-		const { isOpen, isUnlocked, pin, walletInfo } = this.state;
+		const {
+			isBiometricProcess,
+			isOpen,
+			isUnlocked,
+			pin,
+			walletInfo,
+		} = this.state;
 
 		let words, privateKeys;
 		if (isUnlocked) {
@@ -125,7 +149,7 @@ export default class WalletInfoModal extends React.Component<WalletInfoModallPro
 						{privateKeys}
 					</ScrollView>
 				}
-				{!isUnlocked &&
+				{!isUnlocked && !isBiometricProcess &&
 					<View style={styles.pinContainer}>
 						<NalliText size={ETextSize.H2} style={styles.header}>Enter pin to view</NalliText>
 						<TextInput
@@ -135,7 +159,8 @@ export default class WalletInfoModal extends React.Component<WalletInfoModallPro
 						<NalliNumberPad
 								style={styles.numberPad}
 								pin={pin}
-								onChangeText={this.validatePin} />
+								onChangeText={this.validatePin}
+								onBiometricLoginPress={this.signInWithBiometrics} />
 					</View>
 				}
 			</NalliModal>
