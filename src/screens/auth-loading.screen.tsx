@@ -3,12 +3,13 @@ import { StatusBar } from 'expo-status-bar';
 import * as Updates from 'expo-updates'
 import React from 'react';
 import {
+	Alert,
 	ImageBackground,
 	StyleSheet,
 	Text,
 	View,
 } from 'react-native';
-import { v4 as uuidv4 } from 'uuid';
+import uuid from 'react-native-uuid';
 
 import Colors from '../constants/colors';
 import AuthStore from '../service/auth-store';
@@ -28,49 +29,63 @@ export default class AuthLoadingScreen extends React.Component<any, any> {
 
 	async bootstrapAsync() {
 		try {
-			const update = await Updates.checkForUpdateAsync();
-			if (update.isAvailable) {
-				this.setState({ status: 2 });
-				this.forceUpdate();
-				await Updates.fetchUpdateAsync();
-				await Updates.reloadAsync();
+			try {
+				const update = await Updates.checkForUpdateAsync();
+				if (update.isAvailable) {
+					this.setState({ status: 2 });
+					this.forceUpdate();
+					await Updates.fetchUpdateAsync();
+					await Updates.reloadAsync();
+					return;
+				}
+			} catch {
+				// Error in updating, continue with old version
+			}
+			this.setState({ status: 3 });
+			this.forceUpdate();
+
+			const client = await AuthStore.getClient();
+			const deviceId = await VariableStore.getVariable(NalliVariable.DEVICE_ID);
+			console.log(uuid.v4());
+			if (!client) {
+				// If no client information set, navigate to welcome screen
+				this.props.navigation.navigate('Welcome');
+				if (!deviceId) {
+					await VariableStore.setVariable(NalliVariable.DEVICE_ID, uuid.v4());
+				}
 				return;
 			}
-		} catch {
-			// Error in updating, continue with old version
-		}
-		this.setState({ status: 3 });
-		this.forceUpdate();
 
-		const client = await AuthStore.getClient();
-		const deviceId = await VariableStore.getVariable(NalliVariable.DEVICE_ID);
-		if (!client) {
-			// If no client information set, navigate to welcome screen
-			this.props.navigation.navigate('Welcome');
+			// Figure out a different solution when upgrading to a version where deviceId api is removed
+			// For now, move the device id to our own storage as long as possible
 			if (!deviceId) {
-				await VariableStore.setVariable(NalliVariable.DEVICE_ID, uuidv4());
+				await VariableStore.setVariable(NalliVariable.DEVICE_ID, Constants.deviceId);
 			}
-			return;
-		}
 
-		// Figure out a different solution when upgrading to a version where deviceId api is removed
-		// For now, move the device id to our own storage as long as possible
-		if (!deviceId) {
-			await VariableStore.setVariable(NalliVariable.DEVICE_ID, Constants.deviceId);
-		}
-
-		try {
-			await ClientService.getClient();
-			const wallet = await WalletStore.getWallet();
-			if (wallet) {
-				this.props.navigation.navigate('Home');
-			} else {
-				this.props.navigation.navigate('Permissions');
+			try {
+				await ClientService.getClient();
+				const wallet = await WalletStore.getWallet();
+				if (wallet) {
+					this.props.navigation.navigate('Home');
+				} else {
+					this.props.navigation.navigate('Permissions');
+				}
+			} catch {
+				// If login token expired, navigate to pin screen
+				await AuthStore.clearAuthentication();
+				this.props.navigation.navigate('Login');
 			}
-		} catch {
-			// If login token expired, navigate to pin screen
-			await AuthStore.clearAuthentication();
-			this.props.navigation.navigate('Login');
+		} catch (e) {
+			Alert.alert(
+				'Error during loading',
+				e.message,
+				[
+					{
+						text: 'Ok',
+						style: 'default',
+						onPress: () => undefined,
+					},
+				]);
 		}
 	}
 

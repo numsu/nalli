@@ -1,4 +1,4 @@
-import { BarCodeScanningResult } from 'expo-camera';
+import { BarCodeEvent } from 'expo-barcode-scanner';
 import { block, tools } from 'nanocurrency-web';
 import React, { RefObject } from 'react';
 import {
@@ -132,7 +132,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 		this.setState({ walletAddress });
 	}
 
-	onQRCodeScanned = (params: BarCodeScanningResult): boolean => {
+	onQRCodeScanned = (params: BarCodeEvent): boolean => {
 		const address = params.data.replace('nano:', '');
 		if (!tools.validateAddress(address)) {
 			if (!this.barcodeAlertActive) {
