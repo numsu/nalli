@@ -24,7 +24,6 @@ interface CarouselCardProps {
 interface CarouselCardState {
 	displayedCurrency: string;
 	currency: string;
-	processing: boolean;
 }
 
 export default class CarouselCard extends React.Component<CarouselCardProps, CarouselCardState> {
@@ -36,7 +35,6 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 		this.state = {
 			displayedCurrency: 'nano',
 			currency: '$',
-			processing: false,
 		};
 	}
 
@@ -75,15 +73,15 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 
 	render = () => {
 		const {
-			price,
-			balance,
-			showAddAccountView,
-			accountIndex,
 			accountActive,
-			processing,
+			accountIndex,
+			balance,
+			isLastAccount,
 			onAddNewAccount,
 			onHideAccount,
-			isLastAccount,
+			price,
+			processing,
+			showAddAccountView,
 		} = this.props;
 		const { displayedCurrency, currency } = this.state;
 

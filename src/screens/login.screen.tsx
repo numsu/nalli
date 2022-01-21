@@ -171,6 +171,7 @@ export default class Login extends React.Component<any, LoginState> {
 									secureTextEntry={true} />
 						</View>
 						<NalliNumberPad
+								enableBiometrics={true}
 								onBiometricLoginPress={this.signInWithBiometrics}
 								onChangeText={this.onChangeNumberPad}
 								maxLength={6} />
