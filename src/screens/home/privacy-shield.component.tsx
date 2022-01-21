@@ -54,7 +54,7 @@ class PrivacyShield extends React.Component<PrivacyShieldProps, PrivacyShieldSta
 	}
 
 	handleAppChangeState = async (nextAppState) => {
-		if (this.state.appState == 'inactive' && nextAppState == 'active') {
+		if (this.state.appState == NalliAppState.INACTIVE && nextAppState == 'active') {
 			if (new Date(this.state.sessionExpiresTime).getTime() < new Date().getTime()) {
 				await AuthStore.clearAuthentication();
 				AuthStore.clearExpires();
@@ -68,7 +68,7 @@ class PrivacyShield extends React.Component<PrivacyShieldProps, PrivacyShieldSta
 			this.setState({ appState: NalliAppState.ACTIVE, sessionExpiresTime: '', inactivationTime: '' });
 			ContactsService.clearCache();
 		} else if (this.state.appState == NalliAppState.ACTIVE
-				&& nextAppState.match(/inactive|background|suspended/)) {
+				&& nextAppState.match(/inactive|background/)) {
 			WsService.unsubscribe();
 			VariableStore.setVariable(NalliVariable.APP_STATE, NalliAppState.INACTIVE);
 			this.props.onAppStateChange(NalliAppState.INACTIVE);

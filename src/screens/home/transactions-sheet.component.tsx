@@ -32,6 +32,8 @@ interface TransactionSheetState {
 
 export default class TransactionsSheet extends React.Component<TransactionsSheetProps, TransactionSheetState> {
 
+	interval;
+
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -43,6 +45,12 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 
 	componentDidMount = () => {
 		this.getContacts();
+		// Update component every minute
+		this.interval = setInterval(() => this.forceUpdate(), 1000 * 60 * 60);
+	}
+
+	componentWillUnmount = () => {
+		clearInterval(this.interval);
 	}
 
 	getContacts = async () => {
@@ -56,13 +64,26 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 	getRelativeTime = (timestamp) => {
 		const time = moment.unix(timestamp);
 		const now = moment();
+
+		const diffInMinutes = now.diff(time, 'minutes');
+		const diffInHours = now.diff(time, 'hours');
 		const diffInDays = now.diff(time, 'days');
 		const diffInWeeks = now.diff(time, 'weeks');
 		const diffInMonths = now.diff(time, 'months');
 		const diffInYears = now.diff(time, 'years');
 
 		let date;
-		if (diffInDays == 0) {
+		if (diffInMinutes < 1) {
+			date = 'Just now';
+		} else if (diffInMinutes == 1) {
+			date = 'a minute ago';
+		} else if (diffInMinutes < 60) {
+			date = `${diffInMinutes} minutes ago`;
+		} else if (diffInHours == 1) {
+			date = `an hour ago`;
+		} else if (diffInHours < 24) {
+			date = `${diffInHours} hours ago`;
+		} else if (diffInDays == 0) {
 			date = 'Today';
 		} else if (diffInDays == 1) {
 			date = 'Yesterday';
@@ -82,11 +103,7 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 			date = `${diffInYears} years ago`;
 		}
 
-		if (diffInDays < 7) {
-			return `${date} at ${time.format('hh:mm A')}`;
-		} else {
-			return date;
-		}
+		return date;
 	}
 
 	getContactName = (transaction: WalletTransaction) => {

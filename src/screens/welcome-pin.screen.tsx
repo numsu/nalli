@@ -12,13 +12,13 @@ import NalliText, { ETextSize } from '../components/text.component';
 import Colors from '../constants/colors';
 import AuthStore from '../service/auth-store';
 
-interface WelcomPinScreenState {
+interface WelcomePinScreenState {
 	pin: string;
 	verifyPin: string;
 	verify: boolean;
 }
 
-export default class WelcomePinScreen extends React.Component<any, WelcomPinScreenState> {
+export default class WelcomePinScreen extends React.Component<any, WelcomePinScreenState> {
 
 	constructor(props) {
 		super(props);

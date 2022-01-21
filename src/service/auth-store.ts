@@ -1,6 +1,7 @@
 //@ts-ignore
 import { blake2b } from 'blakejs';
 import * as SecureStore from 'expo-secure-store';
+import { Alert } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -56,8 +57,10 @@ export default class AuthStore {
 		try {
 			const hash = await SecureStore.getItemAsync(this.pinKey);
 			const pinHash = Convert.ab2hex(blake2b(Convert.str2bin(pin)));
+			// Alert.alert('Hashes', hash + ' \n' + pinHash);
 			return hash == pinHash;
 		} catch (err) {
+			// Alert.alert('Error validating pin', err.message);
 			console.error(err);
 			throw new Error('Error validating pin in storage');
 		}

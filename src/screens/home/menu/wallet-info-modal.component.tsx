@@ -160,6 +160,7 @@ export default class WalletInfoModal extends React.Component<WalletInfoModallPro
 								style={styles.numberPad}
 								pin={pin}
 								onChangeText={this.validatePin}
+								enableBiometrics={true}
 								onBiometricLoginPress={this.signInWithBiometrics} />
 					</View>
 				}

@@ -14,7 +14,8 @@ import NalliText, { ETextSize } from './text.component';
 
 interface NalliNumberPadProps {
 	onChangeText: (pin: string) => any;
-	onBiometricLoginPress: () => void;
+	onBiometricLoginPress?: () => void;
+	enableBiometrics?: boolean;
 	style?: any;
 	maxLength?: number;
 	pin?: string;
@@ -49,7 +50,13 @@ export default class NalliNumberPad extends React.Component<NalliNumberPadProps,
 	}
 
 	init = async () => {
-		const biometricsType = await VariableStore.getVariable(NalliVariable.BIOMETRICS_TYPE, EBiometricsType.NO_BIOMETRICS);
+		let biometricsType;
+		if (this.props.enableBiometrics) {
+			biometricsType = await VariableStore.getVariable(NalliVariable.BIOMETRICS_TYPE, EBiometricsType.NO_BIOMETRICS);
+		} else {
+			biometricsType = EBiometricsType.NO_BIOMETRICS;
+		}
+
 		this.setState({
 			biometricsType,
 		});
