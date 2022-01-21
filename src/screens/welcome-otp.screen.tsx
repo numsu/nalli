@@ -9,7 +9,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	NavigationInjectedProps,
 } from 'react-navigation';
-import { HeaderBackButton } from 'react-navigation-stack';
 
 import NalliText, { ETextSize } from '../components/text.component';
 import Colors from '../constants/colors';

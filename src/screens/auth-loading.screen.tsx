@@ -1,4 +1,3 @@
-import Constants from 'expo-constants';
 import { StatusBar } from 'expo-status-bar';
 import * as Updates from 'expo-updates'
 import React from 'react';
@@ -12,12 +11,15 @@ import {
 import uuid from 'react-native-uuid';
 
 import Colors from '../constants/colors';
+import PhoneNumberSigner from '../crypto/phone-number-signer';
 import AuthStore from '../service/auth-store';
 import ClientService from '../service/client.service';
 import VariableStore, { NalliVariable } from '../service/variable-store';
 import WalletStore from '../service/wallet-store';
 
 export default class AuthLoadingScreen extends React.Component<any, any> {
+
+	readonly phoneNumberSigner = new PhoneNumberSigner();
 
 	constructor(props) {
 		super(props);
@@ -44,22 +46,16 @@ export default class AuthLoadingScreen extends React.Component<any, any> {
 			this.setState({ status: 3 });
 			this.forceUpdate();
 
-			const client = await AuthStore.getClient();
 			const deviceId = await VariableStore.getVariable(NalliVariable.DEVICE_ID);
-			console.log(uuid.v4());
+			if (!deviceId) {
+				await VariableStore.setVariable(NalliVariable.DEVICE_ID, uuid.v4());
+			}
+
+			const client = await AuthStore.getClient();
 			if (!client) {
 				// If no client information set, navigate to welcome screen
 				this.props.navigation.navigate('Welcome');
-				if (!deviceId) {
-					await VariableStore.setVariable(NalliVariable.DEVICE_ID, uuid.v4());
-				}
 				return;
-			}
-
-			// Figure out a different solution when upgrading to a version where deviceId api is removed
-			// For now, move the device id to our own storage as long as possible
-			if (!deviceId) {
-				await VariableStore.setVariable(NalliVariable.DEVICE_ID, Constants.deviceId);
 			}
 
 			try {
