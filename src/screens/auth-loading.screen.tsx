@@ -53,8 +53,9 @@ export default class AuthLoadingScreen extends React.Component<any, any> {
 			return;
 		}
 
+		// Figure out a different solution when upgrading to a version where deviceId api is removed
+		// For now, move the device id to our own storage as long as possible
 		if (!deviceId) {
-			console.error('Shouldnt come here');
 			await VariableStore.setVariable(NalliVariable.DEVICE_ID, Constants.deviceId);
 		}
 

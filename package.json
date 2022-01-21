@@ -9,7 +9,8 @@
 		"eject": "expo eject",
 		"test": "jest --watchAll",
 		"lint": "tslint -p tsconfig.json src/**/*.{ts,tsx}",
-		"lint:fix": "tslint -p tsconfig.json src/**/*.{ts,tsx} --fix"
+		"lint:fix": "tslint -p tsconfig.json src/**/*.{ts,tsx} --fix",
+		"build:prod": "eas build --profile prod"
 	},
 	"jest": {
 		"preset": "jest-expo"

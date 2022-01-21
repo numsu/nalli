@@ -13,7 +13,7 @@
 			"releaseChannel": "test"
 		},
 		"prod": {
-			"releaseChannel": "prod-v110"
+			"releaseChannel": "prod-v111"
 		}
 	},
 	"submit": {
