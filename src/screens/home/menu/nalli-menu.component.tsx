@@ -6,6 +6,7 @@ import Colors from '../../../constants/colors';
 import BiometricsService, { EBiometricsType } from '../../../service/biometrics.service';
 import ClientService from '../../../service/client.service';
 import VariableStore, { NalliVariable } from '../../../service/variable-store';
+import AccountModal from './account-modal.component';
 import CurrencyModal from './currency-modal.component';
 import NalliMenuPreference from './nalli-menu-preference.component';
 import NotificationModal from './notification-modal.component';
@@ -16,6 +17,7 @@ interface NalliMenuProps {
 }
 
 interface NalliMenuState {
+	accountModalOpen: boolean;
 	biometricsEnabled: boolean;
 	currency: string;
 	currencyModalOpen: boolean;
@@ -33,6 +35,7 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 	constructor(props) {
 		super(props);
 		this.state = {
+			accountModalOpen: false,
 			biometricsEnabled: false,
 			currency: 'usd',
 			currencyModalOpen: false,
@@ -111,8 +114,12 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 		}
 	}
 
-	toggleWalletInfo = () => {
+	toggleWalletInfoModal = () => {
 		this.setState({ walletInfoModalOpen: !this.state.walletInfoModalOpen });
+	}
+
+	toggleAccountModal = () => {
+		this.setState({ accountModalOpen: !this.state.accountModalOpen });
 	}
 
 	openSupportPage = () => {
@@ -135,6 +142,7 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 
 	render = () => {
 		const {
+			accountModalOpen,
 			biometricsEnabled,
 			currency,
 			currencyModalOpen,
@@ -180,8 +188,13 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 					<NalliMenuPreference
 							icon="wallet"
 							header="Wallet"
-							onPress={this.toggleWalletInfo}
+							onPress={this.toggleWalletInfoModal}
 							subheader="Recovery phrase" />
+					<NalliMenuPreference
+							icon="account"
+							header="Account"
+							onPress={this.toggleAccountModal}
+							subheader="Account settings" />
 				</View>
 				<View style={styles.content}>
 					<NalliText size={ETextSize.H2} style={styles.header}>Support</NalliText>
@@ -210,7 +223,10 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 						close={(status) => this.toggleSelectNotification(status)} />
 				<WalletInfoModal
 						isOpen={walletInfoModalOpen}
-						close={this.toggleWalletInfo} />
+						close={this.toggleWalletInfoModal} />
+				<AccountModal
+						isOpen={accountModalOpen}
+						close={this.toggleAccountModal} />
 			</ScrollView>
 		);
 	}

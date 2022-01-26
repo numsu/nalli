@@ -20,6 +20,10 @@ export default class AuthService {
 		return HttpService.post<void>(`${this.uri}/register/push`, req);
 	}
 
+	static deleteAccount() {
+		return HttpService.get<void>(`${this.uri}/delete`);
+	}
+
 }
 
 export interface LoginRequest {

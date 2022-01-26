@@ -38,7 +38,8 @@
 			"allowBackup": false,
 			"permissions": [
 				"CAMERA",
-				"READ_CONTACTS"
+				"READ_CONTACTS",
+				"USE_BIOMETRIC"
 			]
 		},
 		"androidStatusBar": {

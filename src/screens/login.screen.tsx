@@ -101,7 +101,7 @@ export default class Login extends React.Component<any, LoginState> {
 		const pin = this.state.pin;
 		const valid = await AuthStore.isValidPin(pin);
 		if (!valid) {
-			Alert.alert('Error', 'Invalid pin');
+			Alert.alert('Error', 'Invalid PIN');
 			this.setState({ pin: '' });
 			return;
 		}
@@ -168,9 +168,11 @@ export default class Login extends React.Component<any, LoginState> {
 							<TextInput
 									style={styles.numberPadPin}
 									value={pin}
-									secureTextEntry={true} />
+									secureTextEntry={true}
+									editable={false} />
 						</View>
 						<NalliNumberPad
+								pin={pin}
 								enableBiometrics={true}
 								onBiometricLoginPress={this.signInWithBiometrics}
 								onChangeText={this.onChangeNumberPad}

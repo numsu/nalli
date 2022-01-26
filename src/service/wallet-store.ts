@@ -2,7 +2,7 @@ import * as SecureStore from 'expo-secure-store';
 
 export default class WalletStore {
 
-	static walletKey = 'walletData';
+	static readonly walletKey = 'walletData';
 	static wallet: Wallet;
 
 	static async setWallet(newWallet: Wallet) {

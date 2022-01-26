@@ -46,7 +46,7 @@ export default class WelcomePinScreen extends React.Component<any, WelcomePinScr
 							verifyPin: '',
 							verify: false,
 						});
-						Alert.alert('Error', 'Pin numbers did not match. Please try again.');
+						Alert.alert('Error', 'PIN numbers did not match. Please try again.');
 					}
 				}
 			});
@@ -75,7 +75,8 @@ export default class WelcomePinScreen extends React.Component<any, WelcomePinScr
 						<TextInput
 								style={styles.numberPadPin}
 								value={pin}
-								secureTextEntry={true} />
+								secureTextEntry={true}
+								editable={false} />
 					</View>
 					<NalliNumberPad
 							pin={pin}

@@ -8,10 +8,10 @@ import Convert from '../crypto/convert';
 
 export default class AuthStore {
 
-	static authKey = 'NalliAuthorization';
-	static pinKey = 'NalliPin';
-	static clientKey = 'NalliClient';
-	static expiresKey = 'NalliExpires';
+	static readonly authKey = 'NalliAuthorization';
+	static readonly pinKey = 'NalliPin';
+	static readonly clientKey = 'NalliClient';
+	static readonly expiresKey = 'NalliExpires';
 
 	static client: Client;
 	static authentication: string;

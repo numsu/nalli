@@ -8,7 +8,7 @@ import { replacer, reviver } from '../constants/globals';
 export default class VariableStore {
 
 	static variables = new Map<NalliVariable, any>();
-	static variablesKey = 'NalliVariables';
+	static readonly variablesKey = 'NalliVariables';
 
 	static async setVariable<T>(key: NalliVariable, value: T): Promise<void> {
 		try {
@@ -46,6 +46,11 @@ export default class VariableStore {
 
 	static unwatchVariable(subscription: EmitterSubscription) {
 		subscription.remove();
+	}
+
+	static async clear(): Promise<void> {
+		await AsyncStorage.multiRemove(Array.from(this.variables.keys()));
+		this.variables.clear();
 	}
 
 	private static async populate() {
