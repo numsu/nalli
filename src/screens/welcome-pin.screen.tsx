@@ -5,6 +5,7 @@ import {
 	TextInput,
 	View,
 } from 'react-native';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import DismissKeyboardView from '../components/dismiss-keyboard-hoc.component';
 import NalliNumberPad from '../components/nalli-number-pad.component';
@@ -18,7 +19,7 @@ interface WelcomePinScreenState {
 	verify: boolean;
 }
 
-export default class WelcomePinScreen extends React.Component<any, WelcomePinScreenState> {
+export default class WelcomePinScreen extends React.Component<NavigationInjectedProps, WelcomePinScreenState> {
 
 	constructor(props) {
 		super(props);

@@ -5,13 +5,14 @@ import {
 	View,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import NalliButton from '../../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 import { Wallet, WalletType } from '../../../service/wallet-store';
 
-export default class CreateWalletNew extends React.Component<any, any> {
+export default class CreateWalletNew extends React.Component<NavigationInjectedProps, any> {
 
 	constructor(props) {
 		super(props);

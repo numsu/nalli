@@ -6,6 +6,7 @@ import {
 	TextInput,
 	View,
 } from 'react-native';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import DismissKeyboardView from '../components/dismiss-keyboard-hoc.component';
 import Loading from '../components/loading.component';
@@ -31,7 +32,7 @@ interface LoginState {
 	process: boolean;
 }
 
-export default class Login extends React.Component<any, LoginState> {
+export default class Login extends React.Component<NavigationInjectedProps, LoginState> {
 
 	readonly phoneNumberSigner = new PhoneNumberSigner();
 

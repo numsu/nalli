@@ -1,5 +1,6 @@
 import React from 'react';
 import { Alert, EmitterSubscription, Linking, ScrollView, StyleSheet, View } from 'react-native';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
@@ -12,7 +13,7 @@ import NalliMenuPreference from './nalli-menu-preference.component';
 import NotificationModal from './notification-modal.component';
 import WalletInfoModal from './wallet-info-modal.component';
 
-interface NalliMenuProps {
+interface NalliMenuProps extends NavigationInjectedProps {
 	onDonatePress: () => void;
 }
 
@@ -152,7 +153,7 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 			supportedBiometricsType,
 			walletInfoModalOpen,
 		} = this.state;
-		const { onDonatePress } = this.props;
+		const { onDonatePress, navigation } = this.props;
 
 		return (
 			<ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 30 }}>
@@ -225,6 +226,7 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 						isOpen={walletInfoModalOpen}
 						close={this.toggleWalletInfoModal} />
 				<AccountModal
+						navigation={navigation}
 						isOpen={accountModalOpen}
 						close={this.toggleAccountModal} />
 			</ScrollView>

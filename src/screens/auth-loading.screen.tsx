@@ -9,6 +9,7 @@ import {
 	View,
 } from 'react-native';
 import uuid from 'react-native-uuid';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import Colors from '../constants/colors';
 import PhoneNumberSigner from '../crypto/phone-number-signer';
@@ -17,7 +18,7 @@ import ClientService from '../service/client.service';
 import VariableStore, { NalliVariable } from '../service/variable-store';
 import WalletStore from '../service/wallet-store';
 
-export default class AuthLoadingScreen extends React.Component<any, any> {
+export default class AuthLoadingScreen extends React.Component<NavigationInjectedProps, any> {
 
 	readonly phoneNumberSigner = new PhoneNumberSigner();
 

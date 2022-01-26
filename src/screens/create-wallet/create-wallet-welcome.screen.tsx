@@ -4,6 +4,7 @@ import {
 	View,
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import { SimpleLineIcons } from '@expo/vector-icons';
 
@@ -12,7 +13,7 @@ import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
 import AuthStore from '../../service/auth-store';
 
-export default class CreateWalletWelcome extends React.Component<any, any> {
+export default class CreateWalletWelcome extends React.Component<NavigationInjectedProps, any> {
 
 	constructor(props) {
 		super(props);

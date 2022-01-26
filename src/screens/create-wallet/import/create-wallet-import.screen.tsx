@@ -4,12 +4,13 @@ import {
 	View,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import NalliButton from '../../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 
-export default class CreateWalletImportMnemonic extends React.Component<any, any> {
+export default class CreateWalletImportMnemonic extends React.Component<NavigationInjectedProps, any> {
 
 	constructor(props) {
 		super(props);

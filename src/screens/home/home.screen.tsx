@@ -12,6 +12,7 @@ import { Avatar } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SideMenu from 'react-native-side-menu-updated'
+import { NavigationInjectedProps } from 'react-navigation';
 
 import { Ionicons } from '@expo/vector-icons';
 
@@ -37,8 +38,7 @@ import ReceiveSheet from './receive-sheet.component';
 import SendSheet from './send-sheet.component';
 import TransactionsSheet from './transactions-sheet.component';
 
-interface HomeScreenProps {
-	navigation: any;
+interface HomeScreenProps extends NavigationInjectedProps {
 }
 
 interface HomeScreenState {
@@ -247,6 +247,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	}
 
 	render = () => {
+		const { navigation } = this.props;
 		const {
 			price,
 			transactions,
@@ -259,7 +260,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 					onAppStateChange={this.handleAppChangeState}>
 				<SideMenu
 						ref={menu => this.sidemenuRef = menu}
-						menu={<NalliMenu onDonatePress={this.onDonatePress} />}
+						menu={<NalliMenu navigation={navigation} onDonatePress={this.onDonatePress} />}
 						bounceBackOnOverdraw={false}
 						toleranceX={20}
 						autoClosing={false}>

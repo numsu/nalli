@@ -18,7 +18,7 @@ import Colors from '../constants/colors';
 import AuthService from '../service/auth.service';
 import ContactsService from '../service/contacts.service';
 
-export default class WelcomeScreen extends React.Component<NavigationInjectedProps> {
+export default class WelcomeScreen extends React.Component<NavigationInjectedProps, any> {
 
 	state = {
 		phoneNumber: '',
