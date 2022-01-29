@@ -1,15 +1,25 @@
+import LottieView from 'lottie-react-native';
 import React from 'react';
 import {
-	ActivityIndicator,
 	StyleSheet,
+	View,
 } from 'react-native';
+
+export enum LoadingStyle {
+	NONE,
+	LIGHT,
+	DARK,
+}
 
 interface LoadingProps {
 	show: boolean;
-	lighter?: boolean;
+	style?: LoadingStyle;
+	color?: 'main' | 'white';
 }
 
 export default class Loading extends React.Component<LoadingProps, any> {
+
+	animation;
 
 	constructor(props) {
 		super(props);
@@ -27,11 +37,38 @@ export default class Loading extends React.Component<LoadingProps, any> {
 
 	render = () => {
 		const { show } = this.state;
-		const { lighter } = this.props;
+
 		if (show) {
-			return (
-				<ActivityIndicator color="#fff" size="large" style={[styles.activity, lighter ? styles.lighter : undefined]} />
+			const style = this.props.style ?? LoadingStyle.DARK;
+			const color = this.props.color ?? 'main';
+			const source = color == 'white'
+					? require('../assets/lottie/loading-white.json')
+					: require('../assets/lottie/loading-blue.json');
+			const styleInt = [styles.activity] as any[];
+			if (style == LoadingStyle.LIGHT) {
+				styleInt.push(styles.lighter);
+			}
+
+			const lottie = (
+				<LottieView
+						ref={animation => {
+							this.animation = animation;
+						}}
+						onLayout={() => this.animation.play()}
+						loop={true}
+						resizeMode='cover'
+						source={source} />
 			);
+
+			if (style == LoadingStyle.NONE) {
+				return lottie;
+			} else {
+				return (
+					<View style={styleInt}>
+						{lottie}
+					</View>
+				);
+			}
 		} else {
 			return (<></>);
 		}
@@ -44,11 +81,12 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		top: '30%',
 		left: '40%',
-		backgroundColor: 'rgba(170, 170, 170, 0.7)',
-		padding: '5%',
+		backgroundColor: 'rgba(170, 170, 170, 0.3)',
 		borderRadius: 15,
+		height: 80,
+		width: 80,
 	},
 	lighter: {
-		backgroundColor: 'rgba(240, 240, 240, 0.3)',
-	}
+		backgroundColor: 'rgba(240, 240, 240, 0.2)',
+	},
 });

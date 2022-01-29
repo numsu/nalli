@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { block, tools } from 'nanocurrency-web';
 
 import CurrencyService from './currency.service';
@@ -60,6 +61,7 @@ export default class WalletHandler {
 					let balance = +account.balance;
 					balance += Number(tools.convert(pending.amount, 'RAW', 'NANO'));
 					account.balance = CurrencyService.formatNanoAmount(Number(balance));
+					await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 					await VariableStore.setVariable<NalliAccount[]>(NalliVariable.ACCOUNTS_BALANCES, accounts);
 				}
 			}

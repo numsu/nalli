@@ -1,4 +1,5 @@
 import { BarCodeEvent } from 'expo-barcode-scanner';
+import * as Haptics from 'expo-haptics';
 import { block, tools } from 'nanocurrency-web';
 import React, { RefObject } from 'react';
 import {
@@ -334,6 +335,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			process: false,
 		});
 		this.props.onSendSuccess();
+		await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 	}
 
 	render = () => {

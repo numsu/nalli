@@ -1,9 +1,10 @@
 import React from 'react';
-import { ActivityIndicator, Alert, EmitterSubscription, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, EmitterSubscription, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { FontAwesome5, Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 import Card from '../../components/card.component';
+import Loading, { LoadingStyle } from '../../components/loading.component';
 import NalliButton from '../../components/nalli-button.component';
 import Colors from '../../constants/colors';
 import CurrencyService from '../../service/currency.service';
@@ -136,7 +137,9 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 							}
 						</Text>
 						{processing &&
-							<ActivityIndicator size={40} color={Colors.main} />
+							<View style={styles.loadingContainer}>
+								<Loading style={LoadingStyle.NONE} show={true} />
+							</View>
 						}
 					</View>
 				</Card>
@@ -199,6 +202,12 @@ const styles = StyleSheet.create({
 	nanomark: {
 		marginTop: 17,
 		marginRight: 10,
+	},
+	loadingContainer: {
+		height: 91,
+		width: 75,
+		marginTop: -20,
+		marginBottom: -23,
 	},
 	addNewAccountButton: {
 		alignSelf: 'center',

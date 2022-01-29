@@ -9,7 +9,7 @@ import {
 import { NavigationInjectedProps } from 'react-navigation';
 
 import DismissKeyboardView from '../components/dismiss-keyboard-hoc.component';
-import Loading from '../components/loading.component';
+import Loading, { LoadingStyle } from '../components/loading.component';
 import NalliNumberPad from '../components/nalli-number-pad.component';
 import NalliLogo from '../components/svg/nalli-logo';
 import NalliText, { ETextSize } from '../components/text.component';
@@ -156,7 +156,7 @@ export default class Login extends React.Component<NavigationInjectedProps, Logi
 		return (
 			<DismissKeyboardView style={styles.container}>
 				<StatusBar translucent={true} style="light" />
-				<Loading lighter={true} show={process} />
+				<Loading style={LoadingStyle.LIGHT} color='white' show={process} />
 				{/* <TouchableOpacity onPress={this.clearWalletInfo}> */}
 					<NalliLogo width={150} height={60} color="white" />
 				{/* </TouchableOpacity> */}
