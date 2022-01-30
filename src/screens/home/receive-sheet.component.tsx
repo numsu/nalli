@@ -6,6 +6,8 @@ import {
 } from 'react-native';
 import { Clipboard } from 'react-native'
 
+import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import NalliButton from '../../components/nalli-button.component';
 import QRCode from '../../components/qrcode/qrcode.component';
@@ -70,9 +72,10 @@ export default class ReceiveSheet extends React.Component<ReceiveSheetProps, Rec
 					initialSnap={-1}
 					reference={reference}
 					enablePanDownToClose={true}
+					enableLinearGradient={true}
 					snapPoints={layout.isSmallDevice ? ['88%'] : ['68%']}
 					header="Receive">
-				<View style={styles.transactionSheetContent}>
+				<BottomSheetScrollView keyboardDismissMode={'interactive'} style={styles.transactionSheetContent}>
 					<NalliText style={styles.text}>
 						Scan the QR-code below to send funds to this wallet
 					</NalliText>
@@ -101,7 +104,7 @@ export default class ReceiveSheet extends React.Component<ReceiveSheetProps, Rec
 							text={showCopiedText ? 'Copied' : 'Copy address'}
 							style={styles.copyButton}
 							onPress={() => this.onCopyPress(address)} />
-				</View>
+				</BottomSheetScrollView>
 			</MyBottomSheet>
 		);
 	}

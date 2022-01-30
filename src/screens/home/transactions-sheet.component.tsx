@@ -46,7 +46,7 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 	componentDidMount = () => {
 		this.getContacts();
 		// Update component every minute
-		this.interval = setInterval(() => this.forceUpdate(), 1000 * 60 * 60);
+		this.interval = setInterval(() => this.forceUpdate(), 1000 * 60);
 	}
 
 	componentWillUnmount = () => {

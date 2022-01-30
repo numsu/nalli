@@ -2,7 +2,6 @@ import { wallet } from 'nanocurrency-web';
 import React, { RefObject } from 'react';
 import {
 	EmitterSubscription,
-	Keyboard,
 	KeyboardAvoidingView,
 	StyleSheet,
 	TouchableOpacity,
@@ -230,12 +229,6 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		this.receiveSheetRef.current.snapToIndex(0);
 	}
 
-	onSendSuccess = () => {
-		WalletHandler.getAccountsBalancesAndHandlePending();
-		Keyboard.dismiss();
-		this.sendSheetRef.current.close();
-	}
-
 	onDonatePress = () => {
 		this.sidemenuRef.openMenu(false);
 		this.onSendPress();
@@ -313,8 +306,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 										onFetchMore={this.getMoreTransactions} />
 								<SendSheet
 										ref={c => this.sendRef = c}
-										reference={this.sendSheetRef}
-										onSendSuccess={this.onSendSuccess} />
+										reference={this.sendSheetRef} />
 								<ReceiveSheet reference={this.receiveSheetRef} />
 							</DismissKeyboardView>
 						</KeyboardAvoidingView>

@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		position: 'absolute',
 		top: 10,
-		right: -1,
+		right: 0,
 		zIndex: 200,
 	},
 	switchButton: {
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		position: 'absolute',
 		top: 74,
-		right: -1,
+		right: 0,
 		zIndex: 200,
 	},
 	maxIcon: {
