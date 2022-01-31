@@ -9,7 +9,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	NavigationInjectedProps,
 } from 'react-navigation';
-import { HeaderBackButton } from 'react-navigation-stack';
 
 import NalliText, { ETextSize } from '../components/text.component';
 import Colors from '../constants/colors';
@@ -40,7 +39,7 @@ export default class WelcomeOtpScreen extends React.Component<WelcomeOtpScreenPr
 	}
 
 	componentDidMount = () => {
-		setTimeout(() => this.codeInputRef.current.focus());
+		setTimeout(() => this.codeInputRef.current.focus(), 200);
 	}
 
 	static navigationOptions = () => {

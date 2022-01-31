@@ -10,10 +10,14 @@ export default class BiometricsService {
 			const hasBiometricsConfigured = await LocalAuthentication.isEnrolledAsync();
 			if (hasBiometricsConfigured) {
 				const supportedTypes = await LocalAuthentication.supportedAuthenticationTypesAsync();
-				if (supportedTypes.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)) {
-					return EBiometricsType.FINGERPRINT;
-				} else if (supportedTypes.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION)) {
-					return EBiometricsType.FACIAL;
+				if (supportedTypes.length == 1) {
+					if (supportedTypes[0] == LocalAuthentication.AuthenticationType.FINGERPRINT) {
+						return EBiometricsType.FINGERPRINT;
+					} else if (supportedTypes[0] == LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION) {
+						return EBiometricsType.FACE;
+					}
+				} else if (supportedTypes.length > 1) {
+					return EBiometricsType.MULTIPLE;
 				}
 			}
 		}
@@ -39,7 +43,8 @@ export default class BiometricsService {
 export enum EBiometricsType {
 	NO_BIOMETRICS = 0,
 	FINGERPRINT = 1,
-	FACIAL = 2,
+	FACE = 2,
+	MULTIPLE = 3,
 }
 
 export namespace EBiometricsType {
@@ -48,8 +53,10 @@ export namespace EBiometricsType {
 		switch (type) {
 			case EBiometricsType.FINGERPRINT:
 				return 'fingerprint';
-			case EBiometricsType.FACIAL:
+			case EBiometricsType.FACE:
 				return 'face-recognition';
+			case EBiometricsType.MULTIPLE:
+				return 'fingerprint';
 			default:
 				return '';
 		}
@@ -59,8 +66,10 @@ export namespace EBiometricsType {
 		switch (type) {
 			case EBiometricsType.FINGERPRINT:
 				return 'Fingerprint';
-			case EBiometricsType.FACIAL:
+			case EBiometricsType.FACE:
 				return 'Face ID';
+			case EBiometricsType.MULTIPLE:
+				return 'Biometrics';
 			default:
 				return '';
 		}

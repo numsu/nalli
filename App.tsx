@@ -3,9 +3,8 @@ import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import { setCustomText } from 'react-native-global-props';
-import { enableScreens } from 'react-native-screens';
 import * as encoding from 'text-encoding';
 
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
@@ -33,7 +32,6 @@ export default class App extends React.Component<any, any> {
 
 	constructor(props) {
 		super(props);
-		enableScreens();
 	}
 
 	render = () => {
@@ -76,8 +74,19 @@ export default class App extends React.Component<any, any> {
 		}
 	}
 
-	private handleLoadingError = error => {
-		console.warn(error);
+	private handleLoadingError = (error: Error) => {
+		Alert.alert(
+			'Error during app load',
+			error.message,
+			[
+				{
+					text: 'Ok',
+					onPress: () => undefined,
+					style: 'default',
+				},
+			]
+		);
+		console.error(error);
 	}
 
 	private handleFinishLoading = () => {

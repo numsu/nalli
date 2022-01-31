@@ -1,41 +1,40 @@
 import React from 'react';
 import {
-	EmitterSubscription,
+	Alert,
 	ScrollView,
 	StyleSheet,
 	TextInput,
 	View,
 } from 'react-native';
-import { Text } from 'react-native-elements';
+import { NavigationInjectedProps } from 'react-navigation';
 
-import MnemonicWord from '../../../components/mnemonic-word.component';
 import NalliModal, { EModalSize } from '../../../components/modal.component';
+import NalliButton from '../../../components/nalli-button.component';
 import NalliNumberPad from '../../../components/nalli-number-pad.component';
-import ShowHide from '../../../components/show-hide.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 import layout from '../../../constants/layout';
 import AuthStore from '../../../service/auth-store';
+import AuthService from '../../../service/auth.service';
 import BiometricsService, { EBiometricsType } from '../../../service/biometrics.service';
 import VariableStore, { NalliVariable } from '../../../service/variable-store';
-import WalletStore, { Wallet, WalletType } from '../../../service/wallet-store';
+import WalletStore from '../../../service/wallet-store';
+import ChangePinModal from './change-pin-modal.component';
 
-interface WalletInfoModalProps {
+interface AccountModalProps extends NavigationInjectedProps {
 	isOpen: boolean;
 	close: () => void;
 }
 
-interface WalletInfoModalState {
+interface AccountModalState {
 	isBiometricProcess: boolean;
 	isOpen: boolean;
 	isUnlocked: boolean;
+	changePinModalOpen: boolean;
 	pin: string;
-	walletInfo: Wallet;
 }
 
-export default class WalletInfoModal extends React.Component<WalletInfoModalProps, WalletInfoModalState> {
-
-	subscriptions: EmitterSubscription[] = [];
+export default class AccountModal extends React.Component<AccountModalProps, AccountModalState> {
 
 	constructor(props) {
 		super(props);
@@ -43,8 +42,8 @@ export default class WalletInfoModal extends React.Component<WalletInfoModalProp
 			isBiometricProcess: false,
 			isOpen: false,
 			isUnlocked: false,
+			changePinModalOpen: false,
 			pin: '',
-			walletInfo: undefined,
 		};
 	}
 
@@ -53,20 +52,6 @@ export default class WalletInfoModal extends React.Component<WalletInfoModalProp
 			return { isOpen: nextProps.isOpen };
 		}
 		return null;
-	}
-
-	componentDidMount = () => {
-		this.init();
-		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.ACCOUNTS_BALANCES, () => this.init()));
-	}
-
-	componentWillUnmount = () => {
-		this.subscriptions.forEach(VariableStore.unwatchVariable);
-	}
-
-	init = async () => {
-		const wallet = await WalletStore.getWallet();
-		this.setState({ walletInfo: wallet });
 	}
 
 	signInWithBiometrics = async () => {
@@ -102,51 +87,88 @@ export default class WalletInfoModal extends React.Component<WalletInfoModalProp
 		this.props.close();
 	}
 
+	toggleChangePinModal = () => {
+		this.setState({ changePinModalOpen: !this.state.changePinModalOpen });
+	}
+
+	deleteAccount = () => {
+		Alert.alert(
+			'Confirm',
+			'Have you got a backup of your wallet?',
+			[
+				{ text: 'No', style: 'cancel', onPress: () => undefined  },
+				{
+					text: 'Yes',
+					style: 'default',
+					onPress: () =>
+						Alert.prompt(
+							'Confirm',
+							'Write "Confirm" to confirm deletion',
+							str => {
+								if (str == 'Confirm') {
+									this.doAccountDeletion();
+								}
+							}),
+				},
+			],
+		);
+	}
+
+	doAccountDeletion = async () => {
+		await AuthService.deleteAccount();
+		try {
+			await VariableStore.clear();
+			await AuthStore.clearAuthentication();
+			await AuthStore.clearExpires();
+			await AuthStore.clearClient();
+			await AuthStore.clearPin();
+			await WalletStore.clearWallet();
+		} catch (e) {
+			console.error(e);
+			Alert.alert('Error', 'Something went wrong deleting your information from your phone, but your information is deleted from our servers.');
+		}
+		this.props.navigation.navigate('Welcome');
+	}
+
 	render = () => {
 		const {
 			isBiometricProcess,
 			isOpen,
 			isUnlocked,
+			changePinModalOpen,
 			pin,
-			walletInfo,
 		} = this.state;
 
-		let words, privateKeys;
-		if (isUnlocked) {
-			let i = 0;
-			words = walletInfo.mnemonic.split(' ').map(word => (
-				<MnemonicWord key={i} index={++i}>{word}</MnemonicWord>
-			));
-			privateKeys = walletInfo.accounts.map(account => (
-				<View style={{ alignItems: "center" }} key={account.accountIndex}>
-					<NalliText size={ETextSize.H2} style={styles.header}>{`Account #${account.accountIndex} private key`}</NalliText>
-					<ShowHide allowCopy={true} copyValue={account.privateKey} confirmCopy={true}>
-						<Text>{account.privateKey}</Text>
-					</ShowHide>
-				</View>
-			));
-		}
 		return (
 			<NalliModal
 					size={EModalSize.LARGE}
 					isOpen={isOpen}
 					onClose={this.closeAndLock}
-					header='Wallet'>
+					header='Account'>
 				{isUnlocked &&
 					<ScrollView contentContainerStyle={styles.container}>
-						<NalliText>This information is everything needed to access your wallet and spend your funds. Keep a copy of this information in a safe place in case your phone breaks or you lose it and never share it with anyone.</NalliText>
-						<NalliText size={ETextSize.H2} style={styles.header}>Recovery phrase</NalliText>
-						<NalliText style={styles.addition}>Wallet type: {walletInfo.type == WalletType.HD_WALLET ? 'HD Wallet' : 'Legacy wallet'}</NalliText>
-						<ShowHide allowCopy={true} copyValue={walletInfo.mnemonic} confirmCopy={true}>
-							<View style={styles.wordsContainer}>
-								{words}
-							</View>
-						</ShowHide>
-						<NalliText size={ETextSize.H2} style={styles.header}>Wallet seed</NalliText>
-						<ShowHide allowCopy={true} copyValue={walletInfo.seed} confirmCopy={true}>
-							<Text>{walletInfo.seed}</Text>
-						</ShowHide>
-						{privateKeys}
+						<NalliText>Manage your account settings</NalliText>
+						<NalliText size={ETextSize.H2} style={styles.header}>Change PIN</NalliText>
+						<NalliText>Change the PIN used in login</NalliText>
+						<NalliButton
+								style={styles.changePinButton}
+								small={true}
+								solid={true}
+								onPress={this.toggleChangePinModal}
+								text='Change PIN'
+								icon={'key-outline'} />
+						<NalliText size={ETextSize.H2} style={styles.header}>Delete my account</NalliText>
+						<NalliText>This deletes all of your data from our servers and removes the wallet from your phone. The data deleted is not recoverable. Use with caution.</NalliText>
+						<NalliButton
+								small={true}
+								solid={true}
+								style={styles.deleteButton}
+								onPress={this.deleteAccount}
+								text='Delete my account'
+								icon={'key-outline'} />
+						<ChangePinModal
+								isOpen={changePinModalOpen}
+								close={this.toggleChangePinModal} />
 					</ScrollView>
 				}
 				{!isUnlocked && !isBiometricProcess &&
@@ -178,7 +200,6 @@ const styles = StyleSheet.create({
 	},
 	container: {
 		marginHorizontal: 5,
-		alignItems: 'center',
 		paddingBottom: 30,
 	},
 	pinContainer: {
@@ -191,21 +212,19 @@ const styles = StyleSheet.create({
 		marginBottom: 15,
 		marginTop: 20,
 	},
-	addition: {
-		fontSize: 14,
-		marginTop: -10,
-		marginBottom: 10,
-	},
-	wordsContainer: {
-		flexDirection: 'row',
-		flexWrap: 'wrap',
-		justifyContent: 'space-evenly',
-		marginHorizontal: -4,
-	},
 	numberPadPin: {
 		color: Colors.main,
 		fontSize: 40,
 		width: '100%',
 		textAlign: 'center',
 	},
+	changePinButton: {
+		width: '40%',
+		marginTop: 20,
+	},
+	deleteButton: {
+		width: '60%',
+		marginTop: 20,
+		backgroundColor: Colors.danger,
+	}
 });

@@ -20,8 +20,8 @@ export default class AuthService {
 		return HttpService.post<void>(`${this.uri}/register/push`, req);
 	}
 
-	static checkDuplicate(req: LoginRequest) {
-		return HttpService.post<boolean>(`${this.uri}/check/duplicate`, req);
+	static deleteAccount() {
+		return HttpService.get<void>(`${this.uri}/delete`);
 	}
 
 }

@@ -1,5 +1,4 @@
 import * as Contacts from 'expo-contacts';
-import { PermissionStatus } from 'expo-modules-core';
 import { Alert, Linking } from 'react-native';
 
 import ClientService from './client.service';
@@ -34,7 +33,7 @@ export default class ContactsService {
 
 	static async askPermission(): Promise<boolean> {
 		const { status } = await Contacts.getPermissionsAsync();
-		return status == PermissionStatus.GRANTED;
+		return status == Contacts.PermissionStatus.GRANTED;
 	}
 
 	static async getContacts(alertNoPermission = true): Promise<ContactItem[]> {

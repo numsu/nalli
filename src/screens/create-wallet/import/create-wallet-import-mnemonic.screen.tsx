@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import Loading from '../../../components/loading.component';
 import MnemonicWord from '../../../components/mnemonic-word.component';
@@ -18,7 +19,7 @@ import VariableStore, { NalliVariable } from '../../../service/variable-store';
 import WalletStore, { Wallet, WalletType } from '../../../service/wallet-store';
 import WalletService from '../../../service/wallet.service';
 
-export default class CreateWalletImport extends React.Component<any, any> {
+export default class CreateWalletImport extends React.Component<NavigationInjectedProps, any> {
 
 	readonly phoneNumberSigner = new PhoneNumberSigner();
 

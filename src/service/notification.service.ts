@@ -39,7 +39,7 @@ export default class NotificationService {
 	}
 
 	static async listenForPushNotifications(listener: (event: Notification) => void): Promise<any> {
-		let { status } = await getPermissionsAsync();
+		const { status } = await getPermissionsAsync();
 		if (status == PermissionStatus.GRANTED) {
 			return addNotificationReceivedListener(listener);
 		}

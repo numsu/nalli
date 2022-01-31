@@ -6,9 +6,10 @@ import {
 	TextInput,
 	View,
 } from 'react-native';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import DismissKeyboardView from '../components/dismiss-keyboard-hoc.component';
-import Loading from '../components/loading.component';
+import Loading, { LoadingStyle } from '../components/loading.component';
 import NalliNumberPad from '../components/nalli-number-pad.component';
 import NalliLogo from '../components/svg/nalli-logo';
 import NalliText, { ETextSize } from '../components/text.component';
@@ -31,7 +32,7 @@ interface LoginState {
 	process: boolean;
 }
 
-export default class Login extends React.Component<any, LoginState> {
+export default class Login extends React.Component<NavigationInjectedProps, LoginState> {
 
 	readonly phoneNumberSigner = new PhoneNumberSigner();
 
@@ -101,7 +102,7 @@ export default class Login extends React.Component<any, LoginState> {
 		const pin = this.state.pin;
 		const valid = await AuthStore.isValidPin(pin);
 		if (!valid) {
-			Alert.alert('Error', 'Invalid pin');
+			Alert.alert('Error', 'Invalid PIN');
 			this.setState({ pin: '' });
 			return;
 		}
@@ -155,7 +156,7 @@ export default class Login extends React.Component<any, LoginState> {
 		return (
 			<DismissKeyboardView style={styles.container}>
 				<StatusBar translucent={true} style="light" />
-				<Loading lighter={true} show={process} />
+				<Loading style={LoadingStyle.LIGHT} color='white' show={process} />
 				{/* <TouchableOpacity onPress={this.clearWalletInfo}> */}
 					<NalliLogo width={150} height={60} color="white" />
 				{/* </TouchableOpacity> */}
@@ -168,9 +169,12 @@ export default class Login extends React.Component<any, LoginState> {
 							<TextInput
 									style={styles.numberPadPin}
 									value={pin}
-									secureTextEntry={true} />
+									secureTextEntry={true}
+									editable={false} />
 						</View>
 						<NalliNumberPad
+								pin={pin}
+								enableBiometrics={true}
 								onBiometricLoginPress={this.signInWithBiometrics}
 								onChangeText={this.onChangeNumberPad}
 								maxLength={6} />

@@ -9,12 +9,13 @@ import NalliText, { ETextSize } from './text.component';
 
 interface BottomSheetProps {
 	children: ReactNode;
+	enableLinearGradient?: boolean;
 	enablePanDownToClose?: boolean;
 	header: string;
 	initialSnap: number;
+	onClose?: () => void;
 	reference?: RefObject<any>;
 	snapPoints: (string | number)[];
-	enableLinearGradient?: boolean;
 }
 
 interface BottomSheetState {
@@ -33,6 +34,7 @@ export default class MyBottomSheet extends React.Component<BottomSheetProps, Bot
 			enablePanDownToClose,
 			header,
 			initialSnap,
+			onClose,
 			reference,
 			snapPoints,
 		} = this.props;
@@ -43,6 +45,7 @@ export default class MyBottomSheet extends React.Component<BottomSheetProps, Bot
 					enablePanDownToClose={enablePanDownToClose}
 					animateOnMount={false}
 					ref={reference}
+					onClose={onClose}
 					handleIndicatorStyle={styles.panelHandle}
 					style={styles.shadow}>
 				<NalliText

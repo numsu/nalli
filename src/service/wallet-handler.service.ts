@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { block, tools } from 'nanocurrency-web';
 
 import CurrencyService from './currency.service';
@@ -16,7 +17,6 @@ export default class WalletHandler {
 	static lock: boolean = false;
 
 	static async getAccountsBalancesAndHandlePending(): Promise<NalliAccount[]> {
-		await VariableStore.setVariable(NalliVariable.PROCESSING_PENDING, true);
 		const storedWallet = await WalletStore.getWallet();
 		const addresses = storedWallet.accounts.map(acc => acc.address);
 		const res = await WalletService.getWalletsBalances(addresses);
@@ -40,6 +40,7 @@ export default class WalletHandler {
 
 		for (const account of accounts) {
 			if (account.pendingBlocks) {
+				await VariableStore.setVariable(NalliVariable.PROCESSING_PENDING, true);
 				this.lock = true;
 				for (const pending of account.pendingBlocks) {
 					const walletInfo = await WalletService.getWalletInfoAddress(account.address);
@@ -60,6 +61,7 @@ export default class WalletHandler {
 					let balance = +account.balance;
 					balance += Number(tools.convert(pending.amount, 'RAW', 'NANO'));
 					account.balance = CurrencyService.formatNanoAmount(Number(balance));
+					await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 					await VariableStore.setVariable<NalliAccount[]>(NalliVariable.ACCOUNTS_BALANCES, accounts);
 				}
 			}

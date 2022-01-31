@@ -5,6 +5,7 @@ import {
 	TextInput,
 	View,
 } from 'react-native';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import DismissKeyboardView from '../components/dismiss-keyboard-hoc.component';
 import NalliNumberPad from '../components/nalli-number-pad.component';
@@ -12,13 +13,13 @@ import NalliText, { ETextSize } from '../components/text.component';
 import Colors from '../constants/colors';
 import AuthStore from '../service/auth-store';
 
-interface WelcomPinScreenState {
+interface WelcomePinScreenState {
 	pin: string;
 	verifyPin: string;
 	verify: boolean;
 }
 
-export default class WelcomePinScreen extends React.Component<any, WelcomPinScreenState> {
+export default class WelcomePinScreen extends React.Component<NavigationInjectedProps, WelcomePinScreenState> {
 
 	constructor(props) {
 		super(props);
@@ -46,7 +47,7 @@ export default class WelcomePinScreen extends React.Component<any, WelcomPinScre
 							verifyPin: '',
 							verify: false,
 						});
-						Alert.alert('Error', 'Pin numbers did not match. Please try again.');
+						Alert.alert('Error', 'PIN numbers did not match. Please try again.');
 					}
 				}
 			});
@@ -75,7 +76,8 @@ export default class WelcomePinScreen extends React.Component<any, WelcomPinScre
 						<TextInput
 								style={styles.numberPadPin}
 								value={pin}
-								secureTextEntry={true} />
+								secureTextEntry={true}
+								editable={false} />
 					</View>
 					<NalliNumberPad
 							pin={pin}
