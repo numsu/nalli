@@ -24,6 +24,7 @@ import CurrencyInput from '../../components/currency-input.component';
 import Link from '../../components/link.component';
 import NalliButton from '../../components/nalli-button.component';
 import NalliInput from '../../components/nalli-input.component';
+import NalliNanoAddress from '../../components/nano-address.component';
 import QRCodeScanner from '../../components/qrcode-scanner.component';
 import ShowHide from '../../components/show-hide.component';
 import NalliText, { ETextSize } from '../../components/text.component';
@@ -100,7 +101,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			recipientLastLogin: undefined,
 			sendAmount: undefined,
 			success: false,
-			tab: 1,
+			tab: SendSheetTab.CONTACT,
 			walletAddress: '',
 		};
 	}
@@ -121,14 +122,14 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 		} else {
 			const tab = await VariableStore.getVariable(NalliVariable.SEND_TAB, SendSheetTab.CONTACT);
 			this.setState({ tab });
-			this.clearProcessAndRecipient();
+			this.clearRecipient();
 		}
 	}
 
 	onSwitchModePress = async (tab: number) => {
 		if (this.state.tab != tab) {
 			await VariableStore.setVariable(NalliVariable.SEND_TAB, tab);
-			this.clearProcessAndRecipient();
+			this.clearRecipient();
 			this.setState({ tab });
 		}
 	}
@@ -202,7 +203,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 				recipientLastLogin,
 			});
 		} else {
-			this.clearProcessAndRecipient();
+			this.clearRecipient();
 		}
 	}
 
@@ -239,11 +240,23 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 				isNalliUser,
 			});
 		} else {
-			this.clearProcessAndRecipient();
+			this.clearRecipient();
 		}
 	}
 
-	clearProcessAndRecipient = () => {
+	clearRecipient = () => {
+		this.setState({
+			contactsModalOpen: false,
+			inputPhoneNumberModalOpen: false,
+			isNalliUser: false,
+			recipient: undefined,
+			recipientAddress: undefined,
+			recipientLastLogin: undefined,
+			walletAddress: undefined,
+		});
+	}
+
+	clearState = () => {
 		this.setState({
 			contactsModalOpen: false,
 			inputPhoneNumberModalOpen: false,
@@ -254,6 +267,8 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			walletAddress: undefined,
 			process: false,
 			success: false,
+			sendAmount: undefined,
+			convertedAmount: '0',
 		});
 	}
 
@@ -267,15 +282,11 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			return;
 		}
 
+		const message = `You are sending Ӿ ${sendAmount} to ${this.getRecipientText()}`;
+
 		Alert.alert(
 			'Confirm',
-			this.state.tab == SendSheetTab.CONTACT // To a contact
-					? `You are sending ${sendAmount} Nano to ${this.state.recipient.name}`
-					: this.state.tab == SendSheetTab.PHONE // To phone number
-						? `You are sending ${sendAmount} Nano to ${this.state.recipient.formattedNumber}`
-						: this.state.tab == SendSheetTab.DONATION // Nalli donation
-							? `You are donating ${sendAmount} Nano to Nalli`
-							: `You are sending ${sendAmount} Nano to ${this.state.walletAddress}`,
+			message,
 			[
 				{
 					text: 'Confirm',
@@ -346,16 +357,19 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			return;
 		}
 
-		this.setState({
-			sendAmount: undefined,
-			convertedAmount: '0',
-			recipient: undefined,
-			recipientAddress: undefined,
-			walletAddress: undefined,
-			success: true,
-		});
+		this.setState({ success: true });
 		WalletHandler.getAccountsBalancesAndHandlePending();
 		await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+	}
+
+	getRecipientText = (): string => {
+		return this.state.tab == SendSheetTab.CONTACT
+				? this.state.recipient.name
+				: this.state.tab == SendSheetTab.PHONE
+					? this.state.recipient.formattedNumber
+					: this.state.tab == SendSheetTab.DONATION
+						? 'Nalli donations'
+						: this.state.walletAddress;
 	}
 
 	render = () => {
@@ -378,13 +392,22 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 
 		const recipientLastLoginOverMonthAgo = moment(recipientLastLogin).isBefore(moment().subtract(1, 'month'));
 
+		let recipientText;
+		if (success) {
+			if (tab == SendSheetTab.ADDRESS) {
+				recipientText = <NalliNanoAddress style={{ textAlign: 'center' }}>{walletAddress}</NalliNanoAddress>;
+			} else {
+				recipientText = this.getRecipientText();
+			}
+		}
+
 		return (
 			<MyBottomSheet
 					initialSnap={-1}
 					reference={reference}
-					enablePanDownToClose={true}
+					enablePanDownToClose={!process || success}
 					enableLinearGradient={true}
-					onClose={this.clearProcessAndRecipient}
+					onClose={this.clearState}
 					snapPoints={layout.isSmallDevice ? ['88%'] : ['68%']}
 					header={!process ? 'Send' : ''}>
 				{process &&
@@ -412,11 +435,17 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 							}
 						</View>
 						{success &&
+							<View style={styles.successTextContainer}>
+								<NalliText style={styles.successText}>You sent <NalliText style={[styles.successText, styles.successTextColor]}>Ӿ {sendAmount}</NalliText></NalliText>
+								<NalliText style={styles.successText}>to <NalliText style={[styles.successText, styles.successTextColor]}>{recipientText}</NalliText></NalliText>
+							</View>
+						}
+						{success &&
 							<View style={styles.sendTransactionButton}>
 								<NalliButton
 										text={'Close'}
 										solid={true}
-										onPress={() => (this.clearProcessAndRecipient(), this.sendSheetRef.current.close())} />
+										onPress={() => (this.clearState(), this.sendSheetRef.current.close())} />
 							</View>
 						}
 					</View>
@@ -658,10 +687,22 @@ const styles = StyleSheet.create({
 		height: '100%',
 	},
 	animationContainer: {
-		marginTop: 20,
 		alignSelf: 'center',
 		width: '80%',
 		height: '50%',
+		flexDirection: 'row',
+	},
+	successTextContainer: {
+		alignSelf: 'center',
+		paddingHorizontal: layout.window.width * 0.18,
+	},
+	successText: {
+		textAlign: 'center',
+		fontSize: 20
+	},
+	successTextColor: {
+		color: Colors.main,
+		fontFamily: 'OpenSansBold',
 	},
 	transactionSheetContent: {
 		paddingHorizontal: 15,

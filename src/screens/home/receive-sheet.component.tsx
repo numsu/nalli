@@ -10,6 +10,7 @@ import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import NalliButton from '../../components/nalli-button.component';
+import NalliNanoAddress from '../../components/nano-address.component';
 import QRCode from '../../components/qrcode/qrcode.component';
 import NalliText from '../../components/text.component';
 import Colors from '../../constants/colors';
@@ -63,10 +64,6 @@ export default class ReceiveSheet extends React.Component<ReceiveSheetProps, Rec
 		const { reference } = this.props;
 		const { address, showCopiedText } = this.state;
 
-		const addressPart1 = address.substring(0, 12);
-		const addressPart2 = address.substring(13, 57);
-		const addressPart3 = address.substring(58, 65);
-
 		return (
 			<MyBottomSheet
 					initialSnap={-1}
@@ -87,17 +84,11 @@ export default class ReceiveSheet extends React.Component<ReceiveSheetProps, Rec
 								quietZone={4}
 								size={200} />
 					</View>
-					<NalliText style={styles.addressContainer}>
-						<NalliText style={[styles.address, styles.coloredAddress ]}>
-							{ addressPart1 }
-						</NalliText>
-						<NalliText style={styles.address}>
-							{ addressPart2 }
-						</NalliText>
-						<NalliText style={[ styles.address, styles.coloredAddress ]}>
-							{ addressPart3 }
-						</NalliText>
-					</NalliText>
+					<NalliNanoAddress
+							contentContainerStyle={styles.addressContainer}
+							style={styles.text}>
+						{address}
+					</NalliNanoAddress>
 					<NalliButton
 							small={true}
 							icon='ios-copy'
@@ -138,13 +129,5 @@ const styles = StyleSheet.create({
 		borderColor: Colors.borderColor,
 		padding: 10,
 		marginHorizontal: layout.window.width * 0.15,
-		textAlign: 'center',
-	},
-	address: {
-		fontSize: 20,
-	},
-	coloredAddress: {
-		color: Colors.main,
-		fontFamily: 'OpenSansBold',
 	},
 });
