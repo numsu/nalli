@@ -53,6 +53,8 @@ export default class CurrencyModal extends React.Component<CurrencyModalProps, C
 					noScroll={true}
 					isOpen={isOpen}
 					onClose={close}
+					linearGradientTopStyle={{ height: 20, top: 70 }}
+					linearGradientTopStart={0}
 					header='Select currency'>
 				<FlatList
 						data={currencies}
