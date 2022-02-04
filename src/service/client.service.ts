@@ -29,6 +29,10 @@ export default class ClientService {
 		return HttpService.get<void>(`${this.uri}/refresh`);
 	}
 
+	static deleteAccount() {
+		return HttpService.get<void>(`${this.uri}/delete`);
+	}
+
 }
 
 export interface Client {

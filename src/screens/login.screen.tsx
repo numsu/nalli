@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import DismissKeyboardView from '../components/dismiss-keyboard-hoc.component';
 import Loading, { LoadingStyle } from '../components/loading.component';
 import NalliNumberPad from '../components/nalli-number-pad.component';
@@ -148,6 +150,10 @@ export default class Login extends React.Component<NavigationInjectedProps, Logi
 		await WalletStore.clearWallet();
 		await AuthStore.clearAuthentication();
 		await AuthStore.clearClient();
+		await AuthStore.clearExpires();
+		await AuthStore.clearPin();
+		await VariableStore.clear();
+		AsyncStorage.clear();
 		this.props.navigation.navigate('Welcome');
 	}
 

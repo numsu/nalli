@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import NalliModal, { EModalSize } from '../../../components/modal.component';
 import NalliButton from '../../../components/nalli-button.component';
 import NalliNumberPad from '../../../components/nalli-number-pad.component';
@@ -15,8 +17,8 @@ import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 import layout from '../../../constants/layout';
 import AuthStore from '../../../service/auth-store';
-import AuthService from '../../../service/auth.service';
 import BiometricsService, { EBiometricsType } from '../../../service/biometrics.service';
+import ClientService from '../../../service/client.service';
 import VariableStore, { NalliVariable } from '../../../service/variable-store';
 import WalletStore from '../../../service/wallet-store';
 import ChangePinModal from './change-pin-modal.component';
@@ -105,7 +107,7 @@ export default class AccountModal extends React.Component<AccountModalProps, Acc
 							'Confirm',
 							'Write "Confirm" to confirm deletion',
 							str => {
-								if (str == 'Confirm') {
+								if (str.toLowerCase() == 'confirm') {
 									this.doAccountDeletion();
 								}
 							}),
@@ -115,7 +117,7 @@ export default class AccountModal extends React.Component<AccountModalProps, Acc
 	}
 
 	doAccountDeletion = async () => {
-		await AuthService.deleteAccount();
+		await ClientService.deleteAccount();
 		try {
 			await VariableStore.clear();
 			await AuthStore.clearAuthentication();
@@ -123,6 +125,7 @@ export default class AccountModal extends React.Component<AccountModalProps, Acc
 			await AuthStore.clearClient();
 			await AuthStore.clearPin();
 			await WalletStore.clearWallet();
+			AsyncStorage.clear();
 		} catch (e) {
 			console.error(e);
 			Alert.alert('Error', 'Something went wrong deleting your information from your phone, but your information is deleted from our servers.');

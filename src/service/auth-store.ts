@@ -4,6 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { replacer, reviver } from '../constants/globals';
 import Convert from '../crypto/convert';
 
 export default class AuthStore {
@@ -21,7 +22,7 @@ export default class AuthStore {
 	static async getClient(): Promise<Client> {
 		try {
 			if (!this.client) {
-				this.client = JSON.parse(await AsyncStorage.getItem(this.clientKey));
+				this.client = JSON.parse(await AsyncStorage.getItem(this.clientKey, reviver));
 			}
 			return this.client;
 		} catch (err) {
@@ -33,7 +34,7 @@ export default class AuthStore {
 	static async setClient(client: Client): Promise<void> {
 		try {
 			this.client = client;
-			return await AsyncStorage.setItem(this.clientKey, JSON.stringify(this.client));
+			return await AsyncStorage.setItem(this.clientKey, JSON.stringify(this.client, replacer));
 		} catch (err) {
 			console.error(err);
 			throw new Error('Error setting client to storage');

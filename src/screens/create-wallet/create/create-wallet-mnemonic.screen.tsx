@@ -7,6 +7,7 @@ import {
 import { ScrollView } from 'react-native-gesture-handler';
 import { NavigationInjectedProps } from 'react-navigation';
 
+import NalliCopy from '../../../components/copy.component';
 import Loading from '../../../components/loading.component';
 import MnemonicWord from '../../../components/mnemonic-word.component';
 import NalliButton from '../../../components/nalli-button.component';
@@ -114,9 +115,15 @@ export default class CreateWalletMnemonic extends React.Component<NavigationInje
 				<View style={styles.container}>
 					<Loading show={process} />
 					<ScrollView contentContainerStyle={styles.content}>
-						<NalliText size={ETextSize.H1} style={styles.h1}>
-							Recovery phrase
-						</NalliText>
+						<View style={styles.headerContainer}>
+							<NalliText size={ETextSize.H1} style={styles.h1}>
+								Recovery phrase
+							</NalliText>
+							<NalliCopy
+									value={generated.mnemonic}
+									confirm
+									style={styles.copyButton} />
+						</View>
 						<View style={styles.wordsContainer}>
 							{words}
 						</View>
@@ -149,9 +156,16 @@ const styles = StyleSheet.create({
 		paddingTop: 20,
 		alignItems: 'center',
 	},
-	h1: {
+	headerContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
 		marginBottom: 20,
+	},
+	h1: {
 		color: Colors.main,
+	},
+	copyButton: {
+		marginLeft: 10,
 	},
 	text: {
 		width: '80%',

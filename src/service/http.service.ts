@@ -1,3 +1,4 @@
+import { replacer, reviver } from '../constants/globals';
 import AuthStore from './auth-store';
 import NavigationService from './navigation.service';
 import VariableStore, { NalliVariable } from './variable-store';
@@ -21,13 +22,14 @@ export default class HttpService {
 							method: 'GET',
 							headers: await this.getHeaders(),
 						}).then(async res => {
-							resolve(await this.handleResponse(res))
+							const handled = await this.handleResponse(res);
 							this.promises.delete(uri);
+							resolve(handled);
 						})
 						.catch(err => {
 							console.log(`Error in GET ${final}`, err);
-							reject(err);
 							this.promises.delete(uri);
+							reject(err);
 						});
 			});
 
@@ -44,7 +46,7 @@ export default class HttpService {
 			{
 				method: 'POST',
 				headers: await this.getHeaders(),
-				body: JSON.stringify(body),
+				body: JSON.stringify(body, replacer),
 			}
 		)
 		.then(async res => await this.handleResponse(res))
@@ -95,7 +97,7 @@ export default class HttpService {
 			if (len != '0') {
 				const responseBody = await res.text();
 				try {
-					return JSON.parse(responseBody);
+					return JSON.parse(responseBody, reviver);
 				} catch {
 					return responseBody;
 				}

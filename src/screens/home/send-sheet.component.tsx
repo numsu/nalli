@@ -1,4 +1,5 @@
 import { BarCodeEvent } from 'expo-barcode-scanner';
+import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
 import LottieView from 'lottie-react-native';
 import moment from 'moment';
@@ -12,7 +13,6 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native';
-import { Clipboard } from 'react-native'
 import { Avatar } from 'react-native-elements';
 
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
@@ -595,7 +595,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 										}
 										{!walletAddress &&
 											<TouchableOpacity
-													onPress={() => this.onChangeAddress(Clipboard.getString())}>
+													onPress={() => this.onChangeAddress(Clipboard.getStringAsync())}>
 												<Ionicons
 														name="ios-copy"
 														size={30} />

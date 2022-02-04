@@ -1,10 +1,10 @@
+import * as Clipboard from 'expo-clipboard';
 import React, { RefObject } from 'react';
 import {
 	EmitterSubscription,
 	StyleSheet,
 	View,
 } from 'react-native';
-import { Clipboard } from 'react-native'
 
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 

@@ -40,22 +40,34 @@ export default class CreateWalletImport extends React.Component<NavigationInject
 		};
 	}
 
-	onChangeText = (wordIndex, val) => {
-		if (val.endsWith(' ')) {
-			if (wordIndex < 24) {
-				this.state.refs[wordIndex + 1].current.focus();
-			}
-		} else {
+	onChangeText = (wordIndex: number, input: string) => {
+		const inputWords = input.split(' ');
+		// If the user pasted rest of the words
+		if (inputWords.length == 24 - wordIndex) {
 			const words = this.state.words;
-			words[wordIndex] = val;
+			let currentIndex = wordIndex;
+			for (const word of inputWords) {
+				words[currentIndex] = word;
+				currentIndex++;
+			}
 			this.setState({ words });
+		} else if (inputWords.length == 1 || (inputWords.length == 2 && !inputWords[1])) {
+			if (input.endsWith(' ')) {
+				if (wordIndex < 24) {
+					this.state.refs[wordIndex + 1].current.focus();
+				}
+			} else {
+				const words = this.state.words;
+				words[wordIndex] = input;
+				this.setState({ words });
+			}
 		}
 	}
 
 	onFinishPress = async () => {
 		if (this.state.words.every(word => !!word)) {
 			if (!tools.validateMnemonic(this.state.words.join(' '))) {
-				Alert.alert('Error', '1: Invalid recovery phrase');
+				Alert.alert('Error', 'Invalid recovery phrase (1)');
 				return;
 			}
 
@@ -74,7 +86,7 @@ export default class CreateWalletImport extends React.Component<NavigationInject
 			importedLegacy = wallet.fromLegacyMnemonic(words);
 		} catch (e) {
 			console.error(e);
-			Alert.alert('Error', '2: Invalid recovery phrase');
+			Alert.alert('Error', 'Invalid recovery phrase (2)');
 			return;
 		}
 
@@ -128,9 +140,9 @@ export default class CreateWalletImport extends React.Component<NavigationInject
 			this.props.navigation.navigate('Login');
 		} catch (e) {
 			console.error(e);
-			this.setState({ process: false });
 			Alert.alert('Error', 'Something went wrong when saving the wallet');
 		}
+		this.setState({ process: false });
 	}
 
 	render = () => {

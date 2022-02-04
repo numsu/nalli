@@ -76,9 +76,9 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 		const showFiatDefault = await VariableStore.getVariable(NalliVariable.SHOW_FIAT_DEFAULT, false);
 		const currency = await VariableStore.getVariable(NalliVariable.CURRENCY, 'usd');
 		if (showFiatDefault) {
-			this.setState({ currency: 'xno', convertedCurrency: currency });
-		} else {
 			this.setState({ currency: currency, convertedCurrency: 'xno' });
+		} else {
+			this.setState({ currency: 'xno', convertedCurrency: currency });
 		}
 		await CurrencyService.convert('0', this.state.currency, this.state.convertedCurrency);
 	}

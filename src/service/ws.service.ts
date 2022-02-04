@@ -1,5 +1,6 @@
 import { Client, StompSubscription } from '@stomp/stompjs';
 
+import { reviver } from '../constants/globals';
 import AuthStore from './auth-store';
 
 export default class WsService {
@@ -20,7 +21,7 @@ export default class WsService {
 			onConnect: () => {
 				this.stompSubscription = this.client.subscribe(
 					'/user/topic/notifications',
-					message => callback(JSON.parse(message.body)),
+					message => callback(JSON.parse(message.body, reviver)),
 					headers);
 				this.client.publish({
 					destination: '/app/notifications',

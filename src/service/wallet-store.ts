@@ -1,5 +1,7 @@
 import * as SecureStore from 'expo-secure-store';
 
+import { replacer, reviver } from '../constants/globals';
+
 export default class WalletStore {
 
 	static readonly walletKey = 'walletData';
@@ -8,13 +10,13 @@ export default class WalletStore {
 	static async setWallet(newWallet: Wallet) {
 		this.wallet = newWallet;
 		Object.freeze(this.wallet);
-		return await SecureStore.setItemAsync(this.walletKey, JSON.stringify(newWallet));
+		return await SecureStore.setItemAsync(this.walletKey, JSON.stringify(newWallet, replacer));
 	}
 
 	static async getWallet() {
 		if (!this.wallet) {
 			const storedWallet = await SecureStore.getItemAsync(this.walletKey);
-			this.wallet = JSON.parse(storedWallet);
+			this.wallet = JSON.parse(storedWallet, reviver);
 			// Handle imported wallets from earlier versions
 			if (this.wallet && this.wallet.type === undefined) {
 				if (!!this.wallet.mnemonic) {
