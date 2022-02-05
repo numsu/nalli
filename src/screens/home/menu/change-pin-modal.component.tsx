@@ -83,7 +83,7 @@ export default class ChangePinModal extends React.Component<ChangePinModalProps,
 					<TextInput
 							style={styles.numberPadPin}
 							value={isConfirm ? confirm : pin}
-							secureTextEntry={true}
+							secureTextEntry
 							editable={false} />
 					<NalliNumberPad
 							style={styles.numberPad}

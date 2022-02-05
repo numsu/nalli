@@ -18,20 +18,21 @@ import WalletService from '../service/wallet.service';
 import NalliText from './text.component';
 
 interface CurrencyInputProps {
-	reference: RefObject<any>;
-	onChangeText: (value: string, convertedValue: string, convertedCurrency: string) => void;
+	convertedValue: string;
+	hideMaxButton?: boolean;
 	onBlur?: () => void;
+	onChangeText: (value: string, convertedValue: string, convertedCurrency: string) => void;
+	reference?: RefObject<any>;
 	style?: any;
 	value: string;
-	convertedValue: string;
 }
 
 interface CurrencyInputState {
-	currency: string;
-	convertedCurrency: string;
-	value: string;
-	convertedValue: string;
 	borderColor: string;
+	convertedCurrency: string;
+	convertedValue: string;
+	currency: string;
+	value: string;
 }
 
 export default class CurrencyInput extends React.Component<CurrencyInputProps, CurrencyInputState> {
@@ -42,10 +43,10 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 		super(props);
 		this.state = {
 			borderColor: Colors.borderColor,
-			currency: 'xno',
 			convertedCurrency: 'usd',
-			value: props.value,
 			convertedValue: '0',
+			currency: 'xno',
+			value: props.value,
 		};
 	}
 
@@ -65,6 +66,9 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.CURRENCY, async () => {
 			await this.init();
 			this.onChangeText(this.state.value);
+		}));
+		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.SHOW_FIAT_DEFAULT, async () => {
+			await this.init();
 		}));
 	}
 
@@ -133,8 +137,9 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 		if (tempConvertedValue == '0') {
 			tempConvertedValue = undefined;
 		}
-		VariableStore.getVariable(NalliVariable.SHOW_FIAT_DEFAULT, false).then(showFiatDefault => {
-			VariableStore.setVariable(NalliVariable.SHOW_FIAT_DEFAULT, this.state.currency == (showFiatDefault ? this.state.convertedCurrency : 'xno'));
+		VariableStore.getVariable(NalliVariable.SHOW_FIAT_DEFAULT, false).then(() => {
+			const newValue = this.state.convertedCurrency == 'xno';
+			VariableStore.setVariable(NalliVariable.SHOW_FIAT_DEFAULT, newValue);
 		});
 		this.setState({
 			convertedCurrency: this.state.currency,
@@ -145,62 +150,62 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 	}
 
 	render = () => {
-		const { reference, style } = this.props;
+		const { hideMaxButton, reference, style } = this.props;
 		const { borderColor, currency, convertedCurrency, convertedValue, value } = this.state;
 		return (
-			<View style={styles.container}>
-				<View>
-					<View style={styles.inputContainer}>
-						{this.renderCurrencyMark(currency, false)}
-						<TextInput
-								ref={reference}
-								placeholder="0"
-								onBlur={this.onBlur}
-								onFocus={this.onFocus}
-								style={[styles.input, style, { borderBottomColor: borderColor }]}
-								keyboardType="decimal-pad"
-								value={value}
-								onChangeText={this.onChangeText} />
-					</View>
+			<View>
+				<View style={styles.inputContainer}>
+					{this.renderCurrencySign(currency, false)}
+					<TextInput
+							ref={reference}
+							placeholder='0'
+							onBlur={this.onBlur}
+							onFocus={this.onFocus}
+							style={[styles.input, style, { borderBottomColor: borderColor }]}
+							keyboardType='decimal-pad'
+							value={value}
+							onChangeText={this.onChangeText} />
+				</View>
+				{!hideMaxButton &&
 					<TouchableHighlight
 							style={styles.sendMaxButton}
 							underlayColor={Colors.borderColor}
 							onPress={this.onSendMaxButton}>
 						<NalliText style={styles.maxIcon}>MAX</NalliText>
 					</TouchableHighlight>
-					<TouchableHighlight
-							style={styles.switchButton}
-							underlayColor={Colors.borderColor}
-							onPress={this.onCurrencySwitchPress}>
-						<Ionicons
-								style={styles.switchIcon}
-								name="ios-swap-horizontal"
-								size={32} />
-					</TouchableHighlight>
-					<View style={[styles.inputConvertedCurrencyContainer, { borderTopColor: borderColor }]}>
-						{this.renderCurrencyMark(convertedCurrency, true)}
-						<Text style={styles.inputConvertedAmount}>
-							{convertedValue || '-.--'}
-						</Text>
-						<Text />
-					</View>
+				}
+				<TouchableHighlight
+						style={[ styles.switchButton, hideMaxButton ? styles.switchButtonMiddle : undefined ]}
+						underlayColor={Colors.borderColor}
+						onPress={this.onCurrencySwitchPress}>
+					<Ionicons
+							style={styles.switchIcon}
+							name='ios-swap-horizontal'
+							size={32} />
+				</TouchableHighlight>
+				<View style={[styles.inputConvertedCurrencyContainer, { borderTopColor: borderColor }]}>
+					{this.renderCurrencySign(convertedCurrency, true)}
+					<Text style={styles.inputConvertedAmount}>
+						{convertedValue || '-.--'}
+					</Text>
+					<Text />
 				</View>
 			</View>
 		);
 	}
 
-	renderCurrencyMark = (currency, converted) => {
+	renderCurrencySign = (currency, converted) => {
 		switch (currency) {
 			case 'xno':
 				return (
-					<Text style={styles.asciiMark}>
+					<Text style={styles.asciiSign}>
 						Ӿ
 					</Text>
 				);
 			default:
 				const icon = CurrencyService.getCurrencyByISO(currency).icon;
 				return (
-					<Text style={[styles.asciiMark, converted ? styles.convertedMark : {}, icon.length > 1 ? styles.longMark : {}]}>
+					<Text style={[styles.asciiSign, converted ? styles.convertedSign : {}, icon.length > 1 ? styles.longSign : {}]}>
 						{icon}
 					</Text>
 				);
@@ -210,8 +215,6 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 }
 
 const styles = StyleSheet.create({
-	container: {
-	},
 	inputContainer: {
 		flexDirection: 'row',
 		justifyContent: 'center',
@@ -227,11 +230,7 @@ const styles = StyleSheet.create({
 		width: '100%',
 		zIndex: 100,
 	},
-	nanoMark: {
-		marginRight: -38,
-		alignSelf: 'center',
-	},
-	asciiMark: {
+	asciiSign: {
 		width: 40,
 		marginRight: -38,
 		alignSelf: 'center',
@@ -239,11 +238,11 @@ const styles = StyleSheet.create({
 		color: Colors.main,
 		fontFamily: 'OpenSans',
 	},
-	longMark: {
+	longSign: {
 		fontSize: 20,
 		fontFamily: 'OpenSansBold',
 	},
-	convertedMark: {
+	convertedSign: {
 		color: Colors.inputPlaceholder,
 	},
 	sendMaxButton: {
@@ -271,6 +270,9 @@ const styles = StyleSheet.create({
 		top: 74,
 		right: 0,
 		zIndex: 200,
+	},
+	switchButtonMiddle: {
+		top: 42,
 	},
 	maxIcon: {
 		fontSize: 11,

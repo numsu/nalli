@@ -166,54 +166,54 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 					<NalliText size={ETextSize.H2} style={styles.header}>Settings</NalliText>
 					<View style={styles.border} />
 					<NalliMenuPreference
-							icon="home-currency-usd"
-							header="Currency"
+							icon='home-currency-usd'
+							header='Currency'
 							onPress={this.toggleSelectCurrency}
 							subheader={currency} />
 					<NalliMenuPreference
-							icon="bell"
-							header="Notifications"
+							icon='bell'
+							header='Notifications'
 							onPress={() => this.toggleSelectNotification()}
-						subheader={pushEnabled ? "On" : "Off"} />
+						subheader={pushEnabled ? 'On' : 'Off'} />
 					{supportedBiometricsType != EBiometricsType.NO_BIOMETRICS &&
 						<NalliMenuPreference
 								icon={EBiometricsType.getBiometricsTypeIcon(supportedBiometricsType)}
 								header={EBiometricsType.getBiometricsTypeText(supportedBiometricsType)}
 								onPress={() => this.toggleBiometricsEnabled()}
-								subheader={biometricsEnabled ? "On" : "Off"} />
+								subheader={biometricsEnabled ? 'On' : 'Off'} />
 					}
 				</View>
 				<View style={styles.content}>
 					<NalliText size={ETextSize.H2} style={styles.header}>Manage</NalliText>
 					<View style={styles.border} />
 					<NalliMenuPreference
-							icon="wallet"
-							header="Wallet"
+							icon='wallet'
+							header='Wallet'
 							onPress={this.toggleWalletInfoModal}
-							subheader="Recovery phrase" />
+							subheader='Recovery phrase' />
 					<NalliMenuPreference
-							icon="account"
-							header="Account"
+							icon='account'
+							header='Account'
 							onPress={this.toggleAccountModal}
-							subheader="Account settings" />
+							subheader='Account settings' />
 				</View>
 				<View style={styles.content}>
 					<NalliText size={ETextSize.H2} style={styles.header}>Support</NalliText>
 					<View style={styles.border} />
 					<NalliMenuPreference
-							icon="information-outline"
-							header="Support"
+							icon='information-outline'
+							header='Support'
 							onPress={this.openSupportPage}
-							subheader="Get help by contacting us" />
+							subheader='Get help by contacting us' />
 				</View>
 				<View style={styles.content}>
 					<NalliText size={ETextSize.H2} style={styles.header}>Contribute</NalliText>
 					<View style={styles.border} />
 					<NalliMenuPreference
-							icon="rocket"
-							header="Donate"
+							icon='rocket'
+							header='Donate'
 							onPress={onDonatePress}
-							subheader="Donations are used for app maintenance and further development" />
+							subheader='Donations are used for app maintenance and further development' />
 				</View>
 				<CurrencyModal
 						isOpen={currencyModalOpen}

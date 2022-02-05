@@ -87,14 +87,14 @@ export default class NotificationModal extends React.Component<NotificationModal
 					</View>
 					<View style={styles.buttonContainer}>
 						<NalliButton
-								text="No"
-								small={true}
+								text='No'
+								small
 								style={styles.buttonStyle}
 								onPress={() => this.selectNotificationState(false)} />
 						<NalliButton
-								text="Yes"
-								small={true}
-								solid={true}
+								text='Yes'
+								small
+								solid
 								style={styles.buttonStyle}
 								onPress={() => this.selectNotificationState(true)} />
 					</View>

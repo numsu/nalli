@@ -93,13 +93,13 @@ export default class CreateWalletImportSeed extends React.Component<NavigationIn
 								style={styles.input}
 								autoCapitalize='characters'
 								returnKeyType='done'
-								multiline={true}
+								multiline
 								numberOfLines={3}
 								onChangeText={this.onChangeText} />
 						<View style={styles.actions}>
 							<NalliButton
-									text="Import"
-									solid={true}
+									text='Import'
+									solid
 									disabled={process}
 									style={styles.action}
 									onPress={this.onFinishPress} />

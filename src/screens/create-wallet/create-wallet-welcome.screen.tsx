@@ -45,7 +45,7 @@ export default class CreateWalletWelcome extends React.Component<NavigationInjec
 		return (
 			<View style={styles.container}>
 				<TouchableOpacity style={styles.logout} onPress={this.onLogoutPress}>
-					<SimpleLineIcons style={{ color: Colors.main }} name="logout" size={30} />
+					<SimpleLineIcons style={{ color: Colors.main }} name='logout' size={30} />
 				</TouchableOpacity>
 				<View style={styles.content}>
 					<View style={styles.welcome}>
@@ -58,12 +58,12 @@ export default class CreateWalletWelcome extends React.Component<NavigationInjec
 					</View>
 					<View style={styles.actions}>
 						<NalliButton
-								text="Import"
+								text='Import'
 								style={styles.action}
 								onPress={this.onImportPress} />
 						<NalliButton
-								text="Create"
-								solid={true}
+								text='Create'
+								solid
 								style={styles.action}
 								onPress={this.onCreatePress} />
 					</View>

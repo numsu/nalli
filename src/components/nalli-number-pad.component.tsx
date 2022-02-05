@@ -117,7 +117,7 @@ export default class NalliNumberPad extends React.Component<NalliNumberPadProps,
 						key={10}
 						style={[styles.number, style, { borderWidth: 0 }]}
 						onPress={() => this.onRemoveText(onChangeText)}>
-					<Ionicons style={[{ color: 'white' }, style]} name="ios-backspace" size={30} />
+					<Ionicons style={[{ color: 'white' }, style]} name='ios-backspace' size={30} />
 				</TouchableOpacity>
 			</View>
 		);

@@ -94,7 +94,7 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 							onPress={this.onChangeDisplayedCurrencyPress}>
 						<Ionicons
 								style={styles.changeDisplayedCurrencyArrow}
-								name="ios-swap-horizontal"
+								name='ios-swap-horizontal'
 								size={25} />
 					</TouchableOpacity>
 					{accountActive &&
@@ -138,7 +138,7 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 						</Text>
 						{processing &&
 							<View style={styles.loadingContainer}>
-								<Loading style={LoadingStyle.NONE} show={true} />
+								<Loading style={LoadingStyle.NONE} show />
 							</View>
 						}
 					</View>

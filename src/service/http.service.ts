@@ -17,7 +17,7 @@ export default class HttpService {
 			const promise = new Promise<T>(async (resolve, reject) => {
 				const base = this.protocol + this.host;
 				const final = `${base}/api${uri}`;
-				await fetch(
+				fetch(
 						final, {
 							method: 'GET',
 							headers: await this.getHeaders(),

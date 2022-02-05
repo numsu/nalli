@@ -204,7 +204,7 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 							<View>
 								<NalliButton
 										text='Cancel transaction'
-										solid={true}
+										solid
 										style={styles.cancelButton}
 										onPress={this.returnPendingSend} />
 							</View>

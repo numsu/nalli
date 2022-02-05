@@ -65,8 +65,8 @@ export default class CreateWalletNew extends React.Component<NavigationInjectedP
 					</NalliText>
 					<View style={styles.actions}>
 						<NalliButton
-								text="Create my wallet"
-								solid={true}
+								text='Create my wallet'
+								solid
 								style={styles.action}
 								disabled={process}
 								onPress={this.onCreateWalletPress} />

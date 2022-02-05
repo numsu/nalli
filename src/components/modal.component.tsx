@@ -87,8 +87,8 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 			return (
 				<Modal
 						propagateSwipe
-						avoidKeyboard={true}
-						hideModalContentWhileAnimating={true}
+						avoidKeyboard
+						hideModalContentWhileAnimating
 						animationIn={'zoomIn'}
 						animationOut={'fadeOut'}
 						animationInTiming={NalliModal.animationDelay}
@@ -96,8 +96,8 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 						isVisible={isOpen && appState == NalliAppState.ACTIVE}
 						onBackdropPress={onClose}
 						onBackButtonPress={onClose}
-						useNativeDriverForBackdrop={true}
-						useNativeDriver={true}>
+						useNativeDriverForBackdrop
+						useNativeDriver>
 					<KeyboardAvoidingView
 							enabled={Platform.OS == 'android'}
 							behavior={'height'}
@@ -112,10 +112,10 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 									{header}
 								</NalliText>
 								<Avatar
-										rounded={true}
+										rounded
 										onPress={onClose}
 										icon={{ name: 'close', type: 'material' }}
-										size="small"
+										size='small'
 										overlayContainerStyle={{ backgroundColor: Colors.main }} />
 							</View>
 							{headerComponent}
@@ -134,7 +134,7 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 								{children}
 							</ScrollView>
 						}
-						<NalliLinearGradient bottom={true} />
+						<NalliLinearGradient bottom />
 					</KeyboardAvoidingView>
 				</Modal>
 			);

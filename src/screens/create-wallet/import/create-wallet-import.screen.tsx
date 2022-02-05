@@ -49,16 +49,16 @@ export default class CreateWalletImportMnemonic extends React.Component<Navigati
 				<View style={styles.actions}>
 					<View style={styles.action}>
 					<NalliButton
-							text="Write recovery phrase"
-							icon="newspaper-outline"
-							solid={true}
+							text='Write recovery phrase'
+							icon='newspaper-outline'
+							solid
 							onPress={this.onRecoveryPress} />
 					</View>
 					<View style={styles.action}>
 					<NalliButton
-							text="Write seed manually"
-							icon="md-key"
-							solid={true}
+							text='Write seed manually'
+							icon='md-key'
+							solid
 							onPress={this.onManualPress} />
 					</View>
 				</View>

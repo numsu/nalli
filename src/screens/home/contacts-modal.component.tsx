@@ -10,14 +10,15 @@ import NalliModal, { EModalSize } from '../../components/modal.component';
 import NalliInput from '../../components/nalli-input.component';
 import NalliText from '../../components/text.component';
 import Colors from '../../constants/colors';
+import ContactsService, { ContactItem } from '../../service/contacts.service';
 
 interface ContactsModalProps {
 	isOpen: boolean;
-	contacts: any[];
 	onSelectContact: (contact: any) => Promise<any>;
 }
 
 interface ContactsModalState {
+	contacts: ContactItem[];
 	filtered: any[];
 	isOpen: boolean;
 	process: boolean;
@@ -31,6 +32,7 @@ export default class ContactsModal extends React.Component<ContactsModalProps, C
 		super(props);
 		this.contactsSearchRef = React.createRef();
 		this.state = {
+			contacts: [],
 			filtered: [],
 			isOpen: props.isOpen,
 			process: false,
@@ -38,13 +40,13 @@ export default class ContactsModal extends React.Component<ContactsModalProps, C
 	}
 
 	componentDidMount = () => {
-		this.filterContacts();
+		this.init();
 	}
 
 	static getDerivedStateFromProps(nextProps: ContactsModalProps, prevState: ContactsModalState) {
 		if (prevState.isOpen != nextProps.isOpen) {
 			if (nextProps.isOpen) {
-				return { isOpen: nextProps.isOpen, filtered: nextProps.contacts };
+				return { isOpen: nextProps.isOpen };
 			} else {
 				return { isOpen: nextProps.isOpen };
 			}
@@ -52,16 +54,28 @@ export default class ContactsModal extends React.Component<ContactsModalProps, C
 		return null;
 	}
 
+	init = async () => {
+		await this.fetchContacts();
+		this.filterContacts();
+	}
+
+	fetchContacts = async () => {
+		return new Promise<void>(async resolve => {
+			const contacts = await ContactsService.getContacts(false);
+			this.setState({ contacts }, resolve);
+		});
+	}
+
 	filterContacts = (value?) => {
 		if (value) {
 			this.setState({
-				filtered: this.props.contacts.filter(contact => (
+				filtered: this.state.contacts.filter(contact => (
 					contact.name.toUpperCase().indexOf(value.trim().toUpperCase()) > -1
 				))
 			});
 		} else {
 			this.setState({
-				filtered: [ ...this.props.contacts ]
+				filtered: [ ...this.state.contacts ]
 			});
 		}
 	}
@@ -97,12 +111,12 @@ export default class ContactsModal extends React.Component<ContactsModalProps, C
 							<NalliInput
 									style={{ width: '92%', height: 40, alignSelf: 'center' }}
 									reference={this.contactsSearchRef}
-									placeholder="Search..."
-									keyboardType="default"
+									placeholder='Search...'
+									keyboardType='default'
 									onChangeText={this.filterContacts} />
 						</View>
 					}
-					noScroll={true}>
+					noScroll>
 				<FlatList
 						style={{ height: '100%' }}
 						contentContainerStyle={{ paddingBottom: 40 }}

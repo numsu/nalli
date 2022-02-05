@@ -97,8 +97,8 @@ export default class CreateWalletMnemonic extends React.Component<NavigationInje
 						</NalliText>
 						<View style={styles.actions}>
 							<NalliButton
-									text="Continue"
-									solid={true}
+									text='Continue'
+									solid
 									style={styles.action}
 									onPress={this.onContinuePress} />
 						</View>
@@ -132,8 +132,8 @@ export default class CreateWalletMnemonic extends React.Component<NavigationInje
 						</NalliText>
 						<View style={styles.actions}>
 							<NalliButton
-									text="Finish"
-									solid={true}
+									text='Finish'
+									solid
 									style={styles.action}
 									disabled={process}
 									onPress={this.onFinishPress} />

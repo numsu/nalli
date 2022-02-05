@@ -76,7 +76,7 @@ export default class WelcomePinScreen extends React.Component<NavigationInjected
 						<TextInput
 								style={styles.numberPadPin}
 								value={pin}
-								secureTextEntry={true}
+								secureTextEntry
 								editable={false} />
 					</View>
 					<NalliNumberPad

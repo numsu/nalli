@@ -45,7 +45,6 @@ export interface SendSheetProps {
 }
 
 export interface SendSheetState {
-	contacts: any[];
 	contactsModalOpen: boolean;
 	convertedAmount: string;
 	currency: string;
@@ -89,7 +88,6 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 		this.sendAmountRef = React.createRef();
 		this.sendSheetRef = props.reference;
 		this.state = {
-			contacts: [],
 			contactsModalOpen: false,
 			convertedAmount: '0',
 			currency: 'xno',
@@ -112,8 +110,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 
 	init = async () => {
 		const tab = await VariableStore.getVariable(NalliVariable.SEND_TAB, SendSheetTab.CONTACT);
-		const contacts = await ContactsService.getContacts(false);
-		this.setState({ tab, contacts });
+		this.setState({ tab });
 	}
 
 	toggleDonate = async (enable: boolean) => {
@@ -169,12 +166,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 
 	onSelectRecipientPress = async () => {
 		Keyboard.dismiss();
-		if (this.state.contacts.length == 0) {
-			const contacts = await ContactsService.getContacts();
-			this.setState({ contacts: contacts, contactsModalOpen: contacts.length > 0 });
-		} else {
-			this.setState({ contactsModalOpen: true });
-		}
+		this.setState({ contactsModalOpen: true });
 	}
 
 	onConfirmRecipient = async (contact) => {
@@ -375,7 +367,6 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 	render = () => {
 		const { reference } = this.props;
 		const {
-			contacts,
 			contactsModalOpen,
 			convertedAmount,
 			inputPhoneNumberModalOpen,
@@ -406,7 +397,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 					initialSnap={-1}
 					reference={reference}
 					enablePanDownToClose={!process || success}
-					enableLinearGradient={true}
+					enableLinearGradient
 					onClose={this.clearState}
 					snapPoints={layout.isSmallDevice ? ['88%'] : ['68%']}
 					header={!process ? 'Send' : ''}>
@@ -429,7 +420,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 											this.sendAnimation = animation;
 										}}
 										onLayout={() => this.sendAnimation.play()}
-										loop={true}
+										loop
 										resizeMode='contain'
 										source={require('../../assets/lottie/sending.json')} />
 							}
@@ -444,7 +435,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 							<View style={styles.sendTransactionButton}>
 								<NalliButton
 										text={'Close'}
-										solid={true}
+										solid
 										onPress={() => (this.clearState(), this.sendSheetRef.current.close())} />
 							</View>
 						}
@@ -485,16 +476,16 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 
 							{tab == SendSheetTab.CONTACT && !recipient &&
 								<NalliButton
-										text="Select contact"
-										icon="md-person"
+										text='Select contact'
+										icon='md-person'
 										onPress={this.onSelectRecipientPress} />
 							}
 							{tab == SendSheetTab.CONTACT && recipient &&
 								<View style={styles.contactContainer}>
 									<Avatar
-											rounded={true}
+											rounded
 											title={recipient.initials}
-											size="medium"
+											size='medium'
 											titleStyle={{ fontSize: 18 }}
 											containerStyle={{ marginRight: 15 }}
 											overlayContainerStyle={{ backgroundColor: Colors.main }} />
@@ -529,7 +520,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 											onPress={this.onSelectRecipientPress}
 											style={styles.contactSelectArrow}>
 										<Ionicons
-												name="ios-swap-horizontal"
+												name='ios-swap-horizontal'
 												style={styles.contactSelectArrow}
 												size={32} />
 									</TouchableOpacity>
@@ -537,16 +528,16 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 							}
 							{tab == SendSheetTab.PHONE && !recipient &&
 								<NalliButton
-										text="Input phone number"
-										icon="md-person"
+										text='Input phone number'
+										icon='md-person'
 										onPress={this.onSelectInputNumberPress} />
 							}
 							{tab == SendSheetTab.PHONE && recipient &&
 								<View style={styles.contactContainer}>
 									<Avatar
-											rounded={true}
+											rounded
 											title={recipient.initials}
-											size="medium"
+											size='medium'
 											titleStyle={{ fontSize: 18 }}
 											containerStyle={{ marginRight: 15 }}
 											overlayContainerStyle={{ backgroundColor: Colors.main }} />
@@ -576,7 +567,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 											onPress={this.onSelectInputNumberPress}
 											style={styles.contactSelectArrow}>
 										<Ionicons
-												name="ios-swap-horizontal"
+												name='ios-swap-horizontal'
 												style={styles.contactSelectArrow}
 												size={32} />
 									</TouchableOpacity>
@@ -597,7 +588,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 											<TouchableOpacity
 													onPress={() => this.onChangeAddress(Clipboard.getStringAsync())}>
 												<Ionicons
-														name="ios-copy"
+														name='ios-copy'
 														size={30} />
 											</TouchableOpacity>
 										}
@@ -605,9 +596,9 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 									<NalliInput
 											style={styles.addressInput}
 											value={walletAddress}
-											readonly={true}
+											readonly
 											label='Address'
-											multiline={true}
+											multiline
 											onChangeText={this.onChangeAddress} />
 									<QRCodeScanner
 											onQRCodeScanned={this.onQRCodeScanned} />
@@ -617,8 +608,8 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 								<View style={styles.contactContainer}>
 									<Avatar
 											icon={{ name: 'star-border', type: 'material' }}
-											rounded={true}
-											size="medium"
+											rounded
+											size='medium'
 											titleStyle={{ fontSize: 18 }}
 											containerStyle={{ marginRight: 15 }}
 											overlayContainerStyle={{ backgroundColor: Colors.main }} />
@@ -661,14 +652,13 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 							<View style={styles.sendTransactionButton}>
 								<NalliButton
 										text={(!!walletAddress || isNalliUser) ? 'Send' : 'Invite new user'}
-										solid={true}
+										solid
 										onPress={this.confirm}
 										disabled={(!recipient && !walletAddress) || !sendAmount || process} />
 							</View>
 						}
 						<ContactsModal
 								isOpen={contactsModalOpen}
-								contacts={contacts}
 								onSelectContact={this.onConfirmRecipient} />
 						<PhoneNumberInputModal
 								isOpen={inputPhoneNumberModalOpen}

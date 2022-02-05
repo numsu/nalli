@@ -32,9 +32,9 @@ export default class Contact extends React.Component<ContactProps, ContactState>
 					onPress={() => onSelectContact(contact)}
 					style={styles.contactContainer}>
 				<Avatar
-						rounded={true}
+						rounded
 						title={contact.initials}
-						size="medium"
+						size='medium'
 						titleStyle={{ fontSize: 18 }}
 						containerStyle={{ marginRight: 15 }}
 						overlayContainerStyle={{ backgroundColor: colors.main }} />
@@ -48,7 +48,7 @@ export default class Contact extends React.Component<ContactProps, ContactState>
 				</View>
 				<Ionicons
 						style={styles.contactSelectArrow}
-						name="ios-arrow-forward"
+						name='ios-arrow-forward'
 						size={32} />
 			</TouchableOpacity>
 		);

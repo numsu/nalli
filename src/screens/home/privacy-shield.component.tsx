@@ -84,7 +84,7 @@ class PrivacyShield extends React.Component<PrivacyShieldProps, PrivacyShieldSta
 			<View style={styles.container}>
 				{appState == NalliAppState.INACTIVE &&
 					<View style={styles.inactiveOverlay}>
-						<NalliLogo width={200} height={80} color="white" />
+						<NalliLogo width={200} height={80} color='white' />
 					</View>
 				}
 				{children}

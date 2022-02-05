@@ -161,10 +161,10 @@ export default class Login extends React.Component<NavigationInjectedProps, Logi
 		const { isBiometricProcess, pin, process } = this.state;
 		return (
 			<DismissKeyboardView style={styles.container}>
-				<StatusBar translucent={true} style="light" />
+				<StatusBar translucent style='light' />
 				<Loading style={LoadingStyle.LIGHT} color='white' show={process} />
 				{/* <TouchableOpacity onPress={this.clearWalletInfo}> */}
-					<NalliLogo width={150} height={60} color="white" />
+					<NalliLogo width={150} height={60} color='white' />
 				{/* </TouchableOpacity> */}
 				<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 					Enter pin
@@ -175,12 +175,12 @@ export default class Login extends React.Component<NavigationInjectedProps, Logi
 							<TextInput
 									style={styles.numberPadPin}
 									value={pin}
-									secureTextEntry={true}
+									secureTextEntry
 									editable={false} />
 						</View>
 						<NalliNumberPad
 								pin={pin}
-								enableBiometrics={true}
+								enableBiometrics
 								onBiometricLoginPress={this.signInWithBiometrics}
 								onChangeText={this.onChangeNumberPad}
 								maxLength={6} />

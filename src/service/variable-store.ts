@@ -78,6 +78,7 @@ export enum NalliVariable {
 	PROCESSING_PENDING = 'processingPending',
 	SELECTED_ACCOUNT = 'selectedAccount',
 	SELECTED_ACCOUNT_INDEX = 'selectedAccountIndex',
+	SELECTED_REQUEST_MODE = 'selectedReceiveMode',
 	SEND_TAB = 'sendTab',
 	SHOW_FIAT_DEFAULT = 'showFiatDefault',
 }

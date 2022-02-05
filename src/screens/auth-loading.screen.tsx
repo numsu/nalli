@@ -104,7 +104,7 @@ export default class AuthLoadingScreen extends React.Component<NavigationInjecte
 
 		return (
 			<View style={styles.container}>
-				<StatusBar translucent={true} style="light" />
+				<StatusBar translucent style='light' />
 				<ImageBackground resizeMode='contain' style={styles.image} source={require('../../src/assets/images/splash.png')}>
 					<View style={styles.loading}>
 						<Text style={styles.loadingText}>{statusText}...</Text>

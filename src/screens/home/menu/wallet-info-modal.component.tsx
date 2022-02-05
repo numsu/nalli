@@ -118,9 +118,9 @@ export default class WalletInfoModal extends React.Component<WalletInfoModalProp
 				<MnemonicWord key={i} index={++i}>{word}</MnemonicWord>
 			));
 			privateKeys = walletInfo.accounts.map(account => (
-				<View style={{ alignItems: "center" }} key={account.accountIndex}>
+				<View style={{ alignItems: 'center' }} key={account.accountIndex}>
 					<NalliText size={ETextSize.H2} style={styles.header}>{`Account #${account.accountIndex} private key`}</NalliText>
-					<ShowHide allowCopy={true} copyValue={account.privateKey} confirmCopy={true}>
+					<ShowHide allowCopy copyValue={account.privateKey} confirmCopy>
 						<Text>{account.privateKey}</Text>
 					</ShowHide>
 				</View>
@@ -137,13 +137,13 @@ export default class WalletInfoModal extends React.Component<WalletInfoModalProp
 						<NalliText>This information is everything needed to access your wallet and spend your funds. Keep a copy of this information in a safe place in case your phone breaks or you lose it and never share it with anyone.</NalliText>
 						<NalliText size={ETextSize.H2} style={styles.header}>Recovery phrase</NalliText>
 						<NalliText style={styles.addition}>Wallet type: {walletInfo.type == WalletType.HD_WALLET ? 'HD Wallet' : 'Legacy wallet'}</NalliText>
-						<ShowHide allowCopy={true} copyValue={walletInfo.mnemonic} confirmCopy={true}>
+						<ShowHide allowCopy copyValue={walletInfo.mnemonic} confirmCopy>
 							<View style={styles.wordsContainer}>
 								{words}
 							</View>
 						</ShowHide>
 						<NalliText size={ETextSize.H2} style={styles.header}>Wallet seed</NalliText>
-						<ShowHide allowCopy={true} copyValue={walletInfo.seed} confirmCopy={true}>
+						<ShowHide allowCopy copyValue={walletInfo.seed} confirmCopy>
 							<Text>{walletInfo.seed}</Text>
 						</ShowHide>
 						{privateKeys}
@@ -155,13 +155,13 @@ export default class WalletInfoModal extends React.Component<WalletInfoModalProp
 						<TextInput
 								style={styles.numberPadPin}
 								value={pin}
-								secureTextEntry={true}
+								secureTextEntry
 								editable={false} />
 						<NalliNumberPad
 								style={styles.numberPad}
 								pin={pin}
 								onChangeText={this.validatePin}
-								enableBiometrics={true}
+								enableBiometrics
 								onBiometricLoginPress={this.signInWithBiometrics} />
 					</View>
 				}

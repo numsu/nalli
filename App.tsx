@@ -45,7 +45,7 @@ export default class App extends React.Component<any, any> {
 		} else {
 			return (
 				<View style={styles.container}>
-					<StatusBar translucent={true} hidden={false} style="dark" />
+					<StatusBar translucent hidden={false} style='dark' />
 					<AppNavigator
 							ref={navigatorRef => NavigationService.setTopLevelNavigator(navigatorRef)} />
 				</View>

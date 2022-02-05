@@ -74,20 +74,20 @@ export default class WelcomeScreen extends React.Component<NavigationInjectedPro
 		const { phoneNumber, process } = this.state;
 		return (
 			<DismissKeyboardView style={styles.container}>
-				<NalliLogo width={150} height={60} color="white" />
+				<NalliLogo width={150} height={60} color='white' />
 				<NalliText style={styles.text}>
 					Pay anyone, anywhere, instantly. Using just a phone number.
 				</NalliText>
 				<KeyboardAvoidingView
 						style={styles.formContainer}
-						behavior="height"
+						behavior='height'
 						keyboardVerticalOffset={90}>
 					<PhoneNumberInput
 							value={phoneNumber}
 							onChangeNumber={val => this.onChangeText('phoneNumber', val)}
 							onChangeCountry={val => this.onChangeText('phoneNumberCountry', val)}/>
 					<NalliButton
-							text="Send code"
+							text='Send code'
 							onPress={this.signUp}
 							style={styles.loginButton}
 							textStyle={styles.loginButtonText}

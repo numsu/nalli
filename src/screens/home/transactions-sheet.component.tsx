@@ -164,8 +164,8 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 			<MyBottomSheet
 					initialSnap={0}
 					snapPoints={['25%', '87.5%']}
-					enableLinearGradient={true}
-					header="Transactions">
+					enableLinearGradient
+					header='Transactions'>
 				<BottomSheetScrollView style={styles.transactionList}>
 					{!hasTransactions && <NalliText style={styles.noMoreText}>Your transactions will appear here</NalliText>}
 					{transactionListElements}
@@ -177,7 +177,7 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 					{hasTransactions && hasMoreTransactions &&
 						<NalliButton
 								style={styles.fetchMoreButton}
-								small={true}
+								small
 								text='Fetch more'
 								onPress={onFetchMore} />
 					}

@@ -33,7 +33,7 @@ import WalletService, { WalletTransaction } from '../../service/wallet.service';
 import WsService, { EWebSocketNotificationType } from '../../service/ws.service';
 import NalliMenu from './menu/nalli-menu.component';
 import PrivacyShield, { NalliAppState } from './privacy-shield.component';
-import ReceiveSheet from './receive-sheet.component';
+import RequestSheet from './request-sheet.component';
 import SendSheet from './send-sheet.component';
 import TransactionsSheet from './transactions-sheet.component';
 
@@ -263,14 +263,14 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 								<SafeAreaView edges={['top']}>
 									<View style={styles.header}>
 										<TouchableOpacity style={styles.menuIconContainer} onPress={this.openMenu}>
-											<Ionicons style={styles.menuIcon} name="ios-menu" size={40} />
+											<Ionicons style={styles.menuIcon} name='ios-menu' size={40} />
 										</TouchableOpacity>
 										<NalliLogo style={styles.headerLogo} width={90} height={30} />
 										<Avatar
-												rounded={true}
+												rounded
 												onPress={this.logout}
 												icon={{ name: 'lock', type: 'font-awesome' }}
-												size="small"
+												size='small'
 												containerStyle={{ marginRight: 20, marginTop: 15 }}
 												overlayContainerStyle={{ backgroundColor: Colors.main }} />
 									</View>
@@ -285,16 +285,16 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 									</View>
 									<View style={[styles.row, styles.actions]}>
 										<NalliButton
-												text="Send"
-												solid={true}
-												icon="md-arrow-up"
+												text='Send'
+												solid
+												icon='md-arrow-up'
 												style={styles.action}
 												onPress={this.onSendPress}
 												disabled={!walletIsOpen} />
 										<NalliButton
-												text="Receive"
-												solid={true}
-												icon="md-arrow-down"
+												text='Request'
+												solid
+												icon='md-arrow-down'
 												style={styles.action}
 												onPress={this.onReceivePress}
 												disabled={!walletIsOpen} />
@@ -307,7 +307,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 								<SendSheet
 										ref={c => this.sendRef = c}
 										reference={this.sendSheetRef} />
-								<ReceiveSheet reference={this.receiveSheetRef} />
+								<RequestSheet reference={this.receiveSheetRef} />
 							</DismissKeyboardView>
 						</KeyboardAvoidingView>
 					</ScrollView>
