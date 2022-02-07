@@ -130,13 +130,14 @@ export default class Login extends React.Component<NavigationInjectedProps, Logi
 				signature,
 			});
 			await AuthStore.setAuthentication(token.accessToken);
-			ContactsService.clearCache();
+			await ContactsService.refreshCache();
 			if (!wallet) {
 				this.props.navigation.navigate('Permissions');
 			} else {
 				this.props.navigation.navigate('Main');
 			}
 		} catch (e) {
+			console.error(e);
 			this.setState({ pin: '', process: false, isBiometricProcess: false });
 			if (e.code == NalliErrorCode.ACCOUNT_DISABLED) {
 				Alert.alert('Error', 'Your account is disabled. Most likely due to someone else registering with the same wallet. Please reinstall the application.');

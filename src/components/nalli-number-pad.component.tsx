@@ -99,7 +99,7 @@ export default class NalliNumberPad extends React.Component<NalliNumberPadProps,
 						key={20}
 						style={[styles.number, style, { borderWidth: 0 }]}
 						onPress={onBiometricLoginPress}>
-						<MaterialCommunityIcons style={[styles.biometricsIcon, style]} name={EBiometricsType.getBiometricsTypeIcon(biometricsType)} />
+						<MaterialCommunityIcons style={[styles.biometricsIcon, style]} name={EBiometricsType.getBiometricsTypeIcon(biometricsType) as any} />
 					</TouchableOpacity>
 				}
 				{biometricsType == EBiometricsType.NO_BIOMETRICS &&

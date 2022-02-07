@@ -16,11 +16,14 @@ import CurrencyInput from '../../components/currency-input.component';
 import NalliButton from '../../components/nalli-button.component';
 import NalliNanoAddress from '../../components/nano-address.component';
 import QRCode from '../../components/qrcode/qrcode.component';
+import SelectedContact from '../../components/selected-contact.component';
 import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
 import layout from '../../constants/layout';
+import ClientService from '../../service/client.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 import ContactsModal from './contacts-modal.component';
+import { SendSheetRecipient } from './send-sheet.component';
 
 const logo = require('../../assets/images/icon.png');
 
@@ -33,6 +36,10 @@ export interface RequestSheetState {
 	contactsModalOpen: boolean;
 	convertedAmount: string;
 	currency: string;
+	isNalliUser: boolean;
+	recipient: SendSheetRecipient;
+	recipientAddress: string;
+	recipientLastLoginDate: string;
 	requestAmount: string;
 	requestMode: RequestMode;
 	showCopiedText: boolean;
@@ -54,6 +61,10 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 			contactsModalOpen: false,
 			convertedAmount: '0',
 			currency: 'xno',
+			isNalliUser: false,
+			recipient: undefined,
+			recipientAddress: undefined,
+			recipientLastLoginDate: undefined,
 			requestAmount: undefined,
 			requestMode: RequestMode.CONTACT,
 			showCopiedText: false,
@@ -87,6 +98,7 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 		const newRequestMode = this.state.requestMode == RequestMode.QR ? RequestMode.CONTACT : RequestMode.QR;
 		VariableStore.setVariable(NalliVariable.SELECTED_REQUEST_MODE, newRequestMode);
 		this.setState({ requestMode: newRequestMode });
+		this.clearRecipient();
 	}
 
 	onSelectRecipientPress = async () => {
@@ -94,8 +106,44 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 		this.setState({ contactsModalOpen: true });
 	}
 
-	onConfirmRecipient = async (contact) => {
-		this.setState({ contactsModalOpen: false });
+	onConfirmRecipient = async (selectedContact) => {
+		Keyboard.dismiss();
+		if (selectedContact) {
+			const recipient = await ClientService.getClientAddress(selectedContact.fullNumber);
+			let address;
+			let isNalliUser = false;
+			let recipientLastLoginDate;
+
+			// If client is not registered, create a pending send to a custodial account
+			if (!recipient || !recipient.nalliUser) {
+				this.clearRecipient();
+				return;
+			} else {
+				address = recipient.address;
+				isNalliUser = recipient.nalliUser;
+				recipientLastLoginDate = recipient.lastLogin;
+			}
+
+			this.setState({
+				contactsModalOpen: false,
+				isNalliUser,
+				recipient: selectedContact,
+				recipientAddress: address,
+				recipientLastLoginDate,
+			});
+		} else {
+			this.clearRecipient();
+		}
+	}
+
+	clearRecipient = () => {
+		this.setState({
+			contactsModalOpen: false,
+			isNalliUser: false,
+			recipient: undefined,
+			recipientAddress: undefined,
+			recipientLastLoginDate: undefined,
+		});
 	}
 
 	render = () => {
@@ -104,7 +152,9 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 			address,
 			contactsModalOpen,
 			convertedAmount,
-			currency,
+			isNalliUser,
+			recipient,
+			recipientLastLoginDate,
 			requestAmount,
 			requestMode,
 			showCopiedText,
@@ -150,12 +200,23 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 										this.setState({ requestAmount: requestAmount, convertedAmount, currency })} />
 					</View>
 					<NalliText size={ETextSize.H2}>From</NalliText>
-					<NalliButton
-							text='Select contact'
-							icon='md-person'
-							onPress={this.onSelectRecipientPress} />
+					{!recipient &&
+						<NalliButton
+								style={styles.selectRecipientButton}
+								text='Select contact'
+								icon='md-person'
+								onPress={this.onSelectRecipientPress} />
+					}
+					{recipient &&
+						<SelectedContact
+								contact={recipient}
+								isNalliUser={isNalliUser}
+								lastLoginDate={recipientLastLoginDate}
+								onSwapPress={this.onSelectRecipientPress} />
+					}
 					<ContactsModal
 							isOpen={contactsModalOpen}
+							onlyNalliUsers
 							onSelectContact={this.onConfirmRecipient} />
 				</View>
 			)
@@ -169,6 +230,7 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 					enableLinearGradient
 					snapPoints={layout.isSmallDevice ? ['88%'] : ['68%']}
 					header='Request'
+					onClose={this.clearRecipient}
 					headerIconComponent={(
 						<TouchableOpacity
 								style={styles.toggleRequestModeButton}
@@ -222,6 +284,9 @@ const styles = StyleSheet.create({
 	amountContainer: {
 		justifyContent: 'center',
 		marginBottom: 20,
+	},
+	selectRecipientButton: {
+		marginTop: 25,
 	},
 	qrcode: {
 		alignSelf: 'center',

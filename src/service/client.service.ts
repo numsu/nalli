@@ -17,6 +17,10 @@ export default class ClientService {
 		return HttpService.get<RecipientAddress>(`${this.uri}/v2/address/${phone}`);
 	}
 
+	static usersExist(hashes: string[]) {
+		return HttpService.post<string[]>(`${this.uri}/users-exist`, hashes);
+	}
+
 	static getInvitedCount() {
 		return HttpService.get<number>(`${this.uri}/invited-count`);
 	}

@@ -23,13 +23,12 @@ import Colors from '../../constants/colors';
 import Layout from '../../constants/layout';
 import layout from '../../constants/layout';
 import AuthStore from '../../service/auth-store';
-import ContactsService from '../../service/contacts.service';
 import CurrencyService from '../../service/currency.service';
 import NotificationService from '../../service/notification.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 import WalletHandler from '../../service/wallet-handler.service';
 import WalletStore, { WalletType } from '../../service/wallet-store';
-import WalletService, { WalletTransaction } from '../../service/wallet.service';
+import WalletService from '../../service/wallet.service';
 import WsService, { EWebSocketNotificationType } from '../../service/ws.service';
 import NalliMenu from './menu/nalli-menu.component';
 import PrivacyShield, { NalliAppState } from './privacy-shield.component';
@@ -42,8 +41,6 @@ interface HomeScreenProps extends NavigationInjectedProps {
 
 interface HomeScreenState {
 	price: number;
-	transactions: WalletTransaction[];
-	hasMoreTransactions: boolean;
 	isMenuOpen: boolean;
 	walletIsOpen: boolean;
 	process: boolean;
@@ -54,6 +51,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	sendRef: SendSheet;
 	sendSheetRef: RefObject<any>;
 	receiveSheetRef: RefObject<any>;
+	transactionSheetRef: TransactionsSheet;
 	sidemenuRef: SideMenu;
 	subscriptions: EmitterSubscription[] = [];
 
@@ -63,8 +61,6 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		this.receiveSheetRef = React.createRef();
 		this.state = {
 			price: undefined,
-			transactions: undefined,
-			hasMoreTransactions: false,
 			isMenuOpen: false,
 			walletIsOpen: true,
 			process: false,
@@ -76,15 +72,13 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	});
 
 	componentDidMount = () => {
-		this.init();
 		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.CURRENCY, () => this.getCurrentPrice()));
-		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.ACCOUNTS_BALANCES, () => this.fetchTransactions(true)));
+		this.init();
 	}
 
 	init = async () => {
 		this.getCurrentPrice();
 		this.subscribeToNotifications();
-		this.fetchTransactions();
 		NotificationService.checkPushNotificationRegistrationStatusAndRenewIfNecessary();
 	}
 
@@ -101,7 +95,6 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		if (nextState == NalliAppState.ACTIVE) {
 			this.subscribeToNotifications();
 			this.getCurrentPrice();
-			ContactsService.clearCache();
 			WalletHandler.getAccountsBalancesAndHandlePending();
 		}
 	}
@@ -111,7 +104,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 			if (event.type == EWebSocketNotificationType.CONFIRMATION_RECEIVE) {
 				await WalletHandler.getAccountsBalancesAndHandlePending();
 			} else if (event.type == EWebSocketNotificationType.PENDING_RECEIVED) {
-				this.getTransactions();
+				this.transactionSheetRef.getTransactions();
 			}
 		});
 	}
@@ -123,15 +116,11 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 			await VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT, storedWallet.accounts[index].address);
 			await VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT_INDEX, index);
 			if (fetchTransactions) {
-				this.getTransactions();
+				this.transactionSheetRef.getTransactions();
 			}
 			this.setState({ walletIsOpen: true });
 		} else {
-			this.setState({
-				walletIsOpen: false,
-				transactions: [],
-				hasMoreTransactions: false,
-			 });
+			this.setState({ walletIsOpen: false });
 		}
 	}
 
@@ -181,37 +170,11 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		return true;
 	}
 
-	async fetchTransactions(force = false) {
-		if (!this.state.transactions || force) {
-			this.getTransactions();
-		}
-	}
-
 	getCurrentPrice = async () => {
 		const currency = await VariableStore.getVariable(NalliVariable.CURRENCY, 'usd');
 		const price = await CurrencyService.getCurrentPrice('xno', currency);
 		this.setState({ price });
 		return price;
-	}
-
-	getTransactions = async () => {
-		const res = await WalletService.getWalletTransactions(25, 0);
-		this.setState({
-			transactions: res.sort((a, b) => b.timestamp - a.timestamp),
-			hasMoreTransactions: res.length == 25,
-		});
-		return res;
-	}
-
-	getMoreTransactions = async () => {
-		const res = await WalletService.getWalletTransactions(25, this.state.transactions.length);
-		this.setState({
-			transactions: [
-				...this.state.transactions,
-				...res.sort((a, b) => b.timestamp - a.timestamp),
-			],
-			hasMoreTransactions: res.length == 25,
-		});
 	}
 
 	logout = async () => {
@@ -243,8 +206,6 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		const { navigation } = this.props;
 		const {
 			price,
-			transactions,
-			hasMoreTransactions,
 			walletIsOpen,
 		} = this.state;
 
@@ -300,10 +261,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 												disabled={!walletIsOpen} />
 									</View>
 								</View>
-								<TransactionsSheet
-										transactions={transactions}
-										hasMoreTransactions={hasMoreTransactions}
-										onFetchMore={this.getMoreTransactions} />
+								<TransactionsSheet ref={c => this.transactionSheetRef = c} />
 								<SendSheet
 										ref={c => this.sendRef = c}
 										reference={this.sendSheetRef} />

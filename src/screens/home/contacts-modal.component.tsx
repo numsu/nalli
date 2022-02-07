@@ -14,6 +14,7 @@ import ContactsService, { ContactItem } from '../../service/contacts.service';
 
 interface ContactsModalProps {
 	isOpen: boolean;
+	onlyNalliUsers?: boolean;
 	onSelectContact: (contact: any) => Promise<any>;
 }
 
@@ -61,7 +62,10 @@ export default class ContactsModal extends React.Component<ContactsModalProps, C
 
 	fetchContacts = async () => {
 		return new Promise<void>(async resolve => {
-			const contacts = await ContactsService.getContacts(false);
+			let contacts = await ContactsService.getContacts(false);
+			if (this.props.onlyNalliUsers) {
+				contacts = contacts.filter(contact => contact.isNalliUser);
+			}
 			this.setState({ contacts }, resolve);
 		});
 	}

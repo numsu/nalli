@@ -26,12 +26,13 @@ import NalliButton from '../../components/nalli-button.component';
 import NalliInput from '../../components/nalli-input.component';
 import NalliNanoAddress from '../../components/nano-address.component';
 import QRCodeScanner from '../../components/qrcode-scanner.component';
+import SelectedContact from '../../components/selected-contact.component';
 import ShowHide from '../../components/show-hide.component';
 import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
 import layout from '../../constants/layout';
 import ClientService from '../../service/client.service';
-import ContactsService, { FormattedNumber } from '../../service/contacts.service';
+import { FormattedNumber } from '../../service/contacts.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 import WalletHandler from '../../service/wallet-handler.service';
 import WalletStore from '../../service/wallet-store';
@@ -53,14 +54,14 @@ export interface SendSheetState {
 	process: boolean;
 	recipient: SendSheetRecipient;
 	recipientAddress: string;
-	recipientLastLogin: string;
+	recipientLastLoginDate: string;
 	sendAmount: string;
 	success: boolean;
 	tab: SendSheetTab;
 	walletAddress: string;
 }
 
-interface SendSheetRecipient {
+export interface SendSheetRecipient {
 	initials: string;
 	name: string;
 	number: string;
@@ -96,7 +97,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			process: false,
 			recipient: undefined,
 			recipientAddress: undefined,
-			recipientLastLogin: undefined,
+			recipientLastLoginDate: undefined,
 			sendAmount: undefined,
 			success: false,
 			tab: SendSheetTab.CONTACT,
@@ -172,19 +173,19 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 	onConfirmRecipient = async (contact) => {
 		Keyboard.dismiss();
 		if (contact) {
-			const recipientAddress = await ClientService.getClientAddress(contact.fullNumber);
+			const recipient = await ClientService.getClientAddress(contact.fullNumber);
 			let address;
 			let isNalliUser = false;
-			let recipientLastLogin;
+			let recipientLastLoginDate;
 
 			// If client is not registered, create a pending send to a custodial account
-			if (!recipientAddress) {
+			if (!recipient) {
 				const pendingSend = await WalletService.createPendingSend(contact.fullNumber);
 				address = pendingSend.address;
 			} else {
-				address = recipientAddress.address;
-				isNalliUser = recipientAddress.nalliUser;
-				recipientLastLogin = recipientAddress.lastLogin;
+				address = recipient.address;
+				isNalliUser = recipient.nalliUser;
+				recipientLastLoginDate = recipient.lastLogin;
 			}
 
 			this.setState({
@@ -192,7 +193,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 				isNalliUser,
 				recipient: contact,
 				recipientAddress: address,
-				recipientLastLogin,
+				recipientLastLoginDate,
 			});
 		} else {
 			this.clearRecipient();
@@ -243,7 +244,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			isNalliUser: false,
 			recipient: undefined,
 			recipientAddress: undefined,
-			recipientLastLogin: undefined,
+			recipientLastLoginDate: undefined,
 			walletAddress: undefined,
 		});
 	}
@@ -255,7 +256,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			isNalliUser: false,
 			recipient: undefined,
 			recipientAddress: undefined,
-			recipientLastLogin: undefined,
+			recipientLastLoginDate: undefined,
 			walletAddress: undefined,
 			process: false,
 			success: false,
@@ -374,14 +375,14 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			process,
 			recipient,
 			recipientAddress,
-			recipientLastLogin,
+			recipientLastLoginDate,
 			sendAmount,
 			success,
 			tab,
 			walletAddress,
 		} = this.state;
 
-		const recipientLastLoginOverMonthAgo = moment(recipientLastLogin).isBefore(moment().subtract(1, 'month'));
+		const recipientLastLoginOverMonthAgo = moment(recipientLastLoginDate).isBefore(moment().subtract(1, 'month'));
 
 		let recipientText;
 		if (success) {
@@ -481,50 +482,11 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 										onPress={this.onSelectRecipientPress} />
 							}
 							{tab == SendSheetTab.CONTACT && recipient &&
-								<View style={styles.contactContainer}>
-									<Avatar
-											rounded
-											title={recipient.initials}
-											size='medium'
-											titleStyle={{ fontSize: 18 }}
-											containerStyle={{ marginRight: 15 }}
-											overlayContainerStyle={{ backgroundColor: Colors.main }} />
-									<View>
-										<View style={{ flexDirection: 'row' }}>
-											<NalliText size={ETextSize.H2} style={styles.contactName}>
-												{recipient.name}
-											</NalliText>
-											{isNalliUser &&
-												<NalliBadge>
-													<View style={styles.online}></View>
-													<NalliText>Nalli user</NalliText>
-												</NalliBadge>
-											}
-											{!isNalliUser &&
-												<NalliBadge>
-													<View style={styles.offline}></View>
-													<NalliText>New user</NalliText>
-												</NalliBadge>
-											}
-										</View>
-										<NalliText>
-											{recipient.formattedNumber}
-										</NalliText>
-										{recipientLastLoginOverMonthAgo &&
-											<NalliText style={styles.incativeUserWarning}>
-												This user hasn't been active for a while
-											</NalliText>
-										}
-									</View>
-									<TouchableOpacity
-											onPress={this.onSelectRecipientPress}
-											style={styles.contactSelectArrow}>
-										<Ionicons
-												name='ios-swap-horizontal'
-												style={styles.contactSelectArrow}
-												size={32} />
-									</TouchableOpacity>
-								</View>
+								<SelectedContact
+										contact={recipient}
+										isNalliUser={isNalliUser}
+										lastLoginDate={recipientLastLoginDate}
+										onSwapPress={this.onSelectRecipientPress} />
 							}
 							{tab == SendSheetTab.PHONE && !recipient &&
 								<NalliButton

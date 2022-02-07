@@ -40,7 +40,7 @@ export default class WalletService {
 	}
 
 	static getWalletTransactions(amount: number, offset: number) {
-		return HttpService.get<WalletTransaction[]>(`${this.uri}/transactions/${amount}/${offset}`);
+		return HttpService.get<WalletTransaction[]>(`${this.uri}/v2/transactions/${amount}/${offset}`);
 	}
 
 	static isWalletOpened(address: string) {
@@ -98,7 +98,7 @@ export interface ReceivedPendingBlock {
 }
 
 export interface WalletTransaction {
-	phone: string;
+	phoneHash: string;
 	account: string;
 	type: string;
 	amount: string;
