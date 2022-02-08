@@ -18,6 +18,7 @@ interface TextState {
 export enum ETextSize {
 	P,
 	P_LARGE,
+	P_SMALL,
 	H1,
 	H2,
 	BUTTON,
@@ -50,6 +51,9 @@ export default class NalliText extends React.Component<TextProps, TextState> {
 			case ETextSize.P_LARGE:
 				baseStyle = styles.pLarge;
 				break;
+			case ETextSize.P_SMALL:
+				baseStyle = styles.pSmall;
+				break;
 			case ETextSize.P:
 			default:
 				baseStyle = styles.p;
@@ -74,6 +78,10 @@ const styles = StyleSheet.create({
 	},
 	pLarge: {
 		fontSize: 20,
+		fontFamily: 'OpenSans',
+	},
+	pSmall: {
+		fontSize: 11,
 		fontFamily: 'OpenSans',
 	},
 	h1: {

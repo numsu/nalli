@@ -9,11 +9,13 @@ import { Avatar } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 
 import colors from '../constants/colors';
+import { ContactItem } from '../service/contacts.service';
+import NalliBadge from './badge.component';
 import NalliText, { ETextSize } from './text.component';
 
 interface ContactProps {
 	onSelectContact: (contact: any) => void;
-	contact: any;
+	contact: ContactItem;
 }
 
 interface ContactState {
@@ -39,9 +41,17 @@ export default class Contact extends React.Component<ContactProps, ContactState>
 						containerStyle={{ marginRight: 15 }}
 						overlayContainerStyle={{ backgroundColor: colors.main }} />
 				<View>
-					<NalliText size={ETextSize.H2} style={styles.contactName}>
-						{contact.name}
-					</NalliText>
+					<View style={{ flexDirection: 'row', height: 19 }}>
+						<NalliText size={ETextSize.H2} style={styles.contactName}>
+							{contact.name}
+						</NalliText>
+						{contact.isNalliUser &&
+							<NalliBadge>
+								<View style={styles.online}></View>
+								<NalliText size={ETextSize.P_SMALL}>User</NalliText>
+							</NalliBadge>
+						}
+					</View>
 					<NalliText>
 						{contact.formattedNumber}
 					</NalliText>
@@ -71,5 +81,12 @@ const styles = StyleSheet.create({
 	contactSelectArrow: {
 		color: colors.main,
 		marginLeft: 'auto',
+	},
+	online: {
+		backgroundColor: 'forestgreen',
+		width: 6,
+		height: 6,
+		marginRight: 3,
+		borderRadius: 30,
 	},
 });

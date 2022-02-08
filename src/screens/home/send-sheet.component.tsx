@@ -18,7 +18,6 @@ import { Avatar } from 'react-native-elements';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
-import NalliBadge from '../../components/badge.component';
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import CurrencyInput from '../../components/currency-input.component';
 import Link from '../../components/link.component';
@@ -495,45 +494,11 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 										onPress={this.onSelectInputNumberPress} />
 							}
 							{tab == SendSheetTab.PHONE && recipient &&
-								<View style={styles.contactContainer}>
-									<Avatar
-											rounded
-											title={recipient.initials}
-											size='medium'
-											titleStyle={{ fontSize: 18 }}
-											containerStyle={{ marginRight: 15 }}
-											overlayContainerStyle={{ backgroundColor: Colors.main }} />
-									<View>
-										<View style={{ flexDirection: 'row' }}>
-											<NalliText size={ETextSize.H2} style={styles.contactName}>
-												{recipient.name}
-											</NalliText>
-											{isNalliUser &&
-												<NalliBadge>
-													<View style={styles.online}></View>
-													<NalliText>Nalli user</NalliText>
-												</NalliBadge>
-											}
-											{!isNalliUser &&
-												<NalliBadge>
-													<View style={styles.offline}></View>
-													<NalliText>New user</NalliText>
-												</NalliBadge>
-											}
-										</View>
-										<NalliText>
-											{recipient.formattedNumber}
-										</NalliText>
-									</View>
-									<TouchableOpacity
-											onPress={this.onSelectInputNumberPress}
-											style={styles.contactSelectArrow}>
-										<Ionicons
-												name='ios-swap-horizontal'
-												style={styles.contactSelectArrow}
-												size={32} />
-									</TouchableOpacity>
-								</View>
+								<SelectedContact
+										contact={recipient}
+										isNalliUser={isNalliUser}
+										lastLoginDate={recipientLastLoginDate}
+										onSwapPress={this.onSelectInputNumberPress} />
 							}
 							{tab == SendSheetTab.ADDRESS &&
 								<View style={styles.addressView}>

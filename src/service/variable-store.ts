@@ -76,6 +76,7 @@ export default class VariableStore {
 }
 
 export enum NalliVariable {
+	// General
 	ACCOUNTS_BALANCES = 'accountsBalances',
 	APP_STATE = 'appState',
 	BIOMETRICS_TYPE = 'biometricsType',
@@ -92,4 +93,7 @@ export enum NalliVariable {
 	SELECTED_REQUEST_MODE = 'selectedReceiveMode',
 	SEND_TAB = 'sendTab',
 	SHOW_FIAT_DEFAULT = 'showFiatDefault',
+
+	// Settings
+	ONLY_NALLI_USERS = 'onlyUsers',
 }

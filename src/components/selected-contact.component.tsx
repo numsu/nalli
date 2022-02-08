@@ -50,14 +50,14 @@ export default class SelectedContact extends React.Component<SelectedContactProp
 						containerStyle={{ marginRight: 15 }}
 						overlayContainerStyle={{ backgroundColor: Colors.main }} />
 				<View>
-					<View style={{ flexDirection: 'row' }}>
+					<View style={{ flexDirection: 'row', height: 19 }}>
 						<NalliText size={ETextSize.H2} style={styles.contactName}>
 							{contact.name}
 						</NalliText>
 						{isNalliUser &&
 							<NalliBadge>
 								<View style={styles.online}></View>
-								<NalliText>Nalli user</NalliText>
+								<NalliText>User</NalliText>
 							</NalliBadge>
 						}
 						{!isNalliUser &&
