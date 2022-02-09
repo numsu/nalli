@@ -694,13 +694,13 @@ const styles = StyleSheet.create({
 	},
 	sendTransactionButton: {
 		marginTop: 'auto',
-		paddingHorizontal: 20,
+		paddingHorizontal: 17,
 		...Platform.select({
 			android: {
 				marginBottom: 55,
 			},
 			ios: {
-				marginBottom: 45,
+				marginBottom: 55,
 			},
 		}),
 	},

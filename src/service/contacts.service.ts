@@ -53,59 +53,64 @@ export default class ContactsService {
 
 		if (await this.askPermission()) {
 			this.isProcessing = true;
-			const { data } = await Contacts.getContactsAsync({
-				fields: [Contacts.Fields.PhoneNumbers, Contacts.Fields.Name],
-			});
+			try {
+				const { data } = await Contacts.getContactsAsync({
+					fields: [Contacts.Fields.PhoneNumbers, Contacts.Fields.Name],
+				});
 
-			const defaultCountry = await this.getClientCountry();
-			let contacts = data
-					.filter(item => item.phoneNumbers && item.phoneNumbers.length != 0)
-					.sort((a, b) => {
-						const sortValueA = (a.lastName || '') + (a.firstName || '');
-						const sortValueB = (b.lastName || '') + (b.firstName || '');
-						if (sortValueA < sortValueB) return -1;
-						if (sortValueA > sortValueB) return 1;
-						return 0;
-					})
-					.map(item => {
-						const items = new Map<string, ContactItem>();
-						item.phoneNumbers
-								.map(number => {
-									try {
-										return this.handleNumber(number.number, defaultCountry);
-									} catch {
-										return null;
-									}
-								})
-								.filter(number => (
-									number && number.mobile && number.full && number.formatted
-								))
-								.forEach(async number => {
-									try {
-										let initials = (item.firstName?.substr(0, 1) || '') + (item.lastName?.substr(0, 1) || '');
-										if (!initials) {
-											initials = item.name.substr(0, 1);
+				const defaultCountry = await this.getClientCountry();
+				let contacts = data
+						.filter(item => item.phoneNumbers && item.phoneNumbers.length != 0)
+						.sort((a, b) => {
+							const sortValueA = (a.lastName || '') + (a.firstName || '');
+							const sortValueB = (b.lastName || '') + (b.firstName || '');
+							if (sortValueA < sortValueB) return -1;
+							if (sortValueA > sortValueB) return 1;
+							return 0;
+						})
+						.map(item => {
+							const items = new Map<string, ContactItem>();
+							item.phoneNumbers
+									.map(number => {
+										try {
+											return this.handleNumber(number.number, defaultCountry);
+										} catch {
+											return null;
 										}
-										const contactItem = {
-											id: item.id + number.full,
-											name: item.name || 'Unnamed contact',
-											initials: initials.toUpperCase(),
-											formattedNumber: number.formatted,
-											fullNumber: number.full,
-											isNalliUser: false,
-											numberHash: this.hash(number.full),
-										};
-										items.set(contactItem.id, contactItem);
-									} catch {
-										// skip errors
-									}
-								});
-						return [ ...items.values() ];
-					})
-					.flat();
-			contacts = await this.save(contacts);
-			this.isProcessing = false;
-			return contacts;
+									})
+									.filter(number => (
+										number && number.mobile && number.full && number.formatted
+									))
+									.forEach(async number => {
+										try {
+											let initials = (item.firstName?.substr(0, 1) || '') + (item.lastName?.substr(0, 1) || '');
+											if (!initials) {
+												initials = item.name.substr(0, 1);
+											}
+											const contactItem = {
+												id: item.id + number.full,
+												name: item.name || 'Unnamed contact',
+												initials: initials.toUpperCase(),
+												formattedNumber: number.formatted,
+												fullNumber: number.full,
+												isNalliUser: false,
+												numberHash: this.hash(number.full),
+											};
+											items.set(contactItem.id, contactItem);
+										} catch {
+											// skip errors
+										}
+									});
+							return [ ...items.values() ];
+						})
+						.flat();
+				contacts = await this.save(contacts);
+				this.isProcessing = false;
+				return contacts;
+			} catch {
+				this.isProcessing = false;
+				throw new Error('Error when handling contacts');
+			}
 		} else {
 			if (alertNoPermission) {
 				Alert.alert(

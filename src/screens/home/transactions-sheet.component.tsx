@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React from 'react';
+import React, { RefObject } from 'react';
 import {
 	EmitterSubscription,
 	StyleSheet,
@@ -32,11 +32,13 @@ interface TransactionSheetState {
 
 export default class TransactionsSheet extends React.Component<TransactionsSheetProps, TransactionSheetState> {
 
+	ref: RefObject<any>;
 	interval;
 	subscriptions = [] as EmitterSubscription[];
 
 	constructor(props) {
 		super(props);
+		this.ref = React.createRef();
 		this.state = {
 			hasMoreTransactions: false,
 			selectedTransaction: {} as WalletTransaction,
@@ -61,7 +63,7 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.ACCOUNTS_BALANCES, () => this.fetchTransactions(true)));
 	}
 
-	async fetchTransactions(force = false) {
+	fetchTransactions(force = false) {
 		if (!this.state.transactions || !this.state.transactions.length || force) {
 			this.getTransactions();
 		}
@@ -72,7 +74,7 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 		this.setState({
 			transactions: res.sort((a, b) => b.timestamp - a.timestamp),
 			hasMoreTransactions: res.length == 25,
-		});
+		}, () => this.ref.current.snapToIndex(0));
 	}
 
 	getMoreTransactions = async () => {
@@ -193,13 +195,17 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 			));
 		}
 
-		if (hasTransactions) {
-			return (
-				<MyBottomSheet
-						initialSnap={0}
-						snapPoints={['25%', '87.5%']}
-						enableLinearGradient
-						header='Transactions'>
+		return (
+			<MyBottomSheet
+					reference={this.ref}
+					initialSnap={-1}
+					snapPoints={['25%', '87.5%']}
+					enableLinearGradient
+					header='Transactions'>
+				{!hasTransactions &&
+					<NalliText style={styles.noMoreText}>Your transactions will appear here</NalliText>
+				}
+				{hasTransactions &&
 					<BottomSheetScrollView style={styles.transactionList}>
 						{transactionListElements}
 						{hasMoreTransactions &&
@@ -218,11 +224,9 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 								contactName={this.getContactName(selectedTransaction)}
 								onClose={this.closeTransaction} />
 					</BottomSheetScrollView>
-				</MyBottomSheet>
-			);
-		} else {
-			return <></>
-		}
+				}
+			</MyBottomSheet>
+		);
 	}
 
 }

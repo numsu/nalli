@@ -1,6 +1,7 @@
 import React from 'react';
 import {
 	StyleSheet,
+	TouchableWithoutFeedback,
 	View,
 } from 'react-native';
 
@@ -8,8 +9,10 @@ import Colors from '../constants/colors';
 import NalliText, { ETextSize } from './text.component';
 
 interface CardProps {
-	title: string;
+	onPress?: () => void;
+	onLongPress?: () => void;
 	style: any;
+	title: string;
 }
 
 interface CardState {
@@ -22,16 +25,24 @@ export default class Card extends React.Component<CardProps, CardState> {
 	}
 
 	render = () => {
-		const { title, style, children } = this.props;
+		const {
+			children,
+			onLongPress,
+			onPress,
+			style,
+			title,
+		} = this.props;
 		return (
-			<View style={[style, styles.card]}>
-				<NalliText
-						size={ETextSize.H1}
-						style={styles.header}>
-					{title}
-				</NalliText>
-				{children}
-			</View>
+			<TouchableWithoutFeedback onLongPress={onLongPress} onPress={onPress}>
+				<View style={[style, styles.card]}>
+					<NalliText
+							size={ETextSize.H1}
+							style={styles.header}>
+						{title}
+					</NalliText>
+					{children}
+				</View>
+			</TouchableWithoutFeedback>
 		);
 	}
 

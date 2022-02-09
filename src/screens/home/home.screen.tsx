@@ -232,7 +232,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 												onPress={this.logout}
 												icon={{ name: 'lock', type: 'font-awesome' }}
 												size='small'
-												containerStyle={{ marginRight: 20, marginTop: 15 }}
+												containerStyle={styles.logoutButton}
 												overlayContainerStyle={{ backgroundColor: Colors.main }} />
 									</View>
 								</SafeAreaView>
@@ -285,6 +285,7 @@ const styles = StyleSheet.create({
 	header: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
+		paddingBottom: 4,
 	},
 	menuIconContainer: {
 		marginTop: 10,
@@ -294,6 +295,18 @@ const styles = StyleSheet.create({
 	},
 	menuIcon: {
 		color: Colors.main,
+	},
+	logoutButton: {
+		marginRight: 20,
+		marginTop: 15,
+		shadowColor: Colors.shadowColor,
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+		elevation: 3,
 	},
 	headerLogo: {
 		marginTop: 15,

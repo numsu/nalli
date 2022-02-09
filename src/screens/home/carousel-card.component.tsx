@@ -1,7 +1,8 @@
+import * as Haptics from 'expo-haptics';
 import React from 'react';
 import { Alert, EmitterSubscription, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { FontAwesome5, Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 
 import Card from '../../components/card.component';
 import Loading, { LoadingStyle } from '../../components/loading.component';
@@ -55,17 +56,31 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 		this.setState({ displayedCurrency, currency: CurrencyService.getCurrencyByISO(currency).icon });
 	}
 
-	onChangeDisplayedCurrencyPress = async () => {
+	onChangeDisplayedCurrencyPress = () => {
+		if (this.state.displayedCurrency == 'hidden') {
+			return;
+		}
+
 		let displayedCurrency;
 		if (this.state.displayedCurrency == 'nano') {
 			displayedCurrency = 'fiat';
-		} else if (this.state.displayedCurrency == 'fiat') {
-			displayedCurrency = 'hidden';
 		} else {
 			displayedCurrency = 'nano';
 		}
-		await VariableStore.setVariable(NalliVariable.DISPLAYED_CURRENCY, displayedCurrency);
+		VariableStore.setVariable(NalliVariable.DISPLAYED_CURRENCY, displayedCurrency);
 		this.setState({ displayedCurrency });
+	}
+
+	hideAmount = () => {
+		let displayedCurrency;
+		if (this.state.displayedCurrency == 'hidden') {
+			displayedCurrency = 'nano';
+		} else {
+			displayedCurrency = 'hidden';
+		}
+		VariableStore.setVariable(NalliVariable.DISPLAYED_CURRENCY, displayedCurrency);
+		this.setState({ displayedCurrency });
+		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 	}
 
 	onHomeAccountPress = () => {
@@ -88,15 +103,7 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 
 		if (!showAddAccountView) {
 			return (
-				<Card style={styles.row} title={`Account balance`}>
-					<TouchableOpacity
-							style={styles.changeDisplayedCurrencyButton}
-							onPress={this.onChangeDisplayedCurrencyPress}>
-						<Ionicons
-								style={styles.changeDisplayedCurrencyArrow}
-								name='ios-swap-horizontal'
-								size={25} />
-					</TouchableOpacity>
+				<Card onPress={this.onChangeDisplayedCurrencyPress} onLongPress={this.hideAmount} style={styles.row} title={`Account balance`}>
 					{accountActive &&
 						<TouchableOpacity
 								onPress={this.onHomeAccountPress}
@@ -117,10 +124,10 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 					}
 					<View style={styles.balancewrapper}>
 						{(displayedCurrency == 'nano' || displayedCurrency == 'hidden') &&
-							<Text style={styles.currencyMark}>Ӿ</Text>
+							<Text style={styles.currencySign}>Ӿ</Text>
 						}
 						{displayedCurrency == 'fiat' &&
-							<Text style={styles.currencyMark}>{currency}</Text>
+							<Text style={styles.currencySign}>{currency}</Text>
 						}
 						<Text style={styles.balance}>
 							{displayedCurrency == 'nano' &&
@@ -168,21 +175,13 @@ const styles = StyleSheet.create({
 	},
 	homeAccount: {
 		position: 'absolute',
-		right: 48,
+		right: 16,
 		top: 14,
 	},
 	hideAccount: {
 		position: 'absolute',
-		right: 50,
+		right: 18,
 		top: 16,
-	},
-	changeDisplayedCurrencyButton: {
-		position: 'absolute',
-		top: 13,
-		right: 16,
-	},
-	changeDisplayedCurrencyArrow: {
-		color: Colors.main,
 	},
 	balancewrapper: {
 		flexDirection: 'row',
@@ -192,16 +191,12 @@ const styles = StyleSheet.create({
 		fontSize: 40,
 		fontFamily: 'OpenSans',
 	},
-	currencyMark: {
+	currencySign: {
 		fontSize: 36,
 		marginRight: 20,
 		marginTop: 2,
 		color: Colors.main,
 		fontFamily: 'OpenSans',
-	},
-	nanomark: {
-		marginTop: 17,
-		marginRight: 10,
 	},
 	loadingContainer: {
 		height: 91,

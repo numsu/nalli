@@ -1,8 +1,10 @@
 import * as Clipboard from 'expo-clipboard';
 import React, { RefObject } from 'react';
 import {
+	Alert,
 	EmitterSubscription,
 	Keyboard,
+	Platform,
 	StyleSheet,
 	TouchableOpacity,
 	View,
@@ -146,6 +148,51 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 		});
 	}
 
+	clearState = () => {
+		this.setState({
+			contactsModalOpen: false,
+			isNalliUser: false,
+			recipient: undefined,
+			recipientAddress: undefined,
+			recipientLastLoginDate: undefined,
+			requestAmount: undefined,
+			convertedAmount: '0',
+		});
+	}
+
+	confirmRequest = () => {
+		const sendAmount = this.state.currency == 'xno'
+				? this.state.requestAmount
+				: this.state.convertedAmount;
+
+		if (sendAmount == '0') {
+			Alert.alert('Error', 'Please enter an amount to send');
+			return;
+		}
+
+		const message = `You are requesting Ӿ ${sendAmount} from ${this.state.recipient.name}`;
+
+		Alert.alert(
+			'Confirm',
+			message,
+			[
+				{
+					text: 'Confirm',
+					onPress: this.sendRequest,
+					style: 'default',
+				}, {
+					text: 'Cancel',
+					onPress: () => undefined,
+					style: 'cancel',
+				},
+			],
+		);
+	}
+
+	sendRequest = () => {
+
+	}
+
 	render = () => {
 		const { reference } = this.props;
 		const {
@@ -163,56 +210,69 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 		let view;
 		if (requestMode == RequestMode.QR) {
 			view = (
-				<View style={styles.qrcodeContainer}>
-					<NalliText style={styles.text}>
-						Scan the QR-code below to send funds to this wallet
-					</NalliText>
-					<View style={styles.qrcode}>
-						<QRCode
-								value={`nano:${address}`}
-								logo={logo}
-								logoBorderRadius={0}
-								quietZone={4}
-								size={200} />
+				<BottomSheetScrollView keyboardDismissMode={'interactive'} style={styles.transactionSheetContent}>
+					<View style={styles.qrcodeContainer}>
+						<NalliText style={styles.text}>
+							Scan the QR-code below to send funds to this wallet
+						</NalliText>
+						<View style={styles.qrcode}>
+							<QRCode
+									value={`nano:${address}`}
+									logo={logo}
+									logoBorderRadius={0}
+									quietZone={4}
+									size={200} />
+						</View>
+						<NalliNanoAddress
+								contentContainerStyle={styles.addressContainer}
+								style={styles.text}>
+							{address}
+						</NalliNanoAddress>
+						<NalliButton
+								small
+								icon='ios-copy'
+								text={showCopiedText ? 'Copied' : 'Copy address'}
+								style={styles.copyButton}
+								onPress={() => this.onCopyPress(address)} />
 					</View>
-					<NalliNanoAddress
-							contentContainerStyle={styles.addressContainer}
-							style={styles.text}>
-						{address}
-					</NalliNanoAddress>
-					<NalliButton
-							small
-							icon='ios-copy'
-							text={showCopiedText ? 'Copied' : 'Copy address'}
-							style={styles.copyButton}
-							onPress={() => this.onCopyPress(address)} />
-				</View>
+				</BottomSheetScrollView>
 			);
 		} else {
 			view = (
-				<View style={styles.requestContainer}>
-					<View style={styles.amountContainer}>
-						<CurrencyInput
-								value={requestAmount}
-								convertedValue={convertedAmount}
-								hideMaxButton
-								onChangeText={(requestAmount: string, convertedAmount: string, currency: string) =>
-										this.setState({ requestAmount: requestAmount, convertedAmount, currency })} />
-					</View>
-					<NalliText size={ETextSize.H2}>From</NalliText>
-					{!recipient &&
-						<NalliButton
-								style={styles.selectRecipientButton}
-								text='Select contact'
-								icon='md-person'
-								onPress={this.onSelectRecipientPress} />
-					}
+				<View style={styles.transactionSheetContent}>
+					<BottomSheetScrollView keyboardDismissMode={'interactive'}>
+						<View style={styles.amountContainer}>
+							<CurrencyInput
+									value={requestAmount}
+									convertedValue={convertedAmount}
+									hideMaxButton
+									onChangeText={(requestAmount: string, convertedAmount: string, currency: string) =>
+											this.setState({ requestAmount: requestAmount, convertedAmount, currency })} />
+						</View>
+						<NalliText size={ETextSize.H2}>From</NalliText>
+						{!recipient &&
+							<NalliButton
+									style={styles.selectRecipientButton}
+									text='Select contact'
+									icon='md-person'
+									onPress={this.onSelectRecipientPress} />
+						}
+						{recipient &&
+							<SelectedContact
+									contact={recipient}
+									isNalliUser={isNalliUser}
+									lastLoginDate={recipientLastLoginDate}
+									onSwapPress={this.onSelectRecipientPress} />
+						}
+					</BottomSheetScrollView>
 					{recipient &&
-						<SelectedContact
-								contact={recipient}
-								isNalliUser={isNalliUser}
-								lastLoginDate={recipientLastLoginDate}
-								onSwapPress={this.onSelectRecipientPress} />
+						<View style={styles.confirmButton}>
+							<NalliButton
+									text='Request'
+									solid
+									onPress={this.confirmRequest}
+									disabled={!recipient || !requestAmount} />
+						</View>
 					}
 					<ContactsModal
 							isOpen={contactsModalOpen}
@@ -230,7 +290,7 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 					enableLinearGradient
 					snapPoints={layout.isSmallDevice ? ['88%'] : ['68%']}
 					header='Request'
-					onClose={this.clearRecipient}
+					onClose={this.clearState}
 					headerIconComponent={(
 						<TouchableOpacity
 								style={styles.toggleRequestModeButton}
@@ -247,9 +307,7 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 							}
 						</TouchableOpacity>
 					)}>
-				<BottomSheetScrollView keyboardDismissMode={'interactive'} style={styles.transactionSheetContent}>
-					{view}
-				</BottomSheetScrollView>
+				{view}
 			</MyBottomSheet>
 		);
 	}
@@ -258,8 +316,8 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 
 const styles = StyleSheet.create({
 	transactionSheetContent: {
-		backgroundColor: 'white',
-		height: layout.isSmallDevice ? layout.window.height * 0.79 : layout.window.height * 0.62,
+		width: '100%',
+		height: '100%',
 		paddingHorizontal: 15,
 	},
 	qrcodeContainer: {
@@ -277,16 +335,24 @@ const styles = StyleSheet.create({
 	text: {
 		textAlign: 'center',
 	},
-	requestContainer: {
-		width: '100%',
-		height: '100%',
-	},
 	amountContainer: {
 		justifyContent: 'center',
 		marginBottom: 20,
 	},
 	selectRecipientButton: {
 		marginTop: 25,
+	},
+	confirmButton: {
+		marginTop: 'auto',
+		paddingHorizontal: 17,
+		...Platform.select({
+			android: {
+				marginBottom: 55,
+			},
+			ios: {
+				marginBottom: 65,
+			},
+		}),
 	},
 	qrcode: {
 		alignSelf: 'center',
