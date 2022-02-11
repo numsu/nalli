@@ -50,7 +50,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 
 	sendRef: SendSheet;
 	sendSheetRef: RefObject<any>;
-	receiveSheetRef: RefObject<any>;
+	requestSheetRef: RefObject<any>;
 	transactionSheetRef: TransactionsSheet;
 	sidemenuRef: SideMenu;
 	subscriptions: EmitterSubscription[] = [];
@@ -58,7 +58,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	constructor(props) {
 		super(props);
 		this.sendSheetRef = React.createRef();
-		this.receiveSheetRef = React.createRef();
+		this.requestSheetRef = React.createRef();
 		this.state = {
 			price: undefined,
 			isMenuOpen: false,
@@ -189,7 +189,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	}
 
 	onReceivePress = () => {
-		this.receiveSheetRef.current.snapToIndex(0);
+		this.requestSheetRef.current.snapToIndex(0);
 	}
 
 	onDonatePress = () => {
@@ -265,7 +265,7 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 								<SendSheet
 										ref={c => this.sendRef = c}
 										reference={this.sendSheetRef} />
-								<RequestSheet reference={this.receiveSheetRef} />
+								<RequestSheet reference={this.requestSheetRef} />
 							</DismissKeyboardView>
 						</KeyboardAvoidingView>
 					</ScrollView>

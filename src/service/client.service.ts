@@ -47,6 +47,7 @@ export interface Client {
 
 export interface RecipientAddress {
 	address: string;
-	nalliUser: boolean;
+	id: string;
 	lastLogin: string;
+	nalliUser: boolean;
 }

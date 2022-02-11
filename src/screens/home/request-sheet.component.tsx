@@ -1,4 +1,6 @@
 import * as Clipboard from 'expo-clipboard';
+import LottieView from 'lottie-react-native';
+import { tools } from 'nanocurrency-web';
 import React, { RefObject } from 'react';
 import {
 	Alert,
@@ -16,6 +18,7 @@ import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import CurrencyInput from '../../components/currency-input.component';
 import NalliButton from '../../components/nalli-button.component';
+import NalliInput from '../../components/nalli-input.component';
 import NalliNanoAddress from '../../components/nano-address.component';
 import QRCode from '../../components/qrcode/qrcode.component';
 import SelectedContact from '../../components/selected-contact.component';
@@ -23,6 +26,7 @@ import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
 import layout from '../../constants/layout';
 import ClientService from '../../service/client.service';
+import RequestService from '../../service/request.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 import ContactsModal from './contacts-modal.component';
 import { SendSheetRecipient } from './send-sheet.component';
@@ -39,12 +43,16 @@ export interface RequestSheetState {
 	convertedAmount: string;
 	currency: string;
 	isNalliUser: boolean;
+	message: string;
+	process: boolean;
 	recipient: SendSheetRecipient;
 	recipientAddress: string;
+	recipientId: string;
 	recipientLastLoginDate: string;
 	requestAmount: string;
 	requestMode: RequestMode;
 	showCopiedText: boolean;
+	success: boolean;
 }
 
 enum RequestMode {
@@ -54,22 +62,29 @@ enum RequestMode {
 
 export default class RequestSheet extends React.Component<RequestSheetProps, RequestSheetState> {
 
+	requestSheetRef: RefObject<any>;
+	sendAnimation;
 	subscriptions: EmitterSubscription[] = [];
 
 	constructor(props) {
 		super(props);
+		this.requestSheetRef = props.reference;
 		this.state = {
 			address: '',
 			contactsModalOpen: false,
 			convertedAmount: '0',
 			currency: 'xno',
 			isNalliUser: false,
+			message: '',
+			process: false,
 			recipient: undefined,
 			recipientAddress: undefined,
+			recipientId: '',
 			recipientLastLoginDate: undefined,
 			requestAmount: undefined,
 			requestMode: RequestMode.CONTACT,
 			showCopiedText: false,
+			success: false,
 		};
 	}
 
@@ -115,6 +130,7 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 			let address;
 			let isNalliUser = false;
 			let recipientLastLoginDate;
+			let recipientId;
 
 			// If client is not registered, create a pending send to a custodial account
 			if (!recipient || !recipient.nalliUser) {
@@ -122,12 +138,14 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 				return;
 			} else {
 				address = recipient.address;
+				recipientId = recipient.id;
 				isNalliUser = recipient.nalliUser;
 				recipientLastLoginDate = recipient.lastLogin;
 			}
 
 			this.setState({
 				contactsModalOpen: false,
+				recipientId,
 				isNalliUser,
 				recipient: selectedContact,
 				recipientAddress: address,
@@ -142,8 +160,10 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 		this.setState({
 			contactsModalOpen: false,
 			isNalliUser: false,
+			message: '',
 			recipient: undefined,
 			recipientAddress: undefined,
+			recipientId: undefined,
 			recipientLastLoginDate: undefined,
 		});
 	}
@@ -151,13 +171,21 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 	clearState = () => {
 		this.setState({
 			contactsModalOpen: false,
+			convertedAmount: '0',
 			isNalliUser: false,
+			message: '',
+			process: false,
 			recipient: undefined,
 			recipientAddress: undefined,
+			recipientId: undefined,
 			recipientLastLoginDate: undefined,
 			requestAmount: undefined,
-			convertedAmount: '0',
+			success: false,
 		});
+	}
+
+	updateMessage = (message: string) => {
+		this.setState({ message });
 	}
 
 	confirmRequest = () => {
@@ -189,8 +217,15 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 		);
 	}
 
-	sendRequest = () => {
-
+	sendRequest = async () => {
+		this.setState({ process: true });
+		const converted = tools.convert(this.state.requestAmount, 'NANO', 'RAW');
+		await RequestService.newRequest({
+			amount: converted,
+			message: this.state.message,
+			recipientId: this.state.recipientId,
+		});
+		this.setState({ success: true, process: false });
 	}
 
 	render = () => {
@@ -200,113 +235,156 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 			contactsModalOpen,
 			convertedAmount,
 			isNalliUser,
+			message,
+			process,
 			recipient,
 			recipientLastLoginDate,
 			requestAmount,
 			requestMode,
 			showCopiedText,
+			success,
 		} = this.state;
 
 		let view;
-		if (requestMode == RequestMode.QR) {
+		if (success) {
 			view = (
-				<BottomSheetScrollView keyboardDismissMode={'interactive'} style={styles.transactionSheetContent}>
-					<View style={styles.qrcodeContainer}>
-						<NalliText style={styles.text}>
-							Scan the QR-code below to send funds to this wallet
-						</NalliText>
-						<View style={styles.qrcode}>
-							<QRCode
-									value={`nano:${address}`}
-									logo={logo}
-									logoBorderRadius={0}
-									quietZone={4}
-									size={200} />
-						</View>
-						<NalliNanoAddress
-								contentContainerStyle={styles.addressContainer}
-								style={styles.text}>
-							{address}
-						</NalliNanoAddress>
-						<NalliButton
-								small
-								icon='ios-copy'
-								text={showCopiedText ? 'Copied' : 'Copy address'}
-								style={styles.copyButton}
-								onPress={() => this.onCopyPress(address)} />
+				<View style={styles.sendingContainer}>
+					<View style={styles.animationContainer}>
+						<LottieView
+								ref={animation => {
+									this.sendAnimation = animation;
+								}}
+								onLayout={() => this.sendAnimation.play()}
+								loop={false}
+								resizeMode='cover'
+								source={require('../../assets/lottie/sent.json')} />
 					</View>
-				</BottomSheetScrollView>
+					<View style={styles.successTextContainer}>
+						<NalliText style={styles.successText}>You requested <NalliText style={[styles.successText, styles.successTextColor]}>Ӿ {requestAmount}</NalliText></NalliText>
+						<NalliText style={styles.successText}>from <NalliText style={[styles.successText, styles.successTextColor]}>{recipient.name}</NalliText></NalliText>
+					</View>
+					<View style={styles.confirmButton}>
+						<NalliButton
+								text={'Close'}
+								solid
+								onPress={() => (this.clearState(), this.requestSheetRef.current.close())} />
+					</View>
+				</View>
 			);
 		} else {
-			view = (
-				<View style={styles.transactionSheetContent}>
-					<BottomSheetScrollView keyboardDismissMode={'interactive'}>
-						<View style={styles.amountContainer}>
-							<CurrencyInput
-									value={requestAmount}
-									convertedValue={convertedAmount}
-									hideMaxButton
-									onChangeText={(requestAmount: string, convertedAmount: string, currency: string) =>
-											this.setState({ requestAmount: requestAmount, convertedAmount, currency })} />
-						</View>
-						<NalliText size={ETextSize.H2}>From</NalliText>
-						{!recipient &&
+			if (requestMode == RequestMode.QR) {
+				view = (
+					<BottomSheetScrollView keyboardDismissMode={'interactive'} style={styles.transactionSheetContent}>
+						<View style={styles.qrcodeContainer}>
+							<NalliText style={styles.text}>
+								Scan the QR-code below to send Nano to this wallet
+							</NalliText>
+							<View style={styles.qrcode}>
+								<QRCode
+										value={`nano:${address}`}
+										logo={logo}
+										logoBorderRadius={0}
+										quietZone={4}
+										size={200} />
+							</View>
+							<NalliNanoAddress
+									contentContainerStyle={styles.addressContainer}
+									style={styles.text}>
+								{address}
+							</NalliNanoAddress>
 							<NalliButton
-									style={styles.selectRecipientButton}
-									text='Select contact'
-									icon='md-person'
-									onPress={this.onSelectRecipientPress} />
-						}
-						{recipient &&
-							<SelectedContact
-									contact={recipient}
-									isNalliUser={isNalliUser}
-									lastLoginDate={recipientLastLoginDate}
-									onSwapPress={this.onSelectRecipientPress} />
-						}
+									small
+									icon='ios-copy'
+									text={showCopiedText ? 'Copied' : 'Copy address'}
+									style={styles.copyButton}
+									onPress={() => this.onCopyPress(address)} />
+						</View>
 					</BottomSheetScrollView>
-					{recipient &&
-						<View style={styles.confirmButton}>
-							<NalliButton
-									text='Request'
-									solid
-									onPress={this.confirmRequest}
-									disabled={!recipient || !requestAmount} />
-						</View>
+				);
+			} else {
+				view = (
+					<View style={styles.transactionSheetContent}>
+						<BottomSheetScrollView keyboardDismissMode={'interactive'}>
+							<View style={styles.amountContainer}>
+								<CurrencyInput
+										value={requestAmount}
+										convertedValue={convertedAmount}
+										hideMaxButton
+										onChangeText={(requestAmount: string, convertedAmount: string, currency: string) =>
+												this.setState({ requestAmount: requestAmount, convertedAmount, currency })} />
+							</View>
+							<NalliInput
+									style={styles.messageInput}
+									value={message}
+									maxLength={64}
+									onChangeText={this.updateMessage}
+									label='Message' />
+							<NalliText size={ETextSize.H2}>From</NalliText>
+							{!recipient &&
+								<NalliButton
+										style={styles.selectRecipientButton}
+										text='Select contact'
+										icon='md-person'
+										onPress={this.onSelectRecipientPress} />
+							}
+							{recipient &&
+								<SelectedContact
+										contact={recipient}
+										isNalliUser={isNalliUser}
+										lastLoginDate={recipientLastLoginDate}
+										onSwapPress={this.onSelectRecipientPress} />
+							}
+						</BottomSheetScrollView>
+						{recipient &&
+							<View style={styles.confirmButton}>
+								<NalliButton
+										text='Request'
+										solid
+										onPress={this.confirmRequest}
+										disabled={!recipient || !requestAmount || process} />
+							</View>
+						}
+						<ContactsModal
+								isOpen={contactsModalOpen}
+								onlyNalliUsers
+								onSelectContact={this.onConfirmRecipient} />
+					</View>
+				)
+			}
+		}
+
+		let headerIconComponent;
+		if (!success) {
+			headerIconComponent = (
+				<TouchableOpacity
+						style={styles.toggleRequestModeButton}
+						onPress={this.toggleRequestMode}>
+					{requestMode == RequestMode.CONTACT &&
+						<FontAwesome
+								size={22}
+								name='qrcode' />
 					}
-					<ContactsModal
-							isOpen={contactsModalOpen}
-							onlyNalliUsers
-							onSelectContact={this.onConfirmRecipient} />
-				</View>
-			)
+					{requestMode == RequestMode.QR &&
+						<Ionicons
+								size={16}
+								name='person' />
+					}
+				</TouchableOpacity>
+			);
+		} else {
+			headerIconComponent = <></>;
 		}
 
 		return (
 			<MyBottomSheet
 					initialSnap={-1}
 					reference={reference}
-					enablePanDownToClose
+					enablePanDownToClose={!process}
 					enableLinearGradient
-					snapPoints={layout.isSmallDevice ? ['88%'] : ['68%']}
+					snapPoints={['88%']}
 					header='Request'
 					onClose={this.clearState}
-					headerIconComponent={(
-						<TouchableOpacity
-								style={styles.toggleRequestModeButton}
-								onPress={this.toggleRequestMode}>
-							{requestMode == RequestMode.CONTACT &&
-								<FontAwesome
-										size={22}
-										name='qrcode' />
-							}
-							{requestMode == RequestMode.QR &&
-								<Ionicons
-										size={16}
-										name='person' />
-							}
-						</TouchableOpacity>
-					)}>
+					headerIconComponent={headerIconComponent}>
 				{view}
 			</MyBottomSheet>
 		);
@@ -315,6 +393,28 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 }
 
 const styles = StyleSheet.create({
+	sendingContainer: {
+		width: '100%',
+		height: '100%',
+	},
+	animationContainer: {
+		alignSelf: 'center',
+		width: '80%',
+		height: '40%',
+		flexDirection: 'row',
+	},
+	successTextContainer: {
+		alignSelf: 'center',
+		paddingHorizontal: layout.window.width * 0.18,
+	},
+	successText: {
+		textAlign: 'center',
+		fontSize: 20
+	},
+	successTextColor: {
+		color: Colors.main,
+		fontFamily: 'OpenSansBold',
+	},
 	transactionSheetContent: {
 		width: '100%',
 		height: '100%',
@@ -340,7 +440,13 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	selectRecipientButton: {
-		marginTop: 25,
+		marginTop: 10,
+	},
+	messageInput: {
+		fontSize: 18,
+		lineHeight: 25,
+		paddingTop: 10,
+		height: 55,
 	},
 	confirmButton: {
 		marginTop: 'auto',
