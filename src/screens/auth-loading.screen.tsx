@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
 		marginTop: 200,
 	},
 	loadingText: {
-		fontSize: 14,
+		fontSize: 12,
 		color: 'white',
 	},
 });

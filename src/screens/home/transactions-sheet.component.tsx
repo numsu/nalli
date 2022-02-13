@@ -6,7 +6,7 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native';
-import Animated, { SlideInDown } from 'react-native-reanimated';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
@@ -165,7 +165,7 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 		let transactionListElements;
 		if (hasTransactions) {
 			transactionListElements = transactions.map(item => (
-				<Animated.View entering={SlideInDown} key={item.hash} style={styles.transactionContainer}>
+				<Animated.View entering={FadeIn} key={item.hash} style={styles.transactionContainer}>
 					<TouchableOpacity onPress={() => this.openTransaction(item)}>
 						<View style={styles.transactionRow}>
 							{item.type == 'send'
@@ -253,12 +253,12 @@ const styles = StyleSheet.create({
 		paddingBottom: 3,
 	},
 	transactionAmount: {
-		fontSize: 20,
+		fontSize: 18,
 		fontFamily: 'OpenSansBold',
 	},
 	transactionTarget: {
 		marginTop: 4,
-		fontSize: 16,
+		fontSize: 14,
 		lineHeight: 20,
 		fontFamily: 'OpenSans',
 	},

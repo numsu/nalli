@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome5, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
 export enum IconType {
 	ION,
 	MATERIAL_COMMUNITY,
 	MATERIAL,
+	FONT_AWESOME5,
 }
 
 interface IconProps {
@@ -39,6 +40,8 @@ export default class NalliIcon extends React.Component<IconProps, IconState> {
 				return <MaterialCommunityIcons name={icon as any} size={size} style={style} />
 			case IconType.MATERIAL:
 				return <MaterialIcons name={icon as any} size={size} style={style} />
+			case IconType.FONT_AWESOME5:
+				return <FontAwesome5 name={icon as any} size={size} style={style} />
 		}
 	}
 

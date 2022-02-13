@@ -34,7 +34,7 @@ export default class Setting extends React.Component<SettingProps, SettingState>
 
 		return (
 			<View style={styles.settingContainer}>
-				<View>
+				<View style={styles.text}>
 					<NalliText size={ETextSize.BUTTON_SMALL}>{text}</NalliText>
 					{description &&
 						<NalliText size={ETextSize.P_SMALL}>{description}</NalliText>
@@ -59,5 +59,8 @@ const styles = StyleSheet.create({
 		borderTopWidth: 1,
 		borderColor: Colors.borderColor,
 		paddingVertical: 7.5,
+	},
+	text: {
+		maxWidth: '76%',
 	},
 });

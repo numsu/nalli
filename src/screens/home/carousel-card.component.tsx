@@ -1,12 +1,12 @@
 import * as Haptics from 'expo-haptics';
 import React from 'react';
-import { Alert, EmitterSubscription, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
+import { Alert, EmitterSubscription, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import Card from '../../components/card.component';
+import NalliIcon, { IconType } from '../../components/icon.component';
 import Loading, { LoadingStyle } from '../../components/loading.component';
 import NalliButton from '../../components/nalli-button.component';
+import NalliText from '../../components/text.component';
 import Colors from '../../constants/colors';
 import CurrencyService from '../../service/currency.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
@@ -108,9 +108,7 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 					<TouchableOpacity
 							onPress={this.onHomeAccountPress}
 							style={styles.homeAccount}>
-						<Text style={{ color: Colors.main }}>
-							<MaterialIcons size={25} name='home' />
-						</Text>
+						<NalliIcon type={IconType.MATERIAL} icon='home' size={25} style={{ color: Colors.main }} />
 					</TouchableOpacity>
 				);
 			} else if (isLastAccount) {
@@ -118,9 +116,7 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 					<TouchableOpacity
 							style={styles.hideAccount}
 							onPress={() => onHideAccount(accountIndex)}>
-						<Text style={{ color: Colors.main }}>
-							<FontAwesome5 size={17} name='eye-slash' />
-						</Text>
+						<NalliIcon type={IconType.FONT_AWESOME5} icon='eye-slash' size={17} style={{ color: Colors.main }} />
 					</TouchableOpacity>
 				);
 			}
@@ -129,17 +125,16 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 				<Card
 						onPress={this.onChangeDisplayedCurrencyPress}
 						onLongPress={this.hideAmount}
-						style={styles.row}
 						title={`Account balance`}
 						headerAddonComponent={headerAddonComponent}>
 					<View style={styles.balancewrapper}>
 						{(displayedCurrency == 'nano' || displayedCurrency == 'hidden') &&
-							<Text style={styles.currencySign}>Ӿ</Text>
+							<NalliText style={styles.currencySign}>Ӿ</NalliText>
 						}
 						{displayedCurrency == 'fiat' &&
-							<Text style={styles.currencySign}>{currency}</Text>
+							<NalliText style={styles.currencySign}>{currency}</NalliText>
 						}
-						<Text style={styles.balance}>
+						<NalliText style={styles.balance}>
 							{displayedCurrency == 'nano' &&
 								balance
 							}
@@ -152,7 +147,7 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 							{displayedCurrency == 'hidden' &&
 								'****'
 							}
-						</Text>
+						</NalliText>
 						{processing &&
 							<View style={styles.loadingContainer}>
 								<Loading style={LoadingStyle.NONE} show />
@@ -163,7 +158,7 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 			);
 		} else {
 			return (
-				<Card style={styles.row} title={`Show account #${accountIndex}`}>
+				<Card title={`Show account #${accountIndex}`}>
 					<View style={styles.balancewrapper}>
 						<NalliButton
 								onPress={() => onAddNewAccount(accountIndex)}
@@ -179,10 +174,6 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 }
 
 const styles = StyleSheet.create({
-	row: {
-		marginTop: 10,
-		marginBottom: 10,
-	},
 	homeAccount: {
 		position: 'absolute',
 		right: 16,
@@ -198,15 +189,12 @@ const styles = StyleSheet.create({
 	},
 	balance: {
 		color: Colors.main,
-		fontSize: 40,
-		fontFamily: 'OpenSans',
+		fontSize: 34,
 	},
 	currencySign: {
-		fontSize: 36,
+		fontSize: 34,
 		marginRight: 20,
-		marginTop: 2,
 		color: Colors.main,
-		fontFamily: 'OpenSans',
 	},
 	loadingContainer: {
 		height: 91,

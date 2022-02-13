@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
 	},
 	successText: {
 		textAlign: 'center',
-		fontSize: 20
+		fontSize: 18,
 	},
 	successTextColor: {
 		color: Colors.main,
@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 	},
 	messageInput: {
-		fontSize: 18,
+		fontSize: 16,
 		lineHeight: 25,
 		paddingTop: 10,
 		height: 55,

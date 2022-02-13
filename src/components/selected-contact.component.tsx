@@ -46,27 +46,27 @@ export default class SelectedContact extends React.Component<SelectedContactProp
 						rounded
 						title={contact.initials}
 						size='medium'
-						titleStyle={{ fontSize: 18 }}
+						titleStyle={{ fontSize: 16 }}
 						containerStyle={{ marginRight: 15 }}
 						overlayContainerStyle={{ backgroundColor: Colors.main }} />
 				<View>
-					<View style={{ flexDirection: 'row', height: 19 }}>
+					<View style={{ flexDirection: 'row', height: 21 }}>
 						<NalliText size={ETextSize.H2} style={styles.contactName}>
 							{contact.name}
 						</NalliText>
-						{isNalliUser &&
-							<NalliBadge>
-								<View style={styles.online}></View>
-								<NalliText>User</NalliText>
-							</NalliBadge>
-						}
-						{!isNalliUser &&
-							<NalliBadge>
-								<View style={styles.offline}></View>
-								<NalliText>New user</NalliText>
-							</NalliBadge>
-						}
 					</View>
+					{isNalliUser &&
+						<NalliBadge style={{ width: 45, justifyContent: 'center' }}>
+							<View style={styles.online}></View>
+							<NalliText>User</NalliText>
+						</NalliBadge>
+					}
+					{!isNalliUser &&
+						<NalliBadge style={{ width: 75, justifyContent: 'center' }}>
+							<View style={styles.offline}></View>
+							<NalliText>New user</NalliText>
+						</NalliBadge>
+					}
 					<NalliText>
 						{contact.formattedNumber}
 					</NalliText>
@@ -122,6 +122,6 @@ const styles = StyleSheet.create({
 	},
 	incativeUserWarning: {
 		color: Colors.shadowColor,
-		fontSize: 10,
+		fontSize: 8,
 	},
 });

@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
 	},
 	preferenceIcon: {
 		color: Colors.main,
-		fontSize: 20,
+		fontSize: 18,
 		marginTop: 4,
 	},
 });

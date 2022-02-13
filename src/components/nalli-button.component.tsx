@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: 30,
 		borderColor: Colors.main,
-		padding: 15,
+		padding: 12,
 		alignItems: 'center',
 	},
 	solidAction: {
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
 		color: 'white',
 	},
 	smallText: {
-		fontSize: 16,
+		fontSize: 14,
 	},
 	transparent: {
 		backgroundColor: 'transparent',

@@ -245,17 +245,17 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 									</View>
 								</SafeAreaView>
 								<View style={styles.content}>
-									<View style={{ height: 195 }}>
+									<View style={{ height: 165 }}>
 										<NalliCarousel
 												onChangeAccount={this.onChangeAccount}
 												onAddNewAccount={this.addNewAccount}
 												onHideAccount={this.hideAccount}
 												price={price} />
 									</View>
-									<View style={styles.row}>
+									<View>
 										<NalliRequests ref={c => this.requestsRef = c} />
 									</View>
-									<View style={[styles.row, styles.actions]}>
+									<View style={styles.actions}>
 										<NalliButton
 												text='Send'
 												solid
@@ -330,12 +330,9 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		marginBottom: layout.window.height * 0.24,
 	},
-	row: {
-		marginTop: 10,
-		marginBottom: 10,
-	},
 	actions: {
 		marginTop: 'auto',
+		marginBottom: 10,
 		padding: 15,
 		flexDirection: 'row',
 		justifyContent: 'space-between',

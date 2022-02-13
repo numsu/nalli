@@ -399,7 +399,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 					enablePanDownToClose={!process || success}
 					enableLinearGradient
 					onClose={this.clearState}
-					snapPoints={layout.isSmallDevice ? ['88%'] : ['68%']}
+					snapPoints={layout.isSmallDevice ? ['88%'] : ['71%']}
 					header={!process ? 'Send' : ''}>
 				{process &&
 					<View style={styles.sendingContainer}>
@@ -537,7 +537,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 											icon={{ name: 'star-border', type: 'material' }}
 											rounded
 											size='medium'
-											titleStyle={{ fontSize: 18 }}
+											titleStyle={{ fontSize: 16 }}
 											containerStyle={{ marginRight: 15 }}
 											overlayContainerStyle={{ backgroundColor: Colors.main }} />
 									<View>
@@ -615,7 +615,7 @@ const styles = StyleSheet.create({
 	},
 	successText: {
 		textAlign: 'center',
-		fontSize: 20
+		fontSize: 18,
 	},
 	successTextColor: {
 		color: Colors.main,
@@ -641,7 +641,7 @@ const styles = StyleSheet.create({
 		marginRight: 4,
 	},
 	switchButtonText: {
-		fontSize: 20,
+		fontSize: 18,
 	},
 	selected: {
 		borderColor: Colors.main,
@@ -673,7 +673,7 @@ const styles = StyleSheet.create({
 	},
 	incativeUserWarning: {
 		color: Colors.shadowColor,
-		fontSize: 10,
+		fontSize: 8,
 	},
 	contactSelectArrow: {
 		color: Colors.main,
@@ -687,7 +687,7 @@ const styles = StyleSheet.create({
 	},
 	addressInput: {
 		width: layout.window.width * 0.70,
-		fontSize: 16,
+		fontSize: 14,
 		lineHeight: 20,
 		paddingTop: 10,
 		height: 85,

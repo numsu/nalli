@@ -1,12 +1,13 @@
 import * as Haptics from 'expo-haptics';
 import { tools } from 'nanocurrency-web';
 import React from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, EmitterSubscription, StyleSheet, View } from 'react-native';
 
 import Colors from '../constants/colors';
 import ContactsService from '../service/contacts.service';
 import CurrencyService from '../service/currency.service';
 import RequestService, { Request } from '../service/request.service';
+import VariableStore, { NalliVariable } from '../service/variable-store';
 import Card from './card.component';
 import NalliButton from './nalli-button.component';
 import NalliText, { ETextSize } from './text.component';
@@ -20,6 +21,8 @@ interface RequestsState {
 
 export default class NalliRequests extends React.Component<RequestsProps, RequestsState> {
 
+	subscriptions: EmitterSubscription[] = [];
+
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -29,6 +32,11 @@ export default class NalliRequests extends React.Component<RequestsProps, Reques
 
 	componentDidMount = () => {
 		this.fetchRequests();
+		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.APP_STATE, () => this.fetchRequests()));
+	}
+
+	componentWillUnmount() {
+		this.subscriptions.forEach(VariableStore.unwatchVariable);
 	}
 
 	fetchRequests = async () => {

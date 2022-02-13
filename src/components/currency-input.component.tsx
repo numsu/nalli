@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 35,
 		paddingVertical: 10,
 		color: Colors.main,
-		fontSize: 34,
+		fontSize: 32,
 		textAlign: 'center',
 		fontFamily: 'OpenSans',
 		borderBottomWidth: 1,
@@ -234,12 +234,12 @@ const styles = StyleSheet.create({
 		width: 40,
 		marginRight: -38,
 		alignSelf: 'center',
-		fontSize: 34,
+		fontSize: 32,
 		color: Colors.main,
 		fontFamily: 'OpenSans',
 	},
 	longSign: {
-		fontSize: 20,
+		fontSize: 18,
 		fontFamily: 'OpenSansBold',
 	},
 	convertedSign: {
@@ -275,12 +275,12 @@ const styles = StyleSheet.create({
 		top: 42,
 	},
 	maxIcon: {
-		fontSize: 11,
+		fontSize: 9,
 		color: Colors.main,
 		fontFamily: 'OpenSansBold',
 	},
 	switchIcon: {
-		fontSize: 18,
+		fontSize: 16,
 		color: Colors.main,
 		marginRight: 1,
 		transform: [{ rotate: '90deg' }],
@@ -296,12 +296,12 @@ const styles = StyleSheet.create({
 		zIndex: 100,
 	},
 	inputConvertedCurrency: {
-		fontSize: 34,
+		fontSize: 32,
 		color: Colors.inputPlaceholder,
 	},
 	inputConvertedAmount: {
 		alignSelf: 'center',
-		fontSize: 34,
+		fontSize: 32,
 		fontFamily: 'OpenSans',
 		color: Colors.inputPlaceholder,
 	},

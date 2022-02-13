@@ -41,17 +41,17 @@ export default class Contact extends React.Component<ContactProps, ContactState>
 						containerStyle={{ marginRight: 15 }}
 						overlayContainerStyle={{ backgroundColor: colors.main }} />
 				<View>
-					<View style={{ flexDirection: 'row', height: 19 }}>
+					<View style={{ flexDirection: 'row', height: 21 }}>
 						<NalliText size={ETextSize.H2} style={styles.contactName}>
 							{contact.name}
 						</NalliText>
-						{contact.isNalliUser &&
-							<NalliBadge>
-								<View style={styles.online}></View>
-								<NalliText size={ETextSize.P_SMALL}>User</NalliText>
-							</NalliBadge>
-						}
 					</View>
+					{contact.isNalliUser &&
+						<NalliBadge style={{ width: 45, justifyContent: 'center' }}>
+							<View style={styles.online}></View>
+							<NalliText size={ETextSize.P_SMALL}>User</NalliText>
+						</NalliBadge>
+					}
 					<NalliText>
 						{contact.formattedNumber}
 					</NalliText>

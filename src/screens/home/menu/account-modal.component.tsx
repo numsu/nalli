@@ -217,16 +217,16 @@ const styles = StyleSheet.create({
 	},
 	numberPadPin: {
 		color: Colors.main,
-		fontSize: 40,
+		fontSize: 38,
 		width: '100%',
 		textAlign: 'center',
 	},
 	changePinButton: {
-		width: '40%',
+		width: '80%',
 		marginTop: 20,
 	},
 	deleteButton: {
-		width: '60%',
+		width: '80%',
 		marginTop: 20,
 		backgroundColor: Colors.danger,
 	}

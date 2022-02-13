@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 	},
 	addition: {
-		fontSize: 14,
+		fontSize: 12,
 		marginTop: -10,
 		marginBottom: 10,
 	},
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
 	},
 	numberPadPin: {
 		color: Colors.main,
-		fontSize: 40,
+		fontSize: 38,
 		width: '100%',
 		textAlign: 'center',
 	},

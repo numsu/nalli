@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
 		opacity: 0.8,
 	},
 	biometricsIcon: {
-		fontSize: 40,
+		fontSize: 38,
 		color: 'white',
 	},
 	numberText: {

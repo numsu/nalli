@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
 		paddingBottom: 35,
 	},
 	biometricsLoginIcon: {
-		fontSize: 80,
+		fontSize: 78,
 		color: 'white',
 	},
 	numberPadContainer: {
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
 	},
 	numberPadPin: {
 		color: 'white',
-		fontSize: 40,
+		fontSize: 38,
 		width: '100%',
 		textAlign: 'center',
 	},

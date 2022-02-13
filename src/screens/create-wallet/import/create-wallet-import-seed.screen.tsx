@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
 	},
 	input: {
 		width: layout.window.width * 0.9,
-		fontSize: 14,
+		fontSize: 12,
 		paddingTop: 10,
 	},
 	actions: {

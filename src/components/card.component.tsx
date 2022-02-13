@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
 		elevation: 4,
 		borderRadius: 15,
 		padding: 15,
+		marginBottom: 13,
 	},
 	header: {
 		marginBottom: 10,

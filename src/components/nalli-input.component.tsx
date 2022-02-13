@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
 		padding: 12,
 		marginBottom: 10,
 		color: 'black',
-		fontSize: 18,
+		fontSize: 16,
 		zIndex: 100,
 		fontFamily: 'OpenSans',
 	},

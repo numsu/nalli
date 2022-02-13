@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
 		color: Colors.darkText,
 	},
 	invitedNumber: {
-		fontSize: 40,
+		fontSize: 38,
 		fontFamily: 'OpenSansBold',
 		color: Colors.main,
 	},

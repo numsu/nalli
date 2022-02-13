@@ -93,6 +93,7 @@ export default class WelcomeScreen extends React.Component<NavigationInjectedPro
 							textStyle={styles.loginButtonText}
 							disabled={process} />
 					<Text
+							allowFontScaling={false}
 							style={styles.privacyPolicy}>
 						By continuing to use this app, you agree that you have read, understood and accepted our
 						&nbsp;<Link
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
 		paddingTop: 70,
 	},
 	text: {
-		fontSize: 20,
+		fontSize: 18,
 		fontWeight: '400',
 		color: Colors.borderColor,
 		marginTop: 25,
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
 		marginTop: 40,
 		marginBottom: 10,
 		color: 'white',
-		fontSize: 16,
+		fontSize: 14,
 		alignSelf: 'center',
 	},
 	registerButton: {

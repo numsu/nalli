@@ -221,10 +221,6 @@ const styles = StyleSheet.create({
 	row: {
 		paddingVertical: 5,
 	},
-	link: {
-		fontSize: 16,
-		color: Colors.main,
-	},
 	info: {
 		marginBottom: 15,
 	},
