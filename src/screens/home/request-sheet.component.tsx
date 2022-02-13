@@ -1,4 +1,5 @@
 import * as Clipboard from 'expo-clipboard';
+import * as Haptics from 'expo-haptics';
 import LottieView from 'lottie-react-native';
 import { tools } from 'nanocurrency-web';
 import React, { RefObject } from 'react';
@@ -226,6 +227,7 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 			recipientId: this.state.recipientId,
 		});
 		this.setState({ success: true, process: false });
+		await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 	}
 
 	render = () => {

@@ -8,8 +8,8 @@ export default class RequestService {
 		return HttpService.post<void>(`${this.uri}`, req);
 	}
 
-	static getRequests() {
-		return HttpService.get<Request[]>(`${this.uri}`);
+	static getRequestsReceived() {
+		return HttpService.get<Request[]>(`${this.uri}/received`);
 	}
 
 	static cancelRequest(id: string) {

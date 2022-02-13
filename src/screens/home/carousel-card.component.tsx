@@ -102,26 +102,36 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 		const { displayedCurrency, currency } = this.state;
 
 		if (!showAddAccountView) {
+			let headerAddonComponent;
+			if (accountActive) {
+				headerAddonComponent = (
+					<TouchableOpacity
+							onPress={this.onHomeAccountPress}
+							style={styles.homeAccount}>
+						<Text style={{ color: Colors.main }}>
+							<MaterialIcons size={25} name='home' />
+						</Text>
+					</TouchableOpacity>
+				);
+			} else if (isLastAccount) {
+				headerAddonComponent = (
+					<TouchableOpacity
+							style={styles.hideAccount}
+							onPress={() => onHideAccount(accountIndex)}>
+						<Text style={{ color: Colors.main }}>
+							<FontAwesome5 size={17} name='eye-slash' />
+						</Text>
+					</TouchableOpacity>
+				);
+			}
+
 			return (
-				<Card onPress={this.onChangeDisplayedCurrencyPress} onLongPress={this.hideAmount} style={styles.row} title={`Account balance`}>
-					{accountActive &&
-						<TouchableOpacity
-								onPress={this.onHomeAccountPress}
-								style={styles.homeAccount}>
-							<Text style={{ color: Colors.main }}>
-								<MaterialIcons size={25} name='home' />
-							</Text>
-						</TouchableOpacity>
-					}
-					{isLastAccount &&
-						<TouchableOpacity
-								style={styles.hideAccount}
-								onPress={() => onHideAccount(accountIndex)}>
-							<Text style={{ color: Colors.main }}>
-								<FontAwesome5 size={17} name='eye-slash' />
-							</Text>
-						</TouchableOpacity>
-					}
+				<Card
+						onPress={this.onChangeDisplayedCurrencyPress}
+						onLongPress={this.hideAmount}
+						style={styles.row}
+						title={`Account balance`}
+						headerAddonComponent={headerAddonComponent}>
 					<View style={styles.balancewrapper}>
 						{(displayedCurrency == 'nano' || displayedCurrency == 'hidden') &&
 							<Text style={styles.currencySign}>Ӿ</Text>

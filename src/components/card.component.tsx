@@ -4,14 +4,17 @@ import {
 	TouchableWithoutFeedback,
 	View,
 } from 'react-native';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 import Colors from '../constants/colors';
 import NalliText, { ETextSize } from './text.component';
 
 interface CardProps {
-	onPress?: () => void;
+	contentContainerStyle?: any;
+	headerAddonComponent?: any;
 	onLongPress?: () => void;
-	style: any;
+	onPress?: () => void;
+	style?: any;
 	title: string;
 }
 
@@ -27,6 +30,8 @@ export default class Card extends React.Component<CardProps, CardState> {
 	render = () => {
 		const {
 			children,
+			contentContainerStyle,
+			headerAddonComponent,
 			onLongPress,
 			onPress,
 			style,
@@ -34,14 +39,17 @@ export default class Card extends React.Component<CardProps, CardState> {
 		} = this.props;
 		return (
 			<TouchableWithoutFeedback onLongPress={onLongPress} onPress={onPress}>
-				<View style={[style, styles.card]}>
+				<Animated.View entering={FadeIn} exiting={FadeOut} style={[style, styles.card]}>
 					<NalliText
 							size={ETextSize.H1}
 							style={styles.header}>
 						{title}
 					</NalliText>
-					{children}
-				</View>
+					{headerAddonComponent}
+					<View style={contentContainerStyle}>
+						{children}
+					</View>
+				</Animated.View>
 			</TouchableWithoutFeedback>
 		);
 	}

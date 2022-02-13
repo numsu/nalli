@@ -18,6 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 import NalliCarousel from '../../components/carousel.component';
 import DismissKeyboardView from '../../components/dismiss-keyboard-hoc.component';
 import NalliButton from '../../components/nalli-button.component';
+import NalliRequests from '../../components/requests.component';
 import NalliLogo from '../../components/svg/nalli-logo';
 import Colors from '../../constants/colors';
 import Layout from '../../constants/layout';
@@ -48,12 +49,13 @@ interface HomeScreenState {
 
 export default class HomeScreen extends React.Component<HomeScreenProps, HomeScreenState> {
 
+	requestSheetRef: RefObject<any>;
+	requestsRef: NalliRequests;
 	sendRef: SendSheet;
 	sendSheetRef: RefObject<any>;
-	requestSheetRef: RefObject<any>;
-	transactionSheetRef: TransactionsSheet;
 	sidemenuRef: SideMenu;
 	subscriptions: EmitterSubscription[] = [];
+	transactionSheetRef: TransactionsSheet;
 
 	constructor(props) {
 		super(props);
@@ -100,11 +102,17 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	}
 
 	subscribeToNotifications = () => {
-		WsService.subscribe(async event => {
-			if (event.type == EWebSocketNotificationType.CONFIRMATION_RECEIVE) {
-				await WalletHandler.getAccountsBalancesAndHandlePending();
-			} else if (event.type == EWebSocketNotificationType.PENDING_RECEIVED) {
-				this.transactionSheetRef.getTransactions();
+		WsService.subscribe(event => {
+			switch (event.type) {
+				case EWebSocketNotificationType.CONFIRMATION_RECEIVE:
+					WalletHandler.getAccountsBalancesAndHandlePending();
+					break;
+				case EWebSocketNotificationType.PENDING_RECEIVED:
+					this.transactionSheetRef.getTransactions();
+					break;
+				case EWebSocketNotificationType.NEW_REQUEST:
+					this.requestsRef.fetchRequests();
+					break;
 			}
 		});
 	}
@@ -237,12 +245,15 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 									</View>
 								</SafeAreaView>
 								<View style={styles.content}>
-									<View style={{ height: 230 }}>
+									<View style={{ height: 195 }}>
 										<NalliCarousel
 												onChangeAccount={this.onChangeAccount}
 												onAddNewAccount={this.addNewAccount}
 												onHideAccount={this.hideAccount}
 												price={price} />
+									</View>
+									<View style={styles.row}>
+										<NalliRequests ref={c => this.requestsRef = c} />
 									</View>
 									<View style={[styles.row, styles.actions]}>
 										<NalliButton
@@ -317,7 +328,6 @@ const styles = StyleSheet.create({
 		flex: 2,
 		backgroundColor: 'white',
 		flexDirection: 'column',
-		justifyContent: 'space-between',
 		marginBottom: layout.window.height * 0.24,
 	},
 	row: {
@@ -325,6 +335,7 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	actions: {
+		marginTop: 'auto',
 		padding: 15,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
