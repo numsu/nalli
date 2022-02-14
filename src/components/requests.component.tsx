@@ -13,6 +13,7 @@ import NalliButton from './nalli-button.component';
 import NalliText, { ETextSize } from './text.component';
 
 interface RequestsProps {
+	onAcceptPress: (request: Request) => void;
 }
 
 interface RequestsState {
@@ -67,11 +68,11 @@ export default class NalliRequests extends React.Component<RequestsProps, Reques
 		if (this.state.requests.length === 0) {
 			return <></>;
 		}
-
+		const { onAcceptPress } = this.props;
 		const displayedRequest = this.state.requests[0];
 		const amount = CurrencyService.formatNanoAmount(Number(tools.convert(displayedRequest.amount, 'RAW', 'NANO')));
 		const contact = ContactsService.getContactByHash(displayedRequest.phoneHash);
-		const senderName = contact.name || 'Unknown';
+		const senderName = contact.name || 'Someone not in your contacts';
 		return (
 			<Card style={styles.card} contentContainerStyle={styles.cardContainer} title='New request'>
 				<View style={styles.text}>
@@ -79,7 +80,7 @@ export default class NalliRequests extends React.Component<RequestsProps, Reques
 					<NalliText style={styles.marginTop}>{displayedRequest.message}</NalliText>
 				</View>
 				<View style={styles.actions}>
-					<NalliButton style={styles.marginTop} small solid text='Accept' />
+					<NalliButton small solid text='Accept' onPress={() => onAcceptPress(displayedRequest)} />
 					<NalliButton style={styles.marginTop} small text='Ignore' onPress={() => this.confirmIgnoreRequest(displayedRequest)} />
 				</View>
 			</Card>

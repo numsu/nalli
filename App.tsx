@@ -3,7 +3,7 @@ import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import { setCustomText } from 'react-native-global-props';
 import * as encoding from 'text-encoding';
 
@@ -79,12 +79,8 @@ export default class App extends React.Component<any, any> {
 			'Error during app load',
 			error.message,
 			[
-				{
-					text: 'Ok',
-					onPress: () => undefined,
-					style: 'default',
-				},
-			]
+				{ text: 'Ok' },
+			],
 		);
 		console.error(error);
 	}

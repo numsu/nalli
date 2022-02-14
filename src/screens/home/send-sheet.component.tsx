@@ -31,7 +31,9 @@ import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
 import layout from '../../constants/layout';
 import ClientService from '../../service/client.service';
-import { FormattedNumber } from '../../service/contacts.service';
+import ContactsService, { FormattedNumber } from '../../service/contacts.service';
+import CurrencyService from '../../service/currency.service';
+import { Request } from '../../service/request.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 import WalletHandler from '../../service/wallet-handler.service';
 import WalletStore from '../../service/wallet-store';
@@ -40,7 +42,7 @@ import ContactsModal from './contacts-modal.component';
 import PhoneNumberInputModal from './number-input-modal.component';
 
 export interface SendSheetProps {
-	onSendSuccess?: () => void;
+	onSendSuccess?: (requestPaid: boolean) => void;
 	reference: RefObject<any>;
 }
 
@@ -54,6 +56,7 @@ export interface SendSheetState {
 	recipient: SendSheetRecipient;
 	recipientAddress: string;
 	recipientLastLoginDate: string;
+	requestId: string;
 	sendAmount: string;
 	success: boolean;
 	tab: SendSheetTab;
@@ -79,6 +82,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 
 	sendSheetRef: RefObject<any>;
 	sendAmountRef: RefObject<any>;
+	currencyInputRef: CurrencyInput;
 	barcodeAlertActive = false;
 	sendAnimation;
 	sentAnimation;
@@ -97,6 +101,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			recipient: undefined,
 			recipientAddress: undefined,
 			recipientLastLoginDate: undefined,
+			requestId: undefined,
 			sendAmount: undefined,
 			success: false,
 			tab: SendSheetTab.CONTACT,
@@ -121,6 +126,38 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			this.setState({ tab });
 			this.clearRecipient();
 		}
+	}
+
+	fillWithRequest = async (request: Request) => {
+		const contact = ContactsService.getContactByHash(request.phoneHash);
+		let recipient: SendSheetRecipient;
+		if (contact) {
+			recipient = {
+				formattedNumber: contact.formattedNumber,
+				number: contact.fullNumber,
+				initials: contact.initials,
+				name: contact.name,
+			};
+		} else {
+			recipient = {
+				formattedNumber: '',
+				number: '',
+				initials: '?',
+				name: 'Someone not in your contacts',
+			};
+		}
+
+		const amount = CurrencyService.formatNanoAmount(Number(tools.convert(request.amount, 'RAW', 'NANO')));
+		this.setState({
+			tab: SendSheetTab.CONTACT,
+			isNalliUser: true,
+			recipientAddress: request.address,
+			sendAmount: amount,
+			recipient,
+			requestId: request.requestId,
+		}, () => {
+			this.currencyInputRef.forceXno();
+		});
 	}
 
 	onSwitchModePress = async (tab: number) => {
@@ -244,11 +281,13 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			recipient: undefined,
 			recipientAddress: undefined,
 			recipientLastLoginDate: undefined,
+			requestId: undefined,
 			walletAddress: undefined,
 		});
 	}
 
 	clearState = () => {
+		Keyboard.dismiss();
 		this.setState({
 			contactsModalOpen: false,
 			inputPhoneNumberModalOpen: false,
@@ -256,12 +295,14 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			recipient: undefined,
 			recipientAddress: undefined,
 			recipientLastLoginDate: undefined,
+			requestId: undefined,
 			walletAddress: undefined,
 			process: false,
 			success: false,
 			sendAmount: undefined,
 			convertedAmount: '0',
 		});
+		this.init();
 	}
 
 	confirm = () => {
@@ -295,7 +336,6 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 
 	send = async () => {
 		Keyboard.dismiss();
-		this.setState({ process: true, success: false });
 
 		let recipientAddress;
 		if (this.state.tab == SendSheetTab.CONTACT || this.state.tab == SendSheetTab.PHONE) {
@@ -329,6 +369,8 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 				return;
 			}
 
+			this.setState({ process: true, success: false });
+
 			const signedBlock = block.send({
 				amountRaw: tools.convert(sendAmount, 'NANO', 'RAW'),
 				fromAddress: walletInfo.address,
@@ -341,6 +383,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 
 			await WalletService.publishTransaction({
 				subtype: EBlockSubType.SEND,
+				requestId: this.state.requestId,
 				block: signedBlock,
 			});
 		} catch {
@@ -350,6 +393,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 		}
 
 		this.setState({ success: true });
+		this.props.onSendSuccess(!!this.state.requestId);
 		WalletHandler.getAccountsBalancesAndHandlePending();
 		await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 	}
@@ -375,6 +419,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			recipient,
 			recipientAddress,
 			recipientLastLoginDate,
+			requestId,
 			sendAmount,
 			success,
 			tab,
@@ -392,6 +437,13 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			}
 		}
 
+		let header = '';
+		if (requestId) {
+			header = 'Accept request';
+		} else if (!process) {
+			header = 'Send';
+		}
+
 		return (
 			<MyBottomSheet
 					initialSnap={-1}
@@ -400,7 +452,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 					enableLinearGradient
 					onClose={this.clearState}
 					snapPoints={layout.isSmallDevice ? ['88%'] : ['71%']}
-					header={!process ? 'Send' : ''}>
+					header={header}>
 				{process &&
 					<View style={styles.sendingContainer}>
 						<View style={styles.animationContainer}>
@@ -446,13 +498,15 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 						<BottomSheetScrollView keyboardDismissMode={'interactive'}>
 							<View style={styles.transactionMoneyInputContainer}>
 								<CurrencyInput
+										disabled={!!requestId}
+										ref={c => this.currencyInputRef = c}
 										value={sendAmount}
 										convertedValue={convertedAmount}
 										reference={this.sendAmountRef}
 										onChangeText={(sendAmount: string, convertedAmount: string, currency: string) =>
 												this.setState({ sendAmount, convertedAmount, currency })} />
 							</View>
-							{tab != SendSheetTab.DONATION && // Don't show different options for donations
+							{(tab != SendSheetTab.DONATION && !requestId) && // Don't show different options for donations
 								<View style={styles.tabs}>
 									<TouchableOpacity
 											style={[styles.switchButton, (tab == SendSheetTab.CONTACT ? styles.selected : undefined)]}
@@ -485,6 +539,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 										contact={recipient}
 										isNalliUser={isNalliUser}
 										lastLoginDate={recipientLastLoginDate}
+										disableSwap={!!requestId}
 										onSwapPress={this.onSelectRecipientPress} />
 							}
 							{tab == SendSheetTab.PHONE && !recipient &&

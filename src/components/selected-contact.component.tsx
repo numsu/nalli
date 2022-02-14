@@ -16,6 +16,7 @@ import NalliText, { ETextSize } from './text.component';
 
 interface SelectedContactProps {
 	contact: any;
+	disableSwap?: boolean;
 	isNalliUser: boolean;
 	lastLoginDate: string;
 	onSwapPress: () => void;
@@ -33,6 +34,7 @@ export default class SelectedContact extends React.Component<SelectedContactProp
 	render = () => {
 		const {
 			contact,
+			disableSwap,
 			isNalliUser,
 			lastLoginDate,
 			onSwapPress,
@@ -76,14 +78,16 @@ export default class SelectedContact extends React.Component<SelectedContactProp
 						</NalliText>
 					}
 				</View>
-				<TouchableOpacity
-						onPress={onSwapPress}
-						style={styles.contactSelectArrow}>
-					<Ionicons
-							name='ios-swap-horizontal'
-							style={styles.contactSelectArrow}
-							size={32} />
-				</TouchableOpacity>
+				{!disableSwap &&
+					<TouchableOpacity
+							onPress={onSwapPress}
+							style={styles.contactSelectArrow}>
+						<Ionicons
+								name='ios-swap-horizontal'
+								style={styles.contactSelectArrow}
+								size={32} />
+					</TouchableOpacity>
+				}
 			</View>
 		);
 	}

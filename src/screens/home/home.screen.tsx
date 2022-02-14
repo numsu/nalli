@@ -26,6 +26,7 @@ import layout from '../../constants/layout';
 import AuthStore from '../../service/auth-store';
 import CurrencyService from '../../service/currency.service';
 import NotificationService from '../../service/notification.service';
+import { Request } from '../../service/request.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 import WalletHandler from '../../service/wallet-handler.service';
 import WalletStore, { WalletType } from '../../service/wallet-store';
@@ -196,6 +197,10 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		this.sendSheetRef.current.snapToIndex(0);
 	}
 
+	onSendSuccess = () => {
+		this.requestsRef.fetchRequests();
+	}
+
 	onReceivePress = () => {
 		this.requestSheetRef.current.snapToIndex(0);
 	}
@@ -204,6 +209,11 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		this.sidemenuRef.openMenu(false);
 		this.onSendPress();
 		this.sendRef.toggleDonate(true);
+	}
+
+	onRequestAcceptPress = (request: Request) => {
+		this.onSendPress();
+		this.sendRef.fillWithRequest(request);
 	}
 
 	openMenu = () => {
@@ -253,7 +263,9 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 												price={price} />
 									</View>
 									<View>
-										<NalliRequests ref={c => this.requestsRef = c} />
+										<NalliRequests
+												ref={c => this.requestsRef = c}
+												onAcceptPress={this.onRequestAcceptPress} />
 									</View>
 									<View style={styles.actions}>
 										<NalliButton
@@ -275,7 +287,8 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 								<TransactionsSheet ref={c => this.transactionSheetRef = c} />
 								<SendSheet
 										ref={c => this.sendRef = c}
-										reference={this.sendSheetRef} />
+										reference={this.sendSheetRef}
+										onSendSuccess={this.onSendSuccess} />
 								<RequestSheet reference={this.requestSheetRef} />
 							</DismissKeyboardView>
 						</KeyboardAvoidingView>

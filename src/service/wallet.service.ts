@@ -113,6 +113,7 @@ export interface WalletTransaction {
 
 export interface BlockProcess {
 	subtype: EBlockSubType;
+	requestId?: string;
 	block: SignedBlock;
 }
 

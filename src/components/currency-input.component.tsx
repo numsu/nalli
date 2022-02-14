@@ -19,6 +19,7 @@ import NalliText from './text.component';
 
 interface CurrencyInputProps {
 	convertedValue: string;
+	disabled?: boolean;
 	hideMaxButton?: boolean;
 	onBlur?: () => void;
 	onChangeText: (value: string, convertedValue: string, convertedCurrency: string) => void;
@@ -53,7 +54,7 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 	static getDerivedStateFromProps(nextProps, prevState) {
 		let changes = null;
 		if (nextProps.value != prevState.value) {
-			changes = { ...changes, value: nextProps.value };
+			changes = { value: nextProps.value };
 		}
 		if (nextProps.convertedValue != prevState.convertedValue) {
 			changes = { ...changes, convertedValue: nextProps.convertedValue };
@@ -87,21 +88,36 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 		await CurrencyService.convert('0', this.state.currency, this.state.convertedCurrency);
 	}
 
-	onChangeText = async (val: string, strip = true) => {
+	forceXno = () => {
+		this.onChangeText(this.props.value, true, true);
+	}
+
+	onChangeText = async (val: string, strip = true, forceXno = false) => {
 		val = val ? val.replace(',', '.') : val;
 		const isAddition = val?.length > this.state.value?.length;
 		if (strip && isAddition && val?.split('.')[1]?.length > 6) {
 			return;
 		}
 		this.setState({ value: val }, async () => {
-			let convertedValue = await CurrencyService.convert(val, this.state.currency, this.state.convertedCurrency);
+			let convertedValue;
+			if (forceXno && this.state.currency != 'xno') {
+				convertedValue = await CurrencyService.convert(val, 'xno', this.state.currency);
+			} else {
+				convertedValue = await CurrencyService.convert(val, this.state.currency, this.state.convertedCurrency);
+			}
 			if (isNaN(+convertedValue)) {
 				convertedValue = '0';
 			}
 
-			this.setState({ convertedValue }, () => {
-				this.props.onChangeText(val, convertedValue, this.state.currency);
-			});
+			if (forceXno && this.state.currency != 'xno') {
+				this.setState({ convertedValue: val, value: convertedValue }, () => {
+					this.props.onChangeText(convertedValue, val, 'xno');
+				});
+			} else {
+				this.setState({ convertedValue }, () => {
+					this.props.onChangeText(val, convertedValue, this.state.currency);
+				});
+			}
 		});
 	}
 
@@ -150,13 +166,15 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 	}
 
 	render = () => {
-		const { hideMaxButton, reference, style } = this.props;
+		const { disabled, hideMaxButton, reference, style } = this.props;
 		const { borderColor, currency, convertedCurrency, convertedValue, value } = this.state;
+
 		return (
 			<View>
 				<View style={styles.inputContainer}>
 					{this.renderCurrencySign(currency, false)}
 					<TextInput
+							editable={!disabled}
 							ref={reference}
 							placeholder='0'
 							onBlur={this.onBlur}
@@ -166,7 +184,7 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 							value={value}
 							onChangeText={this.onChangeText} />
 				</View>
-				{!hideMaxButton &&
+				{!hideMaxButton && !disabled &&
 					<TouchableHighlight
 							style={styles.sendMaxButton}
 							underlayColor={Colors.borderColor}
@@ -174,15 +192,17 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 						<NalliText style={styles.maxIcon}>MAX</NalliText>
 					</TouchableHighlight>
 				}
-				<TouchableHighlight
-						style={[ styles.switchButton, hideMaxButton ? styles.switchButtonMiddle : undefined ]}
-						underlayColor={Colors.borderColor}
-						onPress={this.onCurrencySwitchPress}>
-					<Ionicons
-							style={styles.switchIcon}
-							name='ios-swap-horizontal'
-							size={32} />
-				</TouchableHighlight>
+				{!disabled &&
+					<TouchableHighlight
+							style={[ styles.switchButton, hideMaxButton ? styles.switchButtonMiddle : undefined ]}
+							underlayColor={Colors.borderColor}
+							onPress={this.onCurrencySwitchPress}>
+						<Ionicons
+								style={styles.switchIcon}
+								name='ios-swap-horizontal'
+								size={32} />
+					</TouchableHighlight>
+				}
 				<View style={[styles.inputConvertedCurrencyContainer, { borderTopColor: borderColor }]}>
 					{this.renderCurrencySign(convertedCurrency, true)}
 					<Text style={styles.inputConvertedAmount}>

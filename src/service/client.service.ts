@@ -13,7 +13,7 @@ export default class ClientService {
 		return this.client;
 	}
 
-	static getClientAddress(phone?: string) {
+	static getClientAddress(phone: string) {
 		return HttpService.get<RecipientAddress>(`${this.uri}/v2/address/${phone}`);
 	}
 

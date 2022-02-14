@@ -84,7 +84,7 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 	}
 
 	onHomeAccountPress = () => {
-		Alert.alert('Home account', 'This is the account which will receive when someone sends to your phone number');
+		Alert.alert('Home account', 'This is the account which will receive when someone sends to your phone number or when you send a request');
 	}
 
 	render = () => {

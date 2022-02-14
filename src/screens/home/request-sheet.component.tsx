@@ -170,6 +170,7 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 	}
 
 	clearState = () => {
+		Keyboard.dismiss();
 		this.setState({
 			contactsModalOpen: false,
 			convertedAmount: '0',
