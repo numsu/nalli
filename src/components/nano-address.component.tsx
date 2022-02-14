@@ -47,7 +47,7 @@ export default class NalliNanoAddress extends React.Component<NalliNanoAddressPr
 
 const styles = StyleSheet.create({
 	address: {
-		fontSize: 20,
+		fontSize: 18,
 	},
 	coloredAddress: {
 		color: Colors.main,

@@ -50,7 +50,7 @@ export default class CurrencyModal extends React.Component<CurrencyModalProps, C
 
 		return (
 			<NalliModal
-					noScroll={true}
+					noScroll
 					isOpen={isOpen}
 					onClose={close}
 					linearGradientTopStyle={{ height: 20, top: 70 }}

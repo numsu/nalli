@@ -1,16 +1,16 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-
+import NalliIcon, { IconType } from '../../../components/icon.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 
 interface NalliMenuPreferenceProps {
-	icon: any;
 	header: string;
-	subheader: string;
+	icon: any;
+	iconType: IconType;
 	onPress?: () => void;
+	subheader: string;
 }
 
 export default class NalliMenuPreference extends React.Component<NalliMenuPreferenceProps, any> {
@@ -20,12 +20,18 @@ export default class NalliMenuPreference extends React.Component<NalliMenuPrefer
 	}
 
 	render = () => {
-		const { icon, header, subheader, onPress } = this.props;
+		const {
+			header,
+			icon,
+			iconType,
+			onPress,
+			subheader,
+		} = this.props;
 
 		return (
 			<TouchableOpacity disabled={!onPress} onPress={onPress}>
 				<View style={styles.preference}>
-					<MaterialCommunityIcons style={styles.preferenceIcon} name={icon} />
+					<NalliIcon type={iconType} style={styles.preferenceIcon} icon={icon} />
 					<View>
 						<NalliText size={ETextSize.P_LARGE} style={styles.preferenceHeader}>{header}</NalliText>
 						<NalliText style={styles.preferenceSubheader}>{subheader}</NalliText>
@@ -52,7 +58,7 @@ const styles = StyleSheet.create({
 	},
 	preferenceIcon: {
 		color: Colors.main,
-		fontSize: 20,
+		fontSize: 18,
 		marginTop: 4,
 	},
 });

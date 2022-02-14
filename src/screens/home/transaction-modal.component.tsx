@@ -12,6 +12,7 @@ import NalliButton from '../../components/nalli-button.component';
 import ShowHide from '../../components/show-hide.component';
 import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
+import ContactsService from '../../service/contacts.service';
 import WalletService, { EPendingStatus, WalletTransaction } from '../../service/wallet.service';
 
 export interface TransactionModalProps {
@@ -78,6 +79,11 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 		const { contactName } = this.props;
 		const { isOpen, transaction } = this.state;
 
+		let phoneNumber;
+		if (transaction.phoneHash && contactName != 'Unknown' && transaction.pendingStatus != EPendingStatus.RETURNED) {
+			phoneNumber = ContactsService.getContactByHash(transaction.phoneHash).fullNumber;
+		}
+
 		return (
 			<NalliModal
 					isOpen={isOpen}
@@ -97,10 +103,10 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 						<NalliText>
 							{contactName}
 						</NalliText>
-						{transaction.phone && contactName != 'Unknown' && transaction.pendingStatus != EPendingStatus.RETURNED ?
+						{!!phoneNumber &&
 							<NalliText>
-								{transaction.phone}
-							</NalliText> : undefined
+								{phoneNumber}
+							</NalliText>
 						}
 					</View>
 					<View style={styles.row}>
@@ -116,62 +122,55 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 							</NalliText>
 						}
 					</View>
-					{transaction.pendingStatus == EPendingStatus.CREATED || transaction.pendingStatus == EPendingStatus.FILLED ?
+					{transaction.pendingStatus == EPendingStatus.CREATED || transaction.pendingStatus == EPendingStatus.FILLED &&
 						<View style={styles.row}>
 							<NalliText size={ETextSize.H2}>Custodial transaction status</NalliText>
 							<NalliText>Funds are in custodial account</NalliText>
 						</View>
-						: undefined
 					}
-					{transaction.pendingStatus == EPendingStatus.SETTLED && transaction.type == 'send' ?
+					{transaction.pendingStatus == EPendingStatus.SETTLED && transaction.type == 'send' &&
 						<View style={styles.row}>
 							<NalliText size={ETextSize.H2}>Custodial transaction status</NalliText>
 							<NalliText>Funds are received by the recipient</NalliText>
 						</View>
-						: undefined
 					}
-					{transaction.pendingStatus == EPendingStatus.RETURNED ?
+					{transaction.pendingStatus == EPendingStatus.RETURNED &&
 						<View style={styles.row}>
 							<NalliText size={ETextSize.H2}>Custodial transaction status</NalliText>
 							<NalliText>Funds are returned to you</NalliText>
 						</View>
-						: undefined
 					}
 					<ShowHide
 							containerStyle={styles.details}
 							showText='Show details'
 							hideText='Hide details'>
-						{transaction.custodialAccount && transaction.type == 'send' ?
+						{transaction.custodialAccount && transaction.type == 'send' &&
 							<View>
 								<NalliText style={styles.info}>
 									When sending funds to a user who has not yet registered to the service,
 									the funds are first sent to a temporary custodial account.
 								</NalliText>
-								{transaction.pendingStatus != EPendingStatus.RETURNED ?
+								{transaction.pendingStatus != EPendingStatus.RETURNED &&
 									<NalliText style={styles.info}>
 										You are able to cancel the transaction and return your funds up until the recipient has claimed them.
 									</NalliText>
-									: undefined
 								}
 							</View>
-							: undefined
 						}
-						{transaction.custodialAccount && transaction.type == 'receive' && transaction.pendingStatus != EPendingStatus.RETURNED ?
+						{transaction.custodialAccount && transaction.type == 'receive' && transaction.pendingStatus != EPendingStatus.RETURNED &&
 								<View>
 									<NalliText style={styles.info}>
 										You received these funds from a custodial account upon registration.
 									</NalliText>
 								</View>
-							: undefined
 						}
-						{transaction.account ?
+						{transaction.account &&
 							<View style={styles.row}>
 								<NalliText size={ETextSize.H2}>Account</NalliText>
 								<Link url={`https://nanolooker.com/account/${transaction.account}`}>
 									{transaction.account}
 								</Link>
 							</View>
-							: undefined
 						}
 						<View style={styles.row}>
 							<NalliText size={ETextSize.H2}>Hash</NalliText>
@@ -179,36 +178,33 @@ export default class TransactionModal extends React.Component<TransactionModalPr
 								{transaction.hash}
 							</Link>
 						</View>
-						{transaction.custodialAccount ?
+						{transaction.custodialAccount &&
 							<View style={styles.row}>
 								<NalliText size={ETextSize.H2}>Custodial account</NalliText>
 								<Link url={`https://nanolooker.com/account/${transaction.custodialAccount}`}>
 									{transaction.custodialAccount}
 								</Link>
 							</View>
-							: undefined
 						}
-						{transaction.custodialHash ?
+						{transaction.custodialHash &&
 							<View style={[styles.row]}>
 								<NalliText size={ETextSize.H2}>Custodial hash</NalliText>
 								<Link url={`https://nanolooker.com/block/${transaction.custodialHash}`}>
 									{transaction.custodialHash}
 								</Link>
 							</View>
-							: undefined
 						}
 						{transaction.custodialAccount
 								&& transaction.type == 'send'
 								&& (transaction.pendingStatus == EPendingStatus.FILLED
-									|| transaction.pendingStatus == EPendingStatus.CREATED) ?
+									|| transaction.pendingStatus == EPendingStatus.CREATED) &&
 							<View>
 								<NalliButton
 										text='Cancel transaction'
-										solid={true}
+										solid
 										style={styles.cancelButton}
 										onPress={this.returnPendingSend} />
 							</View>
-							: undefined
 						}
 					</ShowHide>
 				</View>
@@ -224,10 +220,6 @@ const styles = StyleSheet.create({
 	},
 	row: {
 		paddingVertical: 5,
-	},
-	link: {
-		fontSize: 16,
-		color: Colors.main,
 	},
 	info: {
 		marginBottom: 15,

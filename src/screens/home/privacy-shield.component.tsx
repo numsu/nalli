@@ -63,10 +63,10 @@ class PrivacyShield extends React.Component<PrivacyShieldProps, PrivacyShieldSta
 				ClientService.refresh();
 			}
 
+			await ContactsService.refreshCache();
 			VariableStore.setVariable(NalliVariable.APP_STATE, NalliAppState.ACTIVE);
 			this.props.onAppStateChange(NalliAppState.ACTIVE);
 			this.setState({ appState: NalliAppState.ACTIVE, sessionExpiresTime: '', inactivationTime: '' });
-			ContactsService.clearCache();
 		} else if (this.state.appState == NalliAppState.ACTIVE
 				&& nextAppState.match(/inactive|background/)) {
 			WsService.unsubscribe();
@@ -84,7 +84,7 @@ class PrivacyShield extends React.Component<PrivacyShieldProps, PrivacyShieldSta
 			<View style={styles.container}>
 				{appState == NalliAppState.INACTIVE &&
 					<View style={styles.inactiveOverlay}>
-						<NalliLogo width={200} height={80} color="white" />
+						<NalliLogo width={200} height={80} color='white' />
 					</View>
 				}
 				{children}

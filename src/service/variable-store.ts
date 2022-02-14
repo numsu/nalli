@@ -40,6 +40,15 @@ export default class VariableStore {
 		return undefined;
 	}
 
+	static async removeVariable(key: NalliVariable): Promise<void> {
+		try {
+			this.variables.delete(key);
+			await AsyncStorage.removeItem(key);
+		} catch (e) {
+			console.error('Error removing variable from storage', e);
+		}
+	}
+
 	static watchVariable<T>(key: NalliVariable, callback: (value?: T) => void): EmitterSubscription {
 		return DeviceEventEmitter.addListener(this.variablesKey + key, callback);
 	}
@@ -67,6 +76,7 @@ export default class VariableStore {
 }
 
 export enum NalliVariable {
+	// General
 	ACCOUNTS_BALANCES = 'accountsBalances',
 	APP_STATE = 'appState',
 	BIOMETRICS_TYPE = 'biometricsType',
@@ -74,10 +84,16 @@ export enum NalliVariable {
 	CURRENCY = 'currency',
 	DEVICE_ID = 'deviceId',
 	DISPLAYED_CURRENCY = 'displayedCurrency',
+	NUMBER_HASH_TO_CONTACT_ID = 'numberHashToContact',
+	NUMBER_TO_HASH = 'numberToHash',
 	NO_AUTOLOGIN = 'noAutologin',
 	PROCESSING_PENDING = 'processingPending',
 	SELECTED_ACCOUNT = 'selectedAccount',
 	SELECTED_ACCOUNT_INDEX = 'selectedAccountIndex',
+	SELECTED_REQUEST_MODE = 'selectedReceiveMode',
 	SEND_TAB = 'sendTab',
 	SHOW_FIAT_DEFAULT = 'showFiatDefault',
+
+	// Settings
+	ONLY_NALLI_USERS = 'onlyUsers',
 }

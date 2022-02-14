@@ -15,6 +15,7 @@ import Colors from '../constants/colors';
 import PhoneNumberSigner from '../crypto/phone-number-signer';
 import AuthStore from '../service/auth-store';
 import ClientService from '../service/client.service';
+import ContactsService from '../service/contacts.service';
 import VariableStore, { NalliVariable } from '../service/variable-store';
 import WalletStore from '../service/wallet-store';
 
@@ -61,6 +62,7 @@ export default class AuthLoadingScreen extends React.Component<NavigationInjecte
 
 			try {
 				await ClientService.getClient();
+				await ContactsService.getContacts();
 				const wallet = await WalletStore.getWallet();
 				if (wallet) {
 					this.props.navigation.navigate('Home');
@@ -104,7 +106,7 @@ export default class AuthLoadingScreen extends React.Component<NavigationInjecte
 
 		return (
 			<View style={styles.container}>
-				<StatusBar translucent={true} style="light" />
+				<StatusBar translucent style='light' />
 				<ImageBackground resizeMode='contain' style={styles.image} source={require('../../src/assets/images/splash.png')}>
 					<View style={styles.loading}>
 						<Text style={styles.loadingText}>{statusText}...</Text>
@@ -130,7 +132,7 @@ const styles = StyleSheet.create({
 		marginTop: 200,
 	},
 	loadingText: {
-		fontSize: 14,
+		fontSize: 12,
 		color: 'white',
 	},
 });

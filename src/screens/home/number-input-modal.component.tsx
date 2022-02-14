@@ -68,7 +68,7 @@ export default class PhoneNumberInputModal extends React.Component<NumberInputMo
 
 		return (
 			<NalliModal
-					noScroll={true}
+					noScroll
 					isOpen={isOpen}
 					onClose={this.hide}
 					header='Phone number'
@@ -83,7 +83,7 @@ export default class PhoneNumberInputModal extends React.Component<NumberInputMo
 							countryInputTextStyle={styles.countryInputText} />
 					<NalliButton
 							text='Confirm'
-							solid={true}
+							solid
 							onPress={() => this.onConfirmNumber(number)} />
 				</View>
 			</NalliModal>

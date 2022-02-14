@@ -74,25 +74,26 @@ export default class WelcomeScreen extends React.Component<NavigationInjectedPro
 		const { phoneNumber, process } = this.state;
 		return (
 			<DismissKeyboardView style={styles.container}>
-				<NalliLogo width={150} height={60} color="white" />
+				<NalliLogo width={150} height={60} color='white' />
 				<NalliText style={styles.text}>
 					Pay anyone, anywhere, instantly. Using just a phone number.
 				</NalliText>
 				<KeyboardAvoidingView
 						style={styles.formContainer}
-						behavior="height"
+						behavior='height'
 						keyboardVerticalOffset={90}>
 					<PhoneNumberInput
 							value={phoneNumber}
 							onChangeNumber={val => this.onChangeText('phoneNumber', val)}
 							onChangeCountry={val => this.onChangeText('phoneNumberCountry', val)}/>
 					<NalliButton
-							text="Send code"
+							text='Send code'
 							onPress={this.signUp}
 							style={styles.loginButton}
 							textStyle={styles.loginButtonText}
 							disabled={process} />
 					<Text
+							allowFontScaling={false}
 							style={styles.privacyPolicy}>
 						By continuing to use this app, you agree that you have read, understood and accepted our
 						&nbsp;<Link
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
 		paddingTop: 70,
 	},
 	text: {
-		fontSize: 20,
+		fontSize: 18,
 		fontWeight: '400',
 		color: Colors.borderColor,
 		marginTop: 25,
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
 		marginTop: 40,
 		marginBottom: 10,
 		color: 'white',
-		fontSize: 16,
+		fontSize: 14,
 		alignSelf: 'center',
 	},
 	registerButton: {

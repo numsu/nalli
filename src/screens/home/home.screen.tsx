@@ -18,22 +18,23 @@ import { Ionicons } from '@expo/vector-icons';
 import NalliCarousel from '../../components/carousel.component';
 import DismissKeyboardView from '../../components/dismiss-keyboard-hoc.component';
 import NalliButton from '../../components/nalli-button.component';
+import NalliRequests from '../../components/requests.component';
 import NalliLogo from '../../components/svg/nalli-logo';
 import Colors from '../../constants/colors';
 import Layout from '../../constants/layout';
 import layout from '../../constants/layout';
 import AuthStore from '../../service/auth-store';
-import ContactsService from '../../service/contacts.service';
 import CurrencyService from '../../service/currency.service';
 import NotificationService from '../../service/notification.service';
+import { Request } from '../../service/request.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 import WalletHandler from '../../service/wallet-handler.service';
 import WalletStore, { WalletType } from '../../service/wallet-store';
-import WalletService, { WalletTransaction } from '../../service/wallet.service';
+import WalletService from '../../service/wallet.service';
 import WsService, { EWebSocketNotificationType } from '../../service/ws.service';
 import NalliMenu from './menu/nalli-menu.component';
 import PrivacyShield, { NalliAppState } from './privacy-shield.component';
-import ReceiveSheet from './receive-sheet.component';
+import RequestSheet from './request-sheet.component';
 import SendSheet from './send-sheet.component';
 import TransactionsSheet from './transactions-sheet.component';
 
@@ -42,8 +43,6 @@ interface HomeScreenProps extends NavigationInjectedProps {
 
 interface HomeScreenState {
 	price: number;
-	transactions: WalletTransaction[];
-	hasMoreTransactions: boolean;
 	isMenuOpen: boolean;
 	walletIsOpen: boolean;
 	process: boolean;
@@ -51,20 +50,20 @@ interface HomeScreenState {
 
 export default class HomeScreen extends React.Component<HomeScreenProps, HomeScreenState> {
 
+	requestSheetRef: RefObject<any>;
+	requestsRef: NalliRequests;
 	sendRef: SendSheet;
 	sendSheetRef: RefObject<any>;
-	receiveSheetRef: RefObject<any>;
 	sidemenuRef: SideMenu;
 	subscriptions: EmitterSubscription[] = [];
+	transactionSheetRef: TransactionsSheet;
 
 	constructor(props) {
 		super(props);
 		this.sendSheetRef = React.createRef();
-		this.receiveSheetRef = React.createRef();
+		this.requestSheetRef = React.createRef();
 		this.state = {
 			price: undefined,
-			transactions: undefined,
-			hasMoreTransactions: false,
 			isMenuOpen: false,
 			walletIsOpen: true,
 			process: false,
@@ -76,15 +75,13 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	});
 
 	componentDidMount = () => {
-		this.init();
 		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.CURRENCY, () => this.getCurrentPrice()));
-		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.ACCOUNTS_BALANCES, () => this.fetchTransactions(true)));
+		this.init();
 	}
 
 	init = async () => {
 		this.getCurrentPrice();
 		this.subscribeToNotifications();
-		this.fetchTransactions();
 		NotificationService.checkPushNotificationRegistrationStatusAndRenewIfNecessary();
 	}
 
@@ -101,17 +98,22 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		if (nextState == NalliAppState.ACTIVE) {
 			this.subscribeToNotifications();
 			this.getCurrentPrice();
-			ContactsService.clearCache();
 			WalletHandler.getAccountsBalancesAndHandlePending();
 		}
 	}
 
 	subscribeToNotifications = () => {
-		WsService.subscribe(async event => {
-			if (event.type == EWebSocketNotificationType.CONFIRMATION_RECEIVE) {
-				await WalletHandler.getAccountsBalancesAndHandlePending();
-			} else if (event.type == EWebSocketNotificationType.PENDING_RECEIVED) {
-				this.getTransactions();
+		WsService.subscribe(event => {
+			switch (event.type) {
+				case EWebSocketNotificationType.CONFIRMATION_RECEIVE:
+					WalletHandler.getAccountsBalancesAndHandlePending();
+					break;
+				case EWebSocketNotificationType.PENDING_RECEIVED:
+					this.transactionSheetRef.getTransactions();
+					break;
+				case EWebSocketNotificationType.NEW_REQUEST:
+					this.requestsRef.fetchRequests();
+					break;
 			}
 		});
 	}
@@ -123,15 +125,11 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 			await VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT, storedWallet.accounts[index].address);
 			await VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT_INDEX, index);
 			if (fetchTransactions) {
-				this.getTransactions();
+				this.transactionSheetRef.getTransactions();
 			}
 			this.setState({ walletIsOpen: true });
 		} else {
-			this.setState({
-				walletIsOpen: false,
-				transactions: [],
-				hasMoreTransactions: false,
-			 });
+			this.setState({ walletIsOpen: false });
 		}
 	}
 
@@ -181,37 +179,11 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		return true;
 	}
 
-	async fetchTransactions(force = false) {
-		if (!this.state.transactions || force) {
-			this.getTransactions();
-		}
-	}
-
 	getCurrentPrice = async () => {
 		const currency = await VariableStore.getVariable(NalliVariable.CURRENCY, 'usd');
 		const price = await CurrencyService.getCurrentPrice('xno', currency);
 		this.setState({ price });
 		return price;
-	}
-
-	getTransactions = async () => {
-		const res = await WalletService.getWalletTransactions(25, 0);
-		this.setState({
-			transactions: res.sort((a, b) => b.timestamp - a.timestamp),
-			hasMoreTransactions: res.length == 25,
-		});
-		return res;
-	}
-
-	getMoreTransactions = async () => {
-		const res = await WalletService.getWalletTransactions(25, this.state.transactions.length);
-		this.setState({
-			transactions: [
-				...this.state.transactions,
-				...res.sort((a, b) => b.timestamp - a.timestamp),
-			],
-			hasMoreTransactions: res.length == 25,
-		});
 	}
 
 	logout = async () => {
@@ -225,14 +197,23 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		this.sendSheetRef.current.snapToIndex(0);
 	}
 
+	onSendSuccess = () => {
+		this.requestsRef.fetchRequests();
+	}
+
 	onReceivePress = () => {
-		this.receiveSheetRef.current.snapToIndex(0);
+		this.requestSheetRef.current.snapToIndex(0);
 	}
 
 	onDonatePress = () => {
 		this.sidemenuRef.openMenu(false);
 		this.onSendPress();
 		this.sendRef.toggleDonate(true);
+	}
+
+	onRequestAcceptPress = (request: Request) => {
+		this.onSendPress();
+		this.sendRef.fillWithRequest(request);
 	}
 
 	openMenu = () => {
@@ -243,8 +224,6 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		const { navigation } = this.props;
 		const {
 			price,
-			transactions,
-			hasMoreTransactions,
 			walletIsOpen,
 		} = this.state;
 
@@ -263,51 +242,54 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 								<SafeAreaView edges={['top']}>
 									<View style={styles.header}>
 										<TouchableOpacity style={styles.menuIconContainer} onPress={this.openMenu}>
-											<Ionicons style={styles.menuIcon} name="ios-menu" size={40} />
+											<Ionicons style={styles.menuIcon} name='ios-menu' size={40} />
 										</TouchableOpacity>
 										<NalliLogo style={styles.headerLogo} width={90} height={30} />
 										<Avatar
-												rounded={true}
+												rounded
 												onPress={this.logout}
 												icon={{ name: 'lock', type: 'font-awesome' }}
-												size="small"
-												containerStyle={{ marginRight: 20, marginTop: 15 }}
+												size='small'
+												containerStyle={styles.logoutButton}
 												overlayContainerStyle={{ backgroundColor: Colors.main }} />
 									</View>
 								</SafeAreaView>
 								<View style={styles.content}>
-									<View style={{ height: 230 }}>
+									<View style={{ height: 165 }}>
 										<NalliCarousel
 												onChangeAccount={this.onChangeAccount}
 												onAddNewAccount={this.addNewAccount}
 												onHideAccount={this.hideAccount}
 												price={price} />
 									</View>
-									<View style={[styles.row, styles.actions]}>
+									<View>
+										<NalliRequests
+												ref={c => this.requestsRef = c}
+												onAcceptPress={this.onRequestAcceptPress} />
+									</View>
+									<View style={styles.actions}>
 										<NalliButton
-												text="Send"
-												solid={true}
-												icon="md-arrow-up"
+												text='Send'
+												solid
+												icon='md-arrow-up'
 												style={styles.action}
 												onPress={this.onSendPress}
 												disabled={!walletIsOpen} />
 										<NalliButton
-												text="Receive"
-												solid={true}
-												icon="md-arrow-down"
+												text='Request'
+												solid
+												icon='md-arrow-down'
 												style={styles.action}
 												onPress={this.onReceivePress}
 												disabled={!walletIsOpen} />
 									</View>
 								</View>
-								<TransactionsSheet
-										transactions={transactions}
-										hasMoreTransactions={hasMoreTransactions}
-										onFetchMore={this.getMoreTransactions} />
+								<TransactionsSheet ref={c => this.transactionSheetRef = c} />
 								<SendSheet
 										ref={c => this.sendRef = c}
-										reference={this.sendSheetRef} />
-								<ReceiveSheet reference={this.receiveSheetRef} />
+										reference={this.sendSheetRef}
+										onSendSuccess={this.onSendSuccess} />
+								<RequestSheet reference={this.requestSheetRef} />
 							</DismissKeyboardView>
 						</KeyboardAvoidingView>
 					</ScrollView>
@@ -327,6 +309,7 @@ const styles = StyleSheet.create({
 	header: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
+		paddingBottom: 4,
 	},
 	menuIconContainer: {
 		marginTop: 10,
@@ -337,6 +320,18 @@ const styles = StyleSheet.create({
 	menuIcon: {
 		color: Colors.main,
 	},
+	logoutButton: {
+		marginRight: 20,
+		marginTop: 15,
+		shadowColor: Colors.shadowColor,
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+		elevation: 3,
+	},
 	headerLogo: {
 		marginTop: 15,
 		marginLeft: 15,
@@ -346,14 +341,11 @@ const styles = StyleSheet.create({
 		flex: 2,
 		backgroundColor: 'white',
 		flexDirection: 'column',
-		justifyContent: 'space-between',
 		marginBottom: layout.window.height * 0.24,
 	},
-	row: {
-		marginTop: 10,
-		marginBottom: 10,
-	},
 	actions: {
+		marginTop: 'auto',
+		marginBottom: 10,
 		padding: 15,
 		flexDirection: 'row',
 		justifyContent: 'space-between',

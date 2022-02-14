@@ -18,7 +18,6 @@ import { Avatar } from 'react-native-elements';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
-import NalliBadge from '../../components/badge.component';
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import CurrencyInput from '../../components/currency-input.component';
 import Link from '../../components/link.component';
@@ -26,12 +25,15 @@ import NalliButton from '../../components/nalli-button.component';
 import NalliInput from '../../components/nalli-input.component';
 import NalliNanoAddress from '../../components/nano-address.component';
 import QRCodeScanner from '../../components/qrcode-scanner.component';
+import SelectedContact from '../../components/selected-contact.component';
 import ShowHide from '../../components/show-hide.component';
 import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
 import layout from '../../constants/layout';
 import ClientService from '../../service/client.service';
 import ContactsService, { FormattedNumber } from '../../service/contacts.service';
+import CurrencyService from '../../service/currency.service';
+import { Request } from '../../service/request.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 import WalletHandler from '../../service/wallet-handler.service';
 import WalletStore from '../../service/wallet-store';
@@ -40,12 +42,11 @@ import ContactsModal from './contacts-modal.component';
 import PhoneNumberInputModal from './number-input-modal.component';
 
 export interface SendSheetProps {
-	onSendSuccess?: () => void;
+	onSendSuccess?: (requestPaid: boolean) => void;
 	reference: RefObject<any>;
 }
 
 export interface SendSheetState {
-	contacts: any[];
 	contactsModalOpen: boolean;
 	convertedAmount: string;
 	currency: string;
@@ -54,14 +55,15 @@ export interface SendSheetState {
 	process: boolean;
 	recipient: SendSheetRecipient;
 	recipientAddress: string;
-	recipientLastLogin: string;
+	recipientLastLoginDate: string;
+	requestId: string;
 	sendAmount: string;
 	success: boolean;
 	tab: SendSheetTab;
 	walletAddress: string;
 }
 
-interface SendSheetRecipient {
+export interface SendSheetRecipient {
 	initials: string;
 	name: string;
 	number: string;
@@ -80,6 +82,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 
 	sendSheetRef: RefObject<any>;
 	sendAmountRef: RefObject<any>;
+	currencyInputRef: CurrencyInput;
 	barcodeAlertActive = false;
 	sendAnimation;
 	sentAnimation;
@@ -89,7 +92,6 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 		this.sendAmountRef = React.createRef();
 		this.sendSheetRef = props.reference;
 		this.state = {
-			contacts: [],
 			contactsModalOpen: false,
 			convertedAmount: '0',
 			currency: 'xno',
@@ -98,7 +100,8 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			process: false,
 			recipient: undefined,
 			recipientAddress: undefined,
-			recipientLastLogin: undefined,
+			recipientLastLoginDate: undefined,
+			requestId: undefined,
 			sendAmount: undefined,
 			success: false,
 			tab: SendSheetTab.CONTACT,
@@ -112,8 +115,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 
 	init = async () => {
 		const tab = await VariableStore.getVariable(NalliVariable.SEND_TAB, SendSheetTab.CONTACT);
-		const contacts = await ContactsService.getContacts(false);
-		this.setState({ tab, contacts });
+		this.setState({ tab });
 	}
 
 	toggleDonate = async (enable: boolean) => {
@@ -124,6 +126,38 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			this.setState({ tab });
 			this.clearRecipient();
 		}
+	}
+
+	fillWithRequest = async (request: Request) => {
+		const contact = ContactsService.getContactByHash(request.phoneHash);
+		let recipient: SendSheetRecipient;
+		if (contact) {
+			recipient = {
+				formattedNumber: contact.formattedNumber,
+				number: contact.fullNumber,
+				initials: contact.initials,
+				name: contact.name,
+			};
+		} else {
+			recipient = {
+				formattedNumber: '',
+				number: '',
+				initials: '?',
+				name: 'Someone not in your contacts',
+			};
+		}
+
+		const amount = CurrencyService.formatNanoAmount(Number(tools.convert(request.amount, 'RAW', 'NANO')));
+		this.setState({
+			tab: SendSheetTab.CONTACT,
+			isNalliUser: true,
+			recipientAddress: request.address,
+			sendAmount: amount,
+			recipient,
+			requestId: request.requestId,
+		}, () => {
+			this.currencyInputRef.forceXno();
+		});
 	}
 
 	onSwitchModePress = async (tab: number) => {
@@ -169,30 +203,25 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 
 	onSelectRecipientPress = async () => {
 		Keyboard.dismiss();
-		if (this.state.contacts.length == 0) {
-			const contacts = await ContactsService.getContacts();
-			this.setState({ contacts: contacts, contactsModalOpen: contacts.length > 0 });
-		} else {
-			this.setState({ contactsModalOpen: true });
-		}
+		this.setState({ contactsModalOpen: true });
 	}
 
 	onConfirmRecipient = async (contact) => {
 		Keyboard.dismiss();
 		if (contact) {
-			const recipientAddress = await ClientService.getClientAddress(contact.fullNumber);
+			const recipient = await ClientService.getClientAddress(contact.fullNumber);
 			let address;
 			let isNalliUser = false;
-			let recipientLastLogin;
+			let recipientLastLoginDate;
 
 			// If client is not registered, create a pending send to a custodial account
-			if (!recipientAddress) {
+			if (!recipient) {
 				const pendingSend = await WalletService.createPendingSend(contact.fullNumber);
 				address = pendingSend.address;
 			} else {
-				address = recipientAddress.address;
-				isNalliUser = recipientAddress.nalliUser;
-				recipientLastLogin = recipientAddress.lastLogin;
+				address = recipient.address;
+				isNalliUser = recipient.nalliUser;
+				recipientLastLoginDate = recipient.lastLogin;
 			}
 
 			this.setState({
@@ -200,7 +229,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 				isNalliUser,
 				recipient: contact,
 				recipientAddress: address,
-				recipientLastLogin,
+				recipientLastLoginDate,
 			});
 		} else {
 			this.clearRecipient();
@@ -251,25 +280,29 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			isNalliUser: false,
 			recipient: undefined,
 			recipientAddress: undefined,
-			recipientLastLogin: undefined,
+			recipientLastLoginDate: undefined,
+			requestId: undefined,
 			walletAddress: undefined,
 		});
 	}
 
 	clearState = () => {
+		Keyboard.dismiss();
 		this.setState({
 			contactsModalOpen: false,
 			inputPhoneNumberModalOpen: false,
 			isNalliUser: false,
 			recipient: undefined,
 			recipientAddress: undefined,
-			recipientLastLogin: undefined,
+			recipientLastLoginDate: undefined,
+			requestId: undefined,
 			walletAddress: undefined,
 			process: false,
 			success: false,
 			sendAmount: undefined,
 			convertedAmount: '0',
 		});
+		this.init();
 	}
 
 	confirm = () => {
@@ -303,7 +336,6 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 
 	send = async () => {
 		Keyboard.dismiss();
-		this.setState({ process: true, success: false });
 
 		let recipientAddress;
 		if (this.state.tab == SendSheetTab.CONTACT || this.state.tab == SendSheetTab.PHONE) {
@@ -337,6 +369,8 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 				return;
 			}
 
+			this.setState({ process: true, success: false });
+
 			const signedBlock = block.send({
 				amountRaw: tools.convert(sendAmount, 'NANO', 'RAW'),
 				fromAddress: walletInfo.address,
@@ -349,6 +383,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 
 			await WalletService.publishTransaction({
 				subtype: EBlockSubType.SEND,
+				requestId: this.state.requestId,
 				block: signedBlock,
 			});
 		} catch {
@@ -358,6 +393,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 		}
 
 		this.setState({ success: true });
+		this.props.onSendSuccess(!!this.state.requestId);
 		WalletHandler.getAccountsBalancesAndHandlePending();
 		await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 	}
@@ -375,7 +411,6 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 	render = () => {
 		const { reference } = this.props;
 		const {
-			contacts,
 			contactsModalOpen,
 			convertedAmount,
 			inputPhoneNumberModalOpen,
@@ -383,14 +418,15 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			process,
 			recipient,
 			recipientAddress,
-			recipientLastLogin,
+			recipientLastLoginDate,
+			requestId,
 			sendAmount,
 			success,
 			tab,
 			walletAddress,
 		} = this.state;
 
-		const recipientLastLoginOverMonthAgo = moment(recipientLastLogin).isBefore(moment().subtract(1, 'month'));
+		const recipientLastLoginOverMonthAgo = moment(recipientLastLoginDate).isBefore(moment().subtract(1, 'month'));
 
 		let recipientText;
 		if (success) {
@@ -401,15 +437,22 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			}
 		}
 
+		let header = '';
+		if (requestId) {
+			header = 'Accept request';
+		} else if (!process) {
+			header = 'Send';
+		}
+
 		return (
 			<MyBottomSheet
 					initialSnap={-1}
 					reference={reference}
 					enablePanDownToClose={!process || success}
-					enableLinearGradient={true}
+					enableLinearGradient
 					onClose={this.clearState}
-					snapPoints={layout.isSmallDevice ? ['88%'] : ['68%']}
-					header={!process ? 'Send' : ''}>
+					snapPoints={layout.isSmallDevice ? ['88%'] : ['71%']}
+					header={header}>
 				{process &&
 					<View style={styles.sendingContainer}>
 						<View style={styles.animationContainer}>
@@ -429,7 +472,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 											this.sendAnimation = animation;
 										}}
 										onLayout={() => this.sendAnimation.play()}
-										loop={true}
+										loop
 										resizeMode='contain'
 										source={require('../../assets/lottie/sending.json')} />
 							}
@@ -444,7 +487,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 							<View style={styles.sendTransactionButton}>
 								<NalliButton
 										text={'Close'}
-										solid={true}
+										solid
 										onPress={() => (this.clearState(), this.sendSheetRef.current.close())} />
 							</View>
 						}
@@ -455,13 +498,15 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 						<BottomSheetScrollView keyboardDismissMode={'interactive'}>
 							<View style={styles.transactionMoneyInputContainer}>
 								<CurrencyInput
+										disabled={!!requestId}
+										ref={c => this.currencyInputRef = c}
 										value={sendAmount}
 										convertedValue={convertedAmount}
 										reference={this.sendAmountRef}
 										onChangeText={(sendAmount: string, convertedAmount: string, currency: string) =>
 												this.setState({ sendAmount, convertedAmount, currency })} />
 							</View>
-							{tab != SendSheetTab.DONATION && // Don't show different options for donations
+							{(tab != SendSheetTab.DONATION && !requestId) && // Don't show different options for donations
 								<View style={styles.tabs}>
 									<TouchableOpacity
 											style={[styles.switchButton, (tab == SendSheetTab.CONTACT ? styles.selected : undefined)]}
@@ -485,102 +530,30 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 
 							{tab == SendSheetTab.CONTACT && !recipient &&
 								<NalliButton
-										text="Select contact"
-										icon="md-person"
+										text='Select contact'
+										icon='md-person'
 										onPress={this.onSelectRecipientPress} />
 							}
 							{tab == SendSheetTab.CONTACT && recipient &&
-								<View style={styles.contactContainer}>
-									<Avatar
-											rounded={true}
-											title={recipient.initials}
-											size="medium"
-											titleStyle={{ fontSize: 18 }}
-											containerStyle={{ marginRight: 15 }}
-											overlayContainerStyle={{ backgroundColor: Colors.main }} />
-									<View>
-										<View style={{ flexDirection: 'row' }}>
-											<NalliText size={ETextSize.H2} style={styles.contactName}>
-												{recipient.name}
-											</NalliText>
-											{isNalliUser &&
-												<NalliBadge>
-													<View style={styles.online}></View>
-													<NalliText>Nalli user</NalliText>
-												</NalliBadge>
-											}
-											{!isNalliUser &&
-												<NalliBadge>
-													<View style={styles.offline}></View>
-													<NalliText>New user</NalliText>
-												</NalliBadge>
-											}
-										</View>
-										<NalliText>
-											{recipient.formattedNumber}
-										</NalliText>
-										{recipientLastLoginOverMonthAgo &&
-											<NalliText style={styles.incativeUserWarning}>
-												This user hasn't been active for a while
-											</NalliText>
-										}
-									</View>
-									<TouchableOpacity
-											onPress={this.onSelectRecipientPress}
-											style={styles.contactSelectArrow}>
-										<Ionicons
-												name="ios-swap-horizontal"
-												style={styles.contactSelectArrow}
-												size={32} />
-									</TouchableOpacity>
-								</View>
+								<SelectedContact
+										contact={recipient}
+										isNalliUser={isNalliUser}
+										lastLoginDate={recipientLastLoginDate}
+										disableSwap={!!requestId}
+										onSwapPress={this.onSelectRecipientPress} />
 							}
 							{tab == SendSheetTab.PHONE && !recipient &&
 								<NalliButton
-										text="Input phone number"
-										icon="md-person"
+										text='Input phone number'
+										icon='md-person'
 										onPress={this.onSelectInputNumberPress} />
 							}
 							{tab == SendSheetTab.PHONE && recipient &&
-								<View style={styles.contactContainer}>
-									<Avatar
-											rounded={true}
-											title={recipient.initials}
-											size="medium"
-											titleStyle={{ fontSize: 18 }}
-											containerStyle={{ marginRight: 15 }}
-											overlayContainerStyle={{ backgroundColor: Colors.main }} />
-									<View>
-										<View style={{ flexDirection: 'row' }}>
-											<NalliText size={ETextSize.H2} style={styles.contactName}>
-												{recipient.name}
-											</NalliText>
-											{isNalliUser &&
-												<NalliBadge>
-													<View style={styles.online}></View>
-													<NalliText>Nalli user</NalliText>
-												</NalliBadge>
-											}
-											{!isNalliUser &&
-												<NalliBadge>
-													<View style={styles.offline}></View>
-													<NalliText>New user</NalliText>
-												</NalliBadge>
-											}
-										</View>
-										<NalliText>
-											{recipient.formattedNumber}
-										</NalliText>
-									</View>
-									<TouchableOpacity
-											onPress={this.onSelectInputNumberPress}
-											style={styles.contactSelectArrow}>
-										<Ionicons
-												name="ios-swap-horizontal"
-												style={styles.contactSelectArrow}
-												size={32} />
-									</TouchableOpacity>
-								</View>
+								<SelectedContact
+										contact={recipient}
+										isNalliUser={isNalliUser}
+										lastLoginDate={recipientLastLoginDate}
+										onSwapPress={this.onSelectInputNumberPress} />
 							}
 							{tab == SendSheetTab.ADDRESS &&
 								<View style={styles.addressView}>
@@ -597,7 +570,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 											<TouchableOpacity
 													onPress={() => this.onChangeAddress(Clipboard.getStringAsync())}>
 												<Ionicons
-														name="ios-copy"
+														name='ios-copy'
 														size={30} />
 											</TouchableOpacity>
 										}
@@ -605,9 +578,9 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 									<NalliInput
 											style={styles.addressInput}
 											value={walletAddress}
-											readonly={true}
+											readonly
 											label='Address'
-											multiline={true}
+											multiline
 											onChangeText={this.onChangeAddress} />
 									<QRCodeScanner
 											onQRCodeScanned={this.onQRCodeScanned} />
@@ -617,9 +590,9 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 								<View style={styles.contactContainer}>
 									<Avatar
 											icon={{ name: 'star-border', type: 'material' }}
-											rounded={true}
-											size="medium"
-											titleStyle={{ fontSize: 18 }}
+											rounded
+											size='medium'
+											titleStyle={{ fontSize: 16 }}
 											containerStyle={{ marginRight: 15 }}
 											overlayContainerStyle={{ backgroundColor: Colors.main }} />
 									<View>
@@ -661,14 +634,13 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 							<View style={styles.sendTransactionButton}>
 								<NalliButton
 										text={(!!walletAddress || isNalliUser) ? 'Send' : 'Invite new user'}
-										solid={true}
+										solid
 										onPress={this.confirm}
 										disabled={(!recipient && !walletAddress) || !sendAmount || process} />
 							</View>
 						}
 						<ContactsModal
 								isOpen={contactsModalOpen}
-								contacts={contacts}
 								onSelectContact={this.onConfirmRecipient} />
 						<PhoneNumberInputModal
 								isOpen={inputPhoneNumberModalOpen}
@@ -698,7 +670,7 @@ const styles = StyleSheet.create({
 	},
 	successText: {
 		textAlign: 'center',
-		fontSize: 20
+		fontSize: 18,
 	},
 	successTextColor: {
 		color: Colors.main,
@@ -724,7 +696,7 @@ const styles = StyleSheet.create({
 		marginRight: 4,
 	},
 	switchButtonText: {
-		fontSize: 20,
+		fontSize: 18,
 	},
 	selected: {
 		borderColor: Colors.main,
@@ -756,7 +728,7 @@ const styles = StyleSheet.create({
 	},
 	incativeUserWarning: {
 		color: Colors.shadowColor,
-		fontSize: 10,
+		fontSize: 8,
 	},
 	contactSelectArrow: {
 		color: Colors.main,
@@ -770,20 +742,20 @@ const styles = StyleSheet.create({
 	},
 	addressInput: {
 		width: layout.window.width * 0.70,
-		fontSize: 16,
+		fontSize: 14,
 		lineHeight: 20,
 		paddingTop: 10,
 		height: 85,
 	},
 	sendTransactionButton: {
 		marginTop: 'auto',
-		paddingHorizontal: 20,
+		paddingHorizontal: 17,
 		...Platform.select({
 			android: {
 				marginBottom: 55,
 			},
 			ios: {
-				marginBottom: 45,
+				marginBottom: 55,
 			},
 		}),
 	},

@@ -166,15 +166,15 @@ export default class CreateWalletImport extends React.Component<NavigationInject
 										reference={refs[wordIndex]}
 										key={wordIndex}
 										index={++wordIndex}
-										editable={true}
+										editable
 										onChangeText={(index, val) => this.onChangeText(index, val)}
 										value={word} />
 							))}
 						</View>
 						<View style={styles.actions}>
 							<NalliButton
-									text="Import"
-									solid={true}
+									text='Import'
+									solid
 									style={styles.action}
 									disabled={process}
 									onPress={this.onFinishPress} />

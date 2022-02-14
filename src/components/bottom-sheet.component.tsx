@@ -12,6 +12,7 @@ interface BottomSheetProps {
 	enableLinearGradient?: boolean;
 	enablePanDownToClose?: boolean;
 	header: string;
+	headerIconComponent?: any;
 	initialSnap: number;
 	onClose?: () => void;
 	reference?: RefObject<any>;
@@ -33,6 +34,7 @@ export default class MyBottomSheet extends React.Component<BottomSheetProps, Bot
 			enableLinearGradient,
 			enablePanDownToClose,
 			header,
+			headerIconComponent,
 			initialSnap,
 			onClose,
 			reference,
@@ -48,16 +50,18 @@ export default class MyBottomSheet extends React.Component<BottomSheetProps, Bot
 					onClose={onClose}
 					handleIndicatorStyle={styles.panelHandle}
 					style={styles.shadow}>
-				<NalliText
-						size={ETextSize.H1}
-						style={styles.header}>
-					{header}
-				</NalliText>
+				<View style={styles.headerContainer}>
+					<NalliText
+							size={ETextSize.H1}>
+						{header}
+					</NalliText>
+					{headerIconComponent}
+				</View>
 				<View style={{ height: '100%' }}>
 					{enableLinearGradient && <NalliLinearGradient />}
 					{children}
 				</View>
-				{enableLinearGradient && <NalliLinearGradient bottom={true} />}
+				{enableLinearGradient && <NalliLinearGradient bottom />}
 			</BottomSheet>
 		);
 	}
@@ -68,9 +72,11 @@ const styles = StyleSheet.create({
 	panelHandle: {
 		backgroundColor: Colors.borderColor,
 	},
-	header: {
+	headerContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
 		paddingHorizontal: 15,
-		marginBottom: -5,
 	},
 	shadow: {
 		shadowOffset: { width: 0, height: -5 },

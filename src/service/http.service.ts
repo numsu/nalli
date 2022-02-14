@@ -10,27 +10,26 @@ export default class HttpService {
 
 	static promises = new Map<string, Promise<any>>();
 
-	static get = async <T>(uri: string): Promise<T> => {
+	static get = <T>(uri: string): Promise<T> => {
 		if (this.promises.has(uri)) {
 			return this.promises.get(uri);
 		} else {
 			const promise = new Promise<T>(async (resolve, reject) => {
 				const base = this.protocol + this.host;
 				const final = `${base}/api${uri}`;
-				await fetch(
-						final, {
-							method: 'GET',
-							headers: await this.getHeaders(),
-						}).then(async res => {
-							const handled = await this.handleResponse(res);
-							this.promises.delete(uri);
-							resolve(handled);
-						})
-						.catch(err => {
-							console.log(`Error in GET ${final}`, err);
-							this.promises.delete(uri);
-							reject(err);
-						});
+				fetch(final, {
+						method: 'GET',
+						headers: await this.getHeaders(),
+					}).then(async res => {
+						const handled = await this.handleResponse<T>(res);
+						this.promises.delete(uri);
+						resolve(handled);
+					})
+					.catch(err => {
+						console.log(`Error in GET ${final}`, err);
+						this.promises.delete(uri);
+						reject(err);
+					});
 			});
 
 			this.promises.set(uri, promise);
@@ -49,7 +48,7 @@ export default class HttpService {
 				body: JSON.stringify(body, replacer),
 			}
 		)
-		.then(async res => await this.handleResponse(res))
+		.then(async res => await this.handleResponse<T>(res))
 		.catch(err => {
 			console.log(`Error in POST ${final}`, err);
 			throw err;
@@ -72,7 +71,7 @@ export default class HttpService {
 		return headers;
 	}
 
-	private static async handleResponse(res: Response) {
+	private static async handleResponse<T>(res: Response): Promise<T> {
 		const refreshToken = res.headers.get('Refresh-Token');
 		if (refreshToken) {
 			await AuthStore.setAuthentication(res.headers.get('Refresh-Token'));
@@ -99,10 +98,12 @@ export default class HttpService {
 				try {
 					return JSON.parse(responseBody, reviver);
 				} catch {
-					return responseBody;
+					return responseBody as any;
 				}
 			}
 		}
+
+		return undefined;
 	}
 
 }

@@ -61,7 +61,7 @@ export default class Permissions extends React.Component<NavigationInjectedProps
 					</View>
 					<View style={styles.actions}>
 						<NalliButton
-								text="Continue"
+								text='Continue'
 								onPress={this.onContinuePress} />
 					</View>
 				</View>

@@ -55,7 +55,7 @@ export default class Loading extends React.Component<LoadingProps, any> {
 							this.animation = animation;
 						}}
 						onLayout={() => this.animation.play()}
-						loop={true}
+						loop
 						resizeMode='cover'
 						source={source} />
 			);

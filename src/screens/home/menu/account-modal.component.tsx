@@ -155,16 +155,16 @@ export default class AccountModal extends React.Component<AccountModalProps, Acc
 						<NalliText>Change the PIN used in login</NalliText>
 						<NalliButton
 								style={styles.changePinButton}
-								small={true}
-								solid={true}
+								small
+								solid
 								onPress={this.toggleChangePinModal}
 								text='Change PIN'
 								icon={'key-outline'} />
 						<NalliText size={ETextSize.H2} style={styles.header}>Delete my account</NalliText>
 						<NalliText>This deletes all of your data from our servers and removes the wallet from your phone. The data deleted is not recoverable. Use with caution.</NalliText>
 						<NalliButton
-								small={true}
-								solid={true}
+								small
+								solid
 								style={styles.deleteButton}
 								onPress={this.deleteAccount}
 								text='Delete my account'
@@ -180,13 +180,13 @@ export default class AccountModal extends React.Component<AccountModalProps, Acc
 						<TextInput
 								style={styles.numberPadPin}
 								value={pin}
-								secureTextEntry={true}
+								secureTextEntry
 								editable={false} />
 						<NalliNumberPad
 								style={styles.numberPad}
 								pin={pin}
 								onChangeText={this.validatePin}
-								enableBiometrics={true}
+								enableBiometrics
 								onBiometricLoginPress={this.signInWithBiometrics} />
 					</View>
 				}
@@ -217,16 +217,16 @@ const styles = StyleSheet.create({
 	},
 	numberPadPin: {
 		color: Colors.main,
-		fontSize: 40,
+		fontSize: 38,
 		width: '100%',
 		textAlign: 'center',
 	},
 	changePinButton: {
-		width: '40%',
+		width: '80%',
 		marginTop: 20,
 	},
 	deleteButton: {
-		width: '60%',
+		width: '80%',
 		marginTop: 20,
 		backgroundColor: Colors.danger,
 	}

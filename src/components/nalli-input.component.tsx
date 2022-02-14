@@ -11,20 +11,21 @@ import Colors from '../constants/colors';
 import NalliText from './text.component';
 
 interface NalliInputProps {
-	reference?: RefObject<any>;
+	autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+	keyboardType?: KeyboardTypeOptions;
 	label?: string;
+	maxLength?: number,
+	multiline?: boolean;
+	numberOfLines?: number;
+	onBlur?: () => any;
+	onChangeText: (str: string) => any;
 	placeholder?: string;
 	readonly?: boolean;
-	onChangeText: (str: string) => any;
-	onBlur?: () => any;
-	keyboardType?: KeyboardTypeOptions;
-	autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+	reference?: RefObject<any>;
+	returnKeyType?: ReturnKeyTypeOptions;
 	secureTextEntry?: boolean;
 	style?: any;
 	value?: string;
-	multiline?: boolean;
-	numberOfLines?: number;
-	returnKeyType?: ReturnKeyTypeOptions;
 }
 
 interface NalliInputState {
@@ -53,19 +54,20 @@ export default class NalliInput extends React.Component<NalliInputProps, NalliIn
 
 	render = () => {
 		const {
-			reference,
+			autoCapitalize,
+			keyboardType,
 			label,
+			maxLength,
+			multiline,
+			numberOfLines,
+			onChangeText,
 			placeholder,
 			readonly,
-			onChangeText,
-			keyboardType,
-			autoCapitalize,
+			reference,
+			returnKeyType,
 			secureTextEntry,
 			style,
 			value,
-			multiline,
-			numberOfLines,
-			returnKeyType,
 		} = this.props;
 		const { borderColor } = this.state;
 		return (
@@ -76,21 +78,23 @@ export default class NalliInput extends React.Component<NalliInputProps, NalliIn
 					</NalliText>
 				}
 				<TextInput
-						returnKeyType={returnKeyType}
-						ref={reference}
-						editable={!readonly}
-						onFocus={this.onFocus}
-						placeholder={placeholder}
-						style={[styles.input, style, { borderColor }]}
-						secureTextEntry={secureTextEntry}
-						keyboardType={keyboardType}
 						autoCapitalize={autoCapitalize}
-						placeholderTextColor={Colors.inputPlaceholder}
-						onBlur={this.onBlur}
+						editable={!readonly}
+						keyboardType={keyboardType}
+						maxLength={maxLength}
 						multiline={multiline}
 						numberOfLines={numberOfLines}
+						onBlur={this.onBlur}
+						onChangeText={onChangeText}
+						onFocus={this.onFocus}
+						placeholder={placeholder}
+						placeholderTextColor={Colors.inputPlaceholder}
+						ref={reference}
+						returnKeyType={returnKeyType}
+						secureTextEntry={secureTextEntry}
+						style={[styles.input, style, { borderColor }]}
 						value={value}
-						onChangeText={onChangeText} />
+						 />
 			</View>
 		);
 	}
@@ -113,7 +117,7 @@ const styles = StyleSheet.create({
 		padding: 12,
 		marginBottom: 10,
 		color: 'black',
-		fontSize: 18,
+		fontSize: 16,
 		zIndex: 100,
 		fontFamily: 'OpenSans',
 	},

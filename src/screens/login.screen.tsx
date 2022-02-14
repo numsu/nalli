@@ -130,13 +130,14 @@ export default class Login extends React.Component<NavigationInjectedProps, Logi
 				signature,
 			});
 			await AuthStore.setAuthentication(token.accessToken);
-			ContactsService.clearCache();
+			await ContactsService.refreshCache();
 			if (!wallet) {
 				this.props.navigation.navigate('Permissions');
 			} else {
 				this.props.navigation.navigate('Main');
 			}
 		} catch (e) {
+			console.error(e);
 			this.setState({ pin: '', process: false, isBiometricProcess: false });
 			if (e.code == NalliErrorCode.ACCOUNT_DISABLED) {
 				Alert.alert('Error', 'Your account is disabled. Most likely due to someone else registering with the same wallet. Please reinstall the application.');
@@ -161,10 +162,10 @@ export default class Login extends React.Component<NavigationInjectedProps, Logi
 		const { isBiometricProcess, pin, process } = this.state;
 		return (
 			<DismissKeyboardView style={styles.container}>
-				<StatusBar translucent={true} style="light" />
+				<StatusBar translucent style='light' />
 				<Loading style={LoadingStyle.LIGHT} color='white' show={process} />
 				{/* <TouchableOpacity onPress={this.clearWalletInfo}> */}
-					<NalliLogo width={150} height={60} color="white" />
+					<NalliLogo width={150} height={60} color='white' />
 				{/* </TouchableOpacity> */}
 				<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 					Enter pin
@@ -175,12 +176,12 @@ export default class Login extends React.Component<NavigationInjectedProps, Logi
 							<TextInput
 									style={styles.numberPadPin}
 									value={pin}
-									secureTextEntry={true}
+									secureTextEntry
 									editable={false} />
 						</View>
 						<NalliNumberPad
 								pin={pin}
-								enableBiometrics={true}
+								enableBiometrics
 								onBiometricLoginPress={this.signInWithBiometrics}
 								onChangeText={this.onChangeNumberPad}
 								maxLength={6} />
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
 		paddingBottom: 35,
 	},
 	biometricsLoginIcon: {
-		fontSize: 80,
+		fontSize: 78,
 		color: 'white',
 	},
 	numberPadContainer: {
@@ -224,7 +225,7 @@ const styles = StyleSheet.create({
 	},
 	numberPadPin: {
 		color: 'white',
-		fontSize: 40,
+		fontSize: 38,
 		width: '100%',
 		textAlign: 'center',
 	},

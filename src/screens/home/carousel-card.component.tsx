@@ -1,11 +1,12 @@
+import * as Haptics from 'expo-haptics';
 import React from 'react';
-import { Alert, EmitterSubscription, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-import { FontAwesome5, Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Alert, EmitterSubscription, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import Card from '../../components/card.component';
+import NalliIcon, { IconType } from '../../components/icon.component';
 import Loading, { LoadingStyle } from '../../components/loading.component';
 import NalliButton from '../../components/nalli-button.component';
+import NalliText from '../../components/text.component';
 import Colors from '../../constants/colors';
 import CurrencyService from '../../service/currency.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
@@ -55,21 +56,35 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 		this.setState({ displayedCurrency, currency: CurrencyService.getCurrencyByISO(currency).icon });
 	}
 
-	onChangeDisplayedCurrencyPress = async () => {
+	onChangeDisplayedCurrencyPress = () => {
+		if (this.state.displayedCurrency == 'hidden') {
+			return;
+		}
+
 		let displayedCurrency;
 		if (this.state.displayedCurrency == 'nano') {
 			displayedCurrency = 'fiat';
-		} else if (this.state.displayedCurrency == 'fiat') {
-			displayedCurrency = 'hidden';
 		} else {
 			displayedCurrency = 'nano';
 		}
-		await VariableStore.setVariable(NalliVariable.DISPLAYED_CURRENCY, displayedCurrency);
+		VariableStore.setVariable(NalliVariable.DISPLAYED_CURRENCY, displayedCurrency);
 		this.setState({ displayedCurrency });
 	}
 
+	hideAmount = () => {
+		let displayedCurrency;
+		if (this.state.displayedCurrency == 'hidden') {
+			displayedCurrency = 'nano';
+		} else {
+			displayedCurrency = 'hidden';
+		}
+		VariableStore.setVariable(NalliVariable.DISPLAYED_CURRENCY, displayedCurrency);
+		this.setState({ displayedCurrency });
+		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+	}
+
 	onHomeAccountPress = () => {
-		Alert.alert('Home account', 'This is the account which will receive when someone sends to your phone number');
+		Alert.alert('Home account', 'This is the account which will receive when someone sends to your phone number or when you send a request');
 	}
 
 	render = () => {
@@ -87,42 +102,39 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 		const { displayedCurrency, currency } = this.state;
 
 		if (!showAddAccountView) {
-			return (
-				<Card style={styles.row} title={`Account balance`}>
+			let headerAddonComponent;
+			if (accountActive) {
+				headerAddonComponent = (
 					<TouchableOpacity
-							style={styles.changeDisplayedCurrencyButton}
-							onPress={this.onChangeDisplayedCurrencyPress}>
-						<Ionicons
-								style={styles.changeDisplayedCurrencyArrow}
-								name="ios-swap-horizontal"
-								size={25} />
+							onPress={this.onHomeAccountPress}
+							style={styles.homeAccount}>
+						<NalliIcon type={IconType.MATERIAL} icon='home' size={25} style={{ color: Colors.main }} />
 					</TouchableOpacity>
-					{accountActive &&
-						<TouchableOpacity
-								onPress={this.onHomeAccountPress}
-								style={styles.homeAccount}>
-							<Text style={{ color: Colors.main }}>
-								<MaterialIcons size={25} name='home' />
-							</Text>
-						</TouchableOpacity>
-					}
-					{isLastAccount &&
-						<TouchableOpacity
-								style={styles.hideAccount}
-								onPress={() => onHideAccount(accountIndex)}>
-							<Text style={{ color: Colors.main }}>
-								<FontAwesome5 size={17} name='eye-slash' />
-							</Text>
-						</TouchableOpacity>
-					}
+				);
+			} else if (isLastAccount) {
+				headerAddonComponent = (
+					<TouchableOpacity
+							style={styles.hideAccount}
+							onPress={() => onHideAccount(accountIndex)}>
+						<NalliIcon type={IconType.FONT_AWESOME5} icon='eye-slash' size={17} style={{ color: Colors.main }} />
+					</TouchableOpacity>
+				);
+			}
+
+			return (
+				<Card
+						onPress={this.onChangeDisplayedCurrencyPress}
+						onLongPress={this.hideAmount}
+						title={`Account balance`}
+						headerAddonComponent={headerAddonComponent}>
 					<View style={styles.balancewrapper}>
 						{(displayedCurrency == 'nano' || displayedCurrency == 'hidden') &&
-							<Text style={styles.currencyMark}>Ӿ</Text>
+							<NalliText style={styles.currencySign}>Ӿ</NalliText>
 						}
 						{displayedCurrency == 'fiat' &&
-							<Text style={styles.currencyMark}>{currency}</Text>
+							<NalliText style={styles.currencySign}>{currency}</NalliText>
 						}
-						<Text style={styles.balance}>
+						<NalliText style={styles.balance}>
 							{displayedCurrency == 'nano' &&
 								balance
 							}
@@ -135,10 +147,10 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 							{displayedCurrency == 'hidden' &&
 								'****'
 							}
-						</Text>
+						</NalliText>
 						{processing &&
 							<View style={styles.loadingContainer}>
-								<Loading style={LoadingStyle.NONE} show={true} />
+								<Loading style={LoadingStyle.NONE} show />
 							</View>
 						}
 					</View>
@@ -146,7 +158,7 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 			);
 		} else {
 			return (
-				<Card style={styles.row} title={`Show account #${accountIndex}`}>
+				<Card title={`Show account #${accountIndex}`}>
 					<View style={styles.balancewrapper}>
 						<NalliButton
 								onPress={() => onAddNewAccount(accountIndex)}
@@ -162,46 +174,27 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 }
 
 const styles = StyleSheet.create({
-	row: {
-		marginTop: 10,
-		marginBottom: 10,
-	},
 	homeAccount: {
 		position: 'absolute',
-		right: 48,
+		right: 16,
 		top: 14,
 	},
 	hideAccount: {
 		position: 'absolute',
-		right: 50,
+		right: 18,
 		top: 16,
-	},
-	changeDisplayedCurrencyButton: {
-		position: 'absolute',
-		top: 13,
-		right: 16,
-	},
-	changeDisplayedCurrencyArrow: {
-		color: Colors.main,
 	},
 	balancewrapper: {
 		flexDirection: 'row',
 	},
 	balance: {
 		color: Colors.main,
-		fontSize: 40,
-		fontFamily: 'OpenSans',
+		fontSize: 34,
 	},
-	currencyMark: {
-		fontSize: 36,
+	currencySign: {
+		fontSize: 34,
 		marginRight: 20,
-		marginTop: 2,
 		color: Colors.main,
-		fontFamily: 'OpenSans',
-	},
-	nanomark: {
-		marginTop: 17,
-		marginRight: 10,
 	},
 	loadingContainer: {
 		height: 91,

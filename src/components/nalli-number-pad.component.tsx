@@ -99,7 +99,7 @@ export default class NalliNumberPad extends React.Component<NalliNumberPadProps,
 						key={20}
 						style={[styles.number, style, { borderWidth: 0 }]}
 						onPress={onBiometricLoginPress}>
-						<MaterialCommunityIcons style={[styles.biometricsIcon, style]} name={EBiometricsType.getBiometricsTypeIcon(biometricsType)} />
+						<MaterialCommunityIcons style={[styles.biometricsIcon, style]} name={EBiometricsType.getBiometricsTypeIcon(biometricsType) as any} />
 					</TouchableOpacity>
 				}
 				{biometricsType == EBiometricsType.NO_BIOMETRICS &&
@@ -117,7 +117,7 @@ export default class NalliNumberPad extends React.Component<NalliNumberPadProps,
 						key={10}
 						style={[styles.number, style, { borderWidth: 0 }]}
 						onPress={() => this.onRemoveText(onChangeText)}>
-					<Ionicons style={[{ color: 'white' }, style]} name="ios-backspace" size={30} />
+					<Ionicons style={[{ color: 'white' }, style]} name='ios-backspace' size={30} />
 				</TouchableOpacity>
 			</View>
 		);
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
 		opacity: 0.8,
 	},
 	biometricsIcon: {
-		fontSize: 40,
+		fontSize: 38,
 		color: 'white',
 	},
 	numberText: {

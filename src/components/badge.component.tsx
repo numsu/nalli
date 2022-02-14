@@ -1,9 +1,10 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import Colors from "../constants/colors";
+import Colors from '../constants/colors';
 
 interface NalliBadgeProps {
+	style?: any;
 }
 
 interface NalliBadgeState {
@@ -16,9 +17,9 @@ export default class NalliBadge extends React.Component<NalliBadgeProps, NalliBa
 	}
 
 	render = () => {
-		const { children } = this.props;
+		const { children, style } = this.props;
 		return (
-			<View style={styles.badge}>
+			<View style={[ styles.badge, style ]}>
 				{children}
 			</View>
 		);
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		backgroundColor: Colors.borderColor,
 		paddingHorizontal: 6,
+		paddingVertical: 1,
 		borderRadius: 30,
-		marginLeft: 10,
 	},
 });

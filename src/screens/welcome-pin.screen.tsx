@@ -76,7 +76,7 @@ export default class WelcomePinScreen extends React.Component<NavigationInjected
 						<TextInput
 								style={styles.numberPadPin}
 								value={pin}
-								secureTextEntry={true}
+								secureTextEntry
 								editable={false} />
 					</View>
 					<NalliNumberPad
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
 	},
 	numberPadPin: {
 		color: 'white',
-		fontSize: 40,
+		fontSize: 38,
 		width: '100%',
 		textAlign: 'center',
 	},

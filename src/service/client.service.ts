@@ -13,8 +13,12 @@ export default class ClientService {
 		return this.client;
 	}
 
-	static getClientAddress(phone?: string) {
+	static getClientAddress(phone: string) {
 		return HttpService.get<RecipientAddress>(`${this.uri}/v2/address/${phone}`);
+	}
+
+	static usersExist(hashes: string[]) {
+		return HttpService.post<string[]>(`${this.uri}/users-exist`, hashes);
 	}
 
 	static getInvitedCount() {
@@ -43,6 +47,7 @@ export interface Client {
 
 export interface RecipientAddress {
 	address: string;
-	nalliUser: boolean;
+	id: string;
 	lastLogin: string;
+	nalliUser: boolean;
 }

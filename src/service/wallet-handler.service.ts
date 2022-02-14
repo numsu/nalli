@@ -61,7 +61,7 @@ export default class WalletHandler {
 					let balance = +account.balance;
 					balance += Number(tools.convert(pending.amount, 'RAW', 'NANO'));
 					account.balance = CurrencyService.formatNanoAmount(Number(balance));
-					await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+					await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 					await VariableStore.setVariable<NalliAccount[]>(NalliVariable.ACCOUNTS_BALANCES, accounts);
 				}
 			}

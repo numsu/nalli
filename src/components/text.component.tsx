@@ -18,6 +18,7 @@ interface TextState {
 export enum ETextSize {
 	P,
 	P_LARGE,
+	P_SMALL,
 	H1,
 	H2,
 	BUTTON,
@@ -50,6 +51,9 @@ export default class NalliText extends React.Component<TextProps, TextState> {
 			case ETextSize.P_LARGE:
 				baseStyle = styles.pLarge;
 				break;
+			case ETextSize.P_SMALL:
+				baseStyle = styles.pSmall;
+				break;
 			case ETextSize.P:
 			default:
 				baseStyle = styles.p;
@@ -58,6 +62,7 @@ export default class NalliText extends React.Component<TextProps, TextState> {
 
 		return (
 			<Text
+					allowFontScaling={false}
 					style={[baseStyle, style ? style : undefined]}
 					onPress={onPress}>
 				{children}
@@ -69,29 +74,33 @@ export default class NalliText extends React.Component<TextProps, TextState> {
 
 const styles = StyleSheet.create({
 	p: {
-		fontSize: 14,
+		fontSize: 12,
 		fontFamily: 'OpenSans',
 	},
 	pLarge: {
-		fontSize: 20,
+		fontSize: 18,
+		fontFamily: 'OpenSans',
+	},
+	pSmall: {
+		fontSize: 9,
 		fontFamily: 'OpenSans',
 	},
 	h1: {
-		fontSize: 25,
+		fontSize: 23,
 		fontFamily: 'MontserratBold',
 		color: Colors.darkText,
 	},
 	h2: {
-		fontSize: 16,
+		fontSize: 14,
 		fontFamily: 'MontserratBold',
 		color: Colors.darkText,
 	},
 	button: {
-		fontSize: 20,
+		fontSize: 18,
 		fontFamily: 'OpenSans',
 	},
 	buttonSmall: {
-		fontSize: 18,
+		fontSize: 16,
 		fontFamily: 'OpenSans',
 	},
 });

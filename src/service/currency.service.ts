@@ -47,7 +47,7 @@ export default class CurrencyService {
 			decimalPlaces = 6;
 		}
 
-		return balance.toFixed(Math.max(decimalPlaces, 3));
+		return balance.toFixed(Math.min(decimalPlaces, 3));
 	}
 
 	private static async updateCache() {

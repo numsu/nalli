@@ -18,20 +18,22 @@ import WalletService from '../service/wallet.service';
 import NalliText from './text.component';
 
 interface CurrencyInputProps {
-	reference: RefObject<any>;
-	onChangeText: (value: string, convertedValue: string, convertedCurrency: string) => void;
+	convertedValue: string;
+	disabled?: boolean;
+	hideMaxButton?: boolean;
 	onBlur?: () => void;
+	onChangeText: (value: string, convertedValue: string, convertedCurrency: string) => void;
+	reference?: RefObject<any>;
 	style?: any;
 	value: string;
-	convertedValue: string;
 }
 
 interface CurrencyInputState {
-	currency: string;
-	convertedCurrency: string;
-	value: string;
-	convertedValue: string;
 	borderColor: string;
+	convertedCurrency: string;
+	convertedValue: string;
+	currency: string;
+	value: string;
 }
 
 export default class CurrencyInput extends React.Component<CurrencyInputProps, CurrencyInputState> {
@@ -42,17 +44,17 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 		super(props);
 		this.state = {
 			borderColor: Colors.borderColor,
-			currency: 'xno',
 			convertedCurrency: 'usd',
-			value: props.value,
 			convertedValue: '0',
+			currency: 'xno',
+			value: props.value,
 		};
 	}
 
 	static getDerivedStateFromProps(nextProps, prevState) {
 		let changes = null;
 		if (nextProps.value != prevState.value) {
-			changes = { ...changes, value: nextProps.value };
+			changes = { value: nextProps.value };
 		}
 		if (nextProps.convertedValue != prevState.convertedValue) {
 			changes = { ...changes, convertedValue: nextProps.convertedValue };
@@ -65,6 +67,9 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.CURRENCY, async () => {
 			await this.init();
 			this.onChangeText(this.state.value);
+		}));
+		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.SHOW_FIAT_DEFAULT, async () => {
+			await this.init();
 		}));
 	}
 
@@ -83,21 +88,36 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 		await CurrencyService.convert('0', this.state.currency, this.state.convertedCurrency);
 	}
 
-	onChangeText = async (val: string, strip = true) => {
+	forceXno = () => {
+		this.onChangeText(this.props.value, true, true);
+	}
+
+	onChangeText = async (val: string, strip = true, forceXno = false) => {
 		val = val ? val.replace(',', '.') : val;
 		const isAddition = val?.length > this.state.value?.length;
 		if (strip && isAddition && val?.split('.')[1]?.length > 6) {
 			return;
 		}
 		this.setState({ value: val }, async () => {
-			let convertedValue = await CurrencyService.convert(val, this.state.currency, this.state.convertedCurrency);
+			let convertedValue;
+			if (forceXno && this.state.currency != 'xno') {
+				convertedValue = await CurrencyService.convert(val, 'xno', this.state.currency);
+			} else {
+				convertedValue = await CurrencyService.convert(val, this.state.currency, this.state.convertedCurrency);
+			}
 			if (isNaN(+convertedValue)) {
 				convertedValue = '0';
 			}
 
-			this.setState({ convertedValue }, () => {
-				this.props.onChangeText(val, convertedValue, this.state.currency);
-			});
+			if (forceXno && this.state.currency != 'xno') {
+				this.setState({ convertedValue: val, value: convertedValue }, () => {
+					this.props.onChangeText(convertedValue, val, 'xno');
+				});
+			} else {
+				this.setState({ convertedValue }, () => {
+					this.props.onChangeText(val, convertedValue, this.state.currency);
+				});
+			}
 		});
 	}
 
@@ -133,8 +153,9 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 		if (tempConvertedValue == '0') {
 			tempConvertedValue = undefined;
 		}
-		VariableStore.getVariable(NalliVariable.SHOW_FIAT_DEFAULT, false).then(showFiatDefault => {
-			VariableStore.setVariable(NalliVariable.SHOW_FIAT_DEFAULT, this.state.currency == (showFiatDefault ? this.state.convertedCurrency : 'xno'));
+		VariableStore.getVariable(NalliVariable.SHOW_FIAT_DEFAULT, false).then(() => {
+			const newValue = this.state.convertedCurrency == 'xno';
+			VariableStore.setVariable(NalliVariable.SHOW_FIAT_DEFAULT, newValue);
 		});
 		this.setState({
 			convertedCurrency: this.state.currency,
@@ -145,62 +166,66 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 	}
 
 	render = () => {
-		const { reference, style } = this.props;
+		const { disabled, hideMaxButton, reference, style } = this.props;
 		const { borderColor, currency, convertedCurrency, convertedValue, value } = this.state;
+
 		return (
-			<View style={styles.container}>
-				<View>
-					<View style={styles.inputContainer}>
-						{this.renderCurrencyMark(currency, false)}
-						<TextInput
-								ref={reference}
-								placeholder="0"
-								onBlur={this.onBlur}
-								onFocus={this.onFocus}
-								style={[styles.input, style, { borderBottomColor: borderColor }]}
-								keyboardType="decimal-pad"
-								value={value}
-								onChangeText={this.onChangeText} />
-					</View>
+			<View>
+				<View style={styles.inputContainer}>
+					{this.renderCurrencySign(currency, false)}
+					<TextInput
+							editable={!disabled}
+							ref={reference}
+							placeholder='0'
+							onBlur={this.onBlur}
+							onFocus={this.onFocus}
+							style={[styles.input, style, { borderBottomColor: borderColor }]}
+							keyboardType='decimal-pad'
+							value={value}
+							onChangeText={this.onChangeText} />
+				</View>
+				{!hideMaxButton && !disabled &&
 					<TouchableHighlight
 							style={styles.sendMaxButton}
 							underlayColor={Colors.borderColor}
 							onPress={this.onSendMaxButton}>
 						<NalliText style={styles.maxIcon}>MAX</NalliText>
 					</TouchableHighlight>
+				}
+				{!disabled &&
 					<TouchableHighlight
-							style={styles.switchButton}
+							style={[ styles.switchButton, hideMaxButton ? styles.switchButtonMiddle : undefined ]}
 							underlayColor={Colors.borderColor}
 							onPress={this.onCurrencySwitchPress}>
 						<Ionicons
 								style={styles.switchIcon}
-								name="ios-swap-horizontal"
+								name='ios-swap-horizontal'
 								size={32} />
 					</TouchableHighlight>
-					<View style={[styles.inputConvertedCurrencyContainer, { borderTopColor: borderColor }]}>
-						{this.renderCurrencyMark(convertedCurrency, true)}
-						<Text style={styles.inputConvertedAmount}>
-							{convertedValue || '-.--'}
-						</Text>
-						<Text />
-					</View>
+				}
+				<View style={[styles.inputConvertedCurrencyContainer, { borderTopColor: borderColor }]}>
+					{this.renderCurrencySign(convertedCurrency, true)}
+					<Text style={styles.inputConvertedAmount}>
+						{convertedValue || '-.--'}
+					</Text>
+					<Text />
 				</View>
 			</View>
 		);
 	}
 
-	renderCurrencyMark = (currency, converted) => {
+	renderCurrencySign = (currency, converted) => {
 		switch (currency) {
 			case 'xno':
 				return (
-					<Text style={styles.asciiMark}>
+					<Text style={styles.asciiSign}>
 						Ӿ
 					</Text>
 				);
 			default:
 				const icon = CurrencyService.getCurrencyByISO(currency).icon;
 				return (
-					<Text style={[styles.asciiMark, converted ? styles.convertedMark : {}, icon.length > 1 ? styles.longMark : {}]}>
+					<Text style={[styles.asciiSign, converted ? styles.convertedSign : {}, icon.length > 1 ? styles.longSign : {}]}>
 						{icon}
 					</Text>
 				);
@@ -210,8 +235,6 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 }
 
 const styles = StyleSheet.create({
-	container: {
-	},
 	inputContainer: {
 		flexDirection: 'row',
 		justifyContent: 'center',
@@ -220,30 +243,26 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 35,
 		paddingVertical: 10,
 		color: Colors.main,
-		fontSize: 34,
+		fontSize: 32,
 		textAlign: 'center',
 		fontFamily: 'OpenSans',
 		borderBottomWidth: 1,
 		width: '100%',
 		zIndex: 100,
 	},
-	nanoMark: {
-		marginRight: -38,
-		alignSelf: 'center',
-	},
-	asciiMark: {
+	asciiSign: {
 		width: 40,
 		marginRight: -38,
 		alignSelf: 'center',
-		fontSize: 34,
+		fontSize: 32,
 		color: Colors.main,
 		fontFamily: 'OpenSans',
 	},
-	longMark: {
-		fontSize: 20,
+	longSign: {
+		fontSize: 18,
 		fontFamily: 'OpenSansBold',
 	},
-	convertedMark: {
+	convertedSign: {
 		color: Colors.inputPlaceholder,
 	},
 	sendMaxButton: {
@@ -272,13 +291,16 @@ const styles = StyleSheet.create({
 		right: 0,
 		zIndex: 200,
 	},
+	switchButtonMiddle: {
+		top: 42,
+	},
 	maxIcon: {
-		fontSize: 11,
+		fontSize: 9,
 		color: Colors.main,
 		fontFamily: 'OpenSansBold',
 	},
 	switchIcon: {
-		fontSize: 18,
+		fontSize: 16,
 		color: Colors.main,
 		marginRight: 1,
 		transform: [{ rotate: '90deg' }],
@@ -294,12 +316,12 @@ const styles = StyleSheet.create({
 		zIndex: 100,
 	},
 	inputConvertedCurrency: {
-		fontSize: 34,
+		fontSize: 32,
 		color: Colors.inputPlaceholder,
 	},
 	inputConvertedAmount: {
 		alignSelf: 'center',
-		fontSize: 34,
+		fontSize: 32,
 		fontFamily: 'OpenSans',
 		color: Colors.inputPlaceholder,
 	},

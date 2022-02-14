@@ -42,7 +42,7 @@ export default class MnemonicWord extends React.Component<MnemonicWordProps, Mne
 							ref={reference}
 							style={styles.word}
 							secureTextEntry={false}
-							keyboardType="visible-password"
+							keyboardType='visible-password'
 							autoCorrect={false}
 							autoCompleteType={'off'}
 							autoCapitalize={'none'}
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
 		paddingBottom: 4,
 		paddingLeft: 5,
 		width: '100%',
-		fontSize: 18,
+		fontSize: 16,
 		fontFamily: 'OpenSans',
 	},
 });

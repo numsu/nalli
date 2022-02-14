@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
 		width: layout.window.width * 0.25,
 	},
 	countryInput: {
-		fontSize: 15,
+		fontSize: 13,
 	},
 	phoneNumberInput: {
 		backgroundColor: 'white',
@@ -127,6 +127,6 @@ const styles = StyleSheet.create({
 		paddingVertical: 15,
 		flexGrow: 1,
 		marginLeft: 5,
-		fontSize: 15,
+		fontSize: 13,
 	},
 });

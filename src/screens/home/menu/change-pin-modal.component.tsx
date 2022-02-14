@@ -83,7 +83,7 @@ export default class ChangePinModal extends React.Component<ChangePinModalProps,
 					<TextInput
 							style={styles.numberPadPin}
 							value={isConfirm ? confirm : pin}
-							secureTextEntry={true}
+							secureTextEntry
 							editable={false} />
 					<NalliNumberPad
 							style={styles.numberPad}
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
 	},
 	numberPadPin: {
 		color: Colors.main,
-		fontSize: 40,
+		fontSize: 38,
 		width: '100%',
 		textAlign: 'center',
 	},
