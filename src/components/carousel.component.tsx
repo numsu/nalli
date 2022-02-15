@@ -85,6 +85,8 @@ export default class NalliCarousel extends React.Component<CarouselProps, Carous
 						activeSlideAlignment={'start'}
 						containerCustomStyle={styles.carouselContainer}
 						onSnapToItem={this.changeAccount}
+						shouldOptimizeUpdates
+						lockScrollWhileSnapping={false}
 						data={accounts}
 						renderItem={(data: { item: NalliAccount; index: number }) => (
 							<TouchableHighlight style={{ marginLeft: 3 }}>
@@ -114,14 +116,7 @@ export default class NalliCarousel extends React.Component<CarouselProps, Carous
 const styles = StyleSheet.create({
 	carouselContainer: {
 		paddingHorizontal: 20,
-		paddingTop: 20,
+		paddingTop: 18,
 		marginBottom: -20,
-		marginLeft: -3,
-	},
-	loadingCard: {
-		marginTop: 10,
-		marginBottom: 10,
-		marginLeft: 3,
-		marginRight: 3,
 	},
 });

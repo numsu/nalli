@@ -36,6 +36,7 @@ export interface Request {
 	message: string;
 	status: ERequestStatus;
 	address?: string;
+	created: string;
 }
 
 export enum ERequestStatus {

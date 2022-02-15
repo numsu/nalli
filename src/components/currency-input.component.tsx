@@ -1,4 +1,3 @@
-import { tools } from 'nanocurrency-web';
 import React, { RefObject } from 'react';
 import {
 	EmitterSubscription,
@@ -14,7 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/colors';
 import CurrencyService from '../service/currency.service';
 import VariableStore, { NalliVariable } from '../service/variable-store';
-import WalletService from '../service/wallet.service';
+import { NalliAccount } from '../service/wallet-handler.service';
 import NalliText from './text.component';
 
 interface CurrencyInputProps {
@@ -111,7 +110,7 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 
 			if (forceXno && this.state.currency != 'xno') {
 				this.setState({ convertedValue: val, value: convertedValue }, () => {
-					this.props.onChangeText(convertedValue, val, 'xno');
+					this.props.onChangeText(convertedValue, val, this.state.currency);
 				});
 			} else {
 				this.setState({ convertedValue }, () => {
@@ -133,18 +132,10 @@ export default class CurrencyInput extends React.Component<CurrencyInputProps, C
 	}
 
 	onSendMaxButton = async () => {
-		const selectedAccount = await VariableStore.getVariable<string>(NalliVariable.SELECTED_ACCOUNT);
-		const walletInfo = await WalletService.getWalletInfoAddress(selectedAccount);
-		const balance = Number(tools.convert(walletInfo.balance, 'RAW', 'NANO')).toString(); // Strip insignificant zeroes
-		if (this.state.currency != 'xno') {
-			let convertedValue = await CurrencyService.convert(balance, this.state.convertedCurrency, this.state.currency);
-			if (isNaN(+convertedValue)) {
-				convertedValue = '0';
-			}
-			this.onChangeText(convertedValue, false);
-		} else {
-			this.onChangeText(balance, false);
-		}
+		const index = await VariableStore.getVariable<number>(NalliVariable.SELECTED_ACCOUNT_INDEX, 0);
+		const accountsBalances = await VariableStore.getVariable<NalliAccount[]>(NalliVariable.ACCOUNTS_BALANCES, []);
+		const balance = accountsBalances[index].balance;
+		this.onChangeText(balance, false, this.state.currency != 'xno');
 	}
 
 	onCurrencySwitchPress = () => {

@@ -40,14 +40,14 @@ export default class CurrencyService {
 		return currencyList.find(c => c.iso == iso.toUpperCase());
 	}
 
-	static formatNanoAmount(balance: number): string {
+	static formatNanoAmount(balance: number, limitDecimals = true): string {
 		let decimalPlaces = CurrencyService.getNumberDecimalPlaces(balance);
 
-		if (decimalPlaces > 6) {
+		if (limitDecimals && decimalPlaces > 6) {
 			decimalPlaces = 6;
 		}
 
-		return balance.toFixed(Math.min(decimalPlaces, 3));
+		return balance.toFixed(decimalPlaces);
 	}
 
 	private static async updateCache() {

@@ -200,7 +200,7 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 			return;
 		}
 
-		const message = `You are requesting Ӿ ${sendAmount} from ${this.state.recipient.name}`;
+		const message = `You are requesting Ӿ\xa0${sendAmount} from ${this.state.recipient.name}`;
 
 		Alert.alert(
 			'Confirm',
@@ -263,7 +263,7 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 								source={require('../../assets/lottie/sent.json')} />
 					</View>
 					<View style={styles.successTextContainer}>
-						<NalliText style={styles.successText}>You requested <NalliText style={[styles.successText, styles.successTextColor]}>Ӿ {requestAmount}</NalliText></NalliText>
+						<NalliText style={styles.successText}>You requested <NalliText style={[styles.successText, styles.successTextColor]}>Ӿ&nbsp;{requestAmount}</NalliText></NalliText>
 						<NalliText style={styles.successText}>from <NalliText style={[styles.successText, styles.successTextColor]}>{recipient.name}</NalliText></NalliText>
 					</View>
 					<View style={styles.confirmButton}>
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 17,
 		...Platform.select({
 			android: {
-				marginBottom: 55,
+				marginBottom: 105,
 			},
 			ios: {
 				marginBottom: 65,

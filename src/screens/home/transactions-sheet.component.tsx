@@ -1,4 +1,3 @@
-import moment from 'moment';
 import React, { RefObject } from 'react';
 import {
 	EmitterSubscription,
@@ -19,6 +18,7 @@ import { sleep } from '../../constants/globals';
 import ContactsService from '../../service/contacts.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 import WalletService, { EPendingStatus, WalletTransaction } from '../../service/wallet.service';
+import { DateUtil } from '../../util/date.util';
 import TransactionModal from './transaction-modal.component';
 
 interface TransactionsSheetProps {
@@ -89,51 +89,6 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 		});
 	}
 
-	getRelativeTime = (timestamp) => {
-		const time = moment.unix(timestamp);
-		const now = moment();
-
-		const diffInMinutes = now.diff(time, 'minutes');
-		const diffInHours = now.diff(time, 'hours');
-		const diffInDays = now.diff(time, 'days');
-		const diffInWeeks = now.diff(time, 'weeks');
-		const diffInMonths = now.diff(time, 'months');
-		const diffInYears = now.diff(time, 'years');
-
-		let date;
-		if (diffInMinutes < 1) {
-			date = 'Just now';
-		} else if (diffInMinutes == 1) {
-			date = 'a minute ago';
-		} else if (diffInMinutes < 60) {
-			date = `${diffInMinutes} minutes ago`;
-		} else if (diffInHours == 1) {
-			date = `an hour ago`;
-		} else if (diffInHours < 24) {
-			date = `${diffInHours} hours ago`;
-		} else if (diffInDays == 0) {
-			date = 'Today';
-		} else if (diffInDays == 1) {
-			date = 'Yesterday';
-		} else if (diffInDays < 7) {
-			date = `${diffInDays} days ago`;
-		} else if (diffInWeeks < 2) {
-			date = 'Last week'
-		} else if (diffInWeeks >= 2 && diffInMonths < 1) {
-			date = `${diffInWeeks} weeks ago`;
-		} else if (diffInMonths == 1) {
-			date = 'A month ago';
-		} else if (diffInMonths < 12) {
-			date = `${diffInMonths} months ago`;
-		} else if (diffInYears < 2) {
-			date = 'A year ago';
-		} else {
-			date = `${diffInYears} years ago`;
-		}
-
-		return date;
-	}
-
 	getContactName = (transaction: WalletTransaction) => {
 		if (transaction.type == 'receive' && transaction.pendingStatus == EPendingStatus.RETURNED) {
 			return 'Custodial account';
@@ -175,7 +130,7 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 									: <NalliText size={ETextSize.H2}>Received</NalliText>
 							}
 							<NalliText>
-								{this.getRelativeTime(item.timestamp)}
+								{DateUtil.getRelativeTime(item.timestamp)}
 							</NalliText>
 						</View>
 						<View style={styles.transactionRow}>

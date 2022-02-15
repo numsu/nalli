@@ -315,7 +315,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			return;
 		}
 
-		const message = `You are sending Ӿ ${sendAmount} to ${this.getRecipientText()}`;
+		const message = `You are sending Ӿ\xa0${sendAmount} to ${this.getRecipientText()}`;
 
 		Alert.alert(
 			'Confirm',
@@ -451,7 +451,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 					enablePanDownToClose={!process || success}
 					enableLinearGradient
 					onClose={this.clearState}
-					snapPoints={layout.isSmallDevice ? ['88%'] : ['71%']}
+					snapPoints={layout.isSmallDevice ? ['88%'] : ['71.5%']}
 					header={header}>
 				{process &&
 					<View style={styles.sendingContainer}>
@@ -633,7 +633,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 						{(recipient || !!walletAddress) &&
 							<View style={styles.sendTransactionButton}>
 								<NalliButton
-										text={(!!walletAddress || isNalliUser) ? 'Send' : 'Invite new user'}
+										text={tab == SendSheetTab.DONATION ? 'Donate' : (!!walletAddress || isNalliUser) ? 'Send' : 'Invite new user'}
 										solid
 										onPress={this.confirm}
 										disabled={(!recipient && !walletAddress) || !sendAmount || process} />
@@ -752,7 +752,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 17,
 		...Platform.select({
 			android: {
-				marginBottom: 55,
+				marginBottom: 95,
 			},
 			ios: {
 				marginBottom: 55,

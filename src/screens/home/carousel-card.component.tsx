@@ -100,6 +100,7 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 			showAddAccountView,
 		} = this.props;
 		const { displayedCurrency, currency } = this.state;
+		const formattedBalance = CurrencyService.formatNanoAmount(+balance);
 
 		if (!showAddAccountView) {
 			let headerAddonComponent;
@@ -136,7 +137,7 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 						}
 						<NalliText style={styles.balance}>
 							{displayedCurrency == 'nano' &&
-								balance
+								formattedBalance
 							}
 							{displayedCurrency == 'fiat' && price &&
 								(price * +balance).toFixed(2)

@@ -32,7 +32,12 @@ export default class NalliText extends React.Component<TextProps, TextState> {
 	}
 
 	render = () => {
-		const { size, style, children, onPress } = this.props;
+		const {
+			children,
+			onPress,
+			size,
+			style,
+		} = this.props;
 
 		let baseStyle;
 		switch (size) {

@@ -103,14 +103,13 @@ export default class AccountModal extends React.Component<AccountModalProps, Acc
 					text: 'Yes',
 					style: 'default',
 					onPress: () =>
-						Alert.prompt(
+						Alert.alert(
 							'Confirm',
-							'Write "Confirm" to confirm deletion',
-							str => {
-								if (str.toLowerCase() == 'confirm') {
-									this.doAccountDeletion();
-								}
-							}),
+							'Do you really want to delete your account and your wallet data?',
+							[
+								{ text: 'No', style: 'cancel', onPress: () => undefined  },
+								{ text: 'Yes', style: 'destructive', onPress: this.doAccountDeletion  },
+							]),
 				},
 			],
 		);

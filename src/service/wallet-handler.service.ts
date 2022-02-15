@@ -27,7 +27,7 @@ export default class WalletHandler {
 			const { privateKey, ...rest } = storedWallet.accounts[accountIndex];
 			accounts.push({
 				...rest,
-				balance: CurrencyService.formatNanoAmount(Number(item.balance)),
+				balance: CurrencyService.formatNanoAmount(Number(item.balance), false),
 				active: item.active,
 				pendingBlocks: item.pendingBlocks,
 			});
@@ -60,7 +60,7 @@ export default class WalletHandler {
 
 					let balance = +account.balance;
 					balance += Number(tools.convert(pending.amount, 'RAW', 'NANO'));
-					account.balance = CurrencyService.formatNanoAmount(Number(balance));
+					account.balance = CurrencyService.formatNanoAmount(Number(balance), false);
 					await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 					await VariableStore.setVariable<NalliAccount[]>(NalliVariable.ACCOUNTS_BALANCES, accounts);
 				}
