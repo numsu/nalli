@@ -21,6 +21,7 @@ interface RequestsProps {
 
 interface RequestsState {
 	requests: Request[];
+	hasMore: boolean;
 }
 
 export default class NalliRequests extends React.Component<RequestsProps, RequestsState> {
@@ -32,6 +33,7 @@ export default class NalliRequests extends React.Component<RequestsProps, Reques
 		super(props);
 		this.state = {
 			requests: [],
+			hasMore: false,
 		};
 	}
 
@@ -48,11 +50,17 @@ export default class NalliRequests extends React.Component<RequestsProps, Reques
 	}
 
 	fetchRequests = async () => {
-		const requests = await RequestService.getRequestsReceived();
-		this.setState({ requests });
-		if (this.state.requests.length > requests.length) {
-			await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+		const { requests, hasMore } = await RequestService.getRequestsReceived();
+		if (requests.length > 0) {
+			if (this.state.requests.length == 0
+					|| requests[0].requestId != this.state.requests[0].requestId) {
+				await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+			}
 		}
+		if (requests.length == 10 && hasMore) {
+			requests.push({} as Request); // Display the has more card
+		}
+		this.setState({ requests, hasMore });
 	}
 
 	confirmIgnoreRequest = (request: Request) => {
@@ -69,6 +77,9 @@ export default class NalliRequests extends React.Component<RequestsProps, Reques
 	ignoreRequest = async (request: Request) => {
 		await RequestService.ignoreRequest(request.requestId);
 		this.setState({ requests: this.state.requests.filter(req => req.requestId != request.requestId) });
+		if (this.state.requests.length == 10 && this.state.hasMore) {
+			this.fetchRequests();
+		}
 	}
 
 	render = () => {
@@ -90,23 +101,33 @@ export default class NalliRequests extends React.Component<RequestsProps, Reques
 					layoutCardOffset={8}
 					data={requests}
 					renderItem={(data: { item: Request; index: number }) => {
-						const amount = CurrencyService.formatNanoAmount(Number(tools.convert(data.item.amount, 'RAW', 'NANO')));
-						const contact = ContactsService.getContactByHash(data.item.phoneHash);
-						const senderName = contact.name || 'Someone not in your contacts';
-						return (
-							<TouchableHighlight style={{ marginLeft: 3 }}>
-								<Card style={styles.card} contentContainerStyle={styles.cardContainer} title='Request'>
-									<View style={styles.text}>
-										<NalliText size={ETextSize.H2}>{senderName} requested <NalliText style={{ color: Colors.main }} size={ETextSize.H2}>Ӿ&nbsp;{amount}</NalliText> from you {DateUtil.getRelativeTime(data.item.created).toLowerCase()}.</NalliText>
-										<NalliText style={styles.marginTop}>{data.item.message}</NalliText>
-									</View>
-									<View style={styles.actions}>
-										<NalliButton small solid text='Accept' onPress={() => onAcceptPress(data.item)} />
-										<NalliButton style={styles.marginTop} small text='Ignore' onPress={() => this.confirmIgnoreRequest(data.item)} />
-									</View>
-								</Card>
-							</TouchableHighlight>
-						);
+						if (data.item?.requestId) {
+							const amount = CurrencyService.formatNanoAmount(Number(tools.convert(data.item.amount, 'RAW', 'NANO')));
+							const contact = ContactsService.getContactByHash(data.item.phoneHash);
+							const senderName = contact?.name || 'Someone not in your contacts';
+							return (
+								<TouchableHighlight style={{ marginLeft: 3 }}>
+									<Card style={styles.card} contentContainerStyle={styles.cardContainer} title='Request'>
+										<View style={styles.text}>
+											<NalliText size={ETextSize.H2}>{senderName} requested <NalliText style={{ color: Colors.main }} size={ETextSize.H2}>Ӿ&nbsp;{amount}</NalliText> from you {DateUtil.getRelativeTime(data.item.created).toLowerCase()}.</NalliText>
+											<NalliText style={styles.marginTop}>{data.item.message}</NalliText>
+										</View>
+										<View style={styles.actions}>
+											<NalliButton small solid text='Accept' onPress={() => onAcceptPress(data.item)} />
+											<NalliButton style={styles.marginTop} small text='Ignore' onPress={() => this.confirmIgnoreRequest(data.item)} />
+										</View>
+									</Card>
+								</TouchableHighlight>
+							);
+						} else {
+							return (
+								<TouchableHighlight style={{ marginLeft: 3 }}>
+									<Card style={styles.card} contentContainerStyle={styles.cardContainer} title='Request'>
+										<NalliText size={ETextSize.H2}>There are more requests to be fetched. Handle some of the newer requests to fetch more.</NalliText>
+									</Card>
+								</TouchableHighlight>
+							);
+						}
 					}} />
 		);
 	}

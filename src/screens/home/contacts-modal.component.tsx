@@ -161,6 +161,8 @@ export default class ContactsModal extends React.Component<ContactsModalProps, C
 						contentContainerStyle={{ paddingBottom: 40 }}
 						data={filtered}
 						keyExtractor={item => item.id}
+						initialNumToRender={8}
+						removeClippedSubviews
 						ListHeaderComponent={() => (
 							<View style={{ marginTop: 40 }}></View>
 						)}

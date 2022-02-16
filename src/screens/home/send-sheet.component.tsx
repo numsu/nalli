@@ -660,8 +660,8 @@ const styles = StyleSheet.create({
 	},
 	animationContainer: {
 		alignSelf: 'center',
-		width: '80%',
-		height: '50%',
+		width: layout.window.width * 0.8,
+		height: layout.window.width * 0.8,
 		flexDirection: 'row',
 	},
 	successTextContainer: {
@@ -684,6 +684,7 @@ const styles = StyleSheet.create({
 	transactionMoneyInputContainer: {
 		justifyContent: 'center',
 		marginBottom: 20,
+		marginTop: 10,
 	},
 	tabs: {
 		marginBottom: 25,

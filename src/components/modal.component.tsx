@@ -63,7 +63,7 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 		if (this.props.isOpen != this.state.isOpen) {
 			this.setState({ isOpen: this.props.isOpen });
 			if (this.props.isOpen == false) {
-				await sleep(NalliModal.animationDelay);
+				await sleep(NalliModal.animationDelay * 2);
 			}
 			this.setState({ isRendered: this.props.isOpen });
 		}

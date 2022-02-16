@@ -83,6 +83,7 @@ export enum NalliVariable {
 	COUNTRY = 'country',
 	CURRENCY = 'currency',
 	DEVICE_ID = 'deviceId',
+	DISABLE_PRIVACY_SHIELD = 'disableShield',
 	DISPLAYED_CURRENCY = 'displayedCurrency',
 	NUMBER_HASH_TO_CONTACT_ID = 'numberHashToContact',
 	NUMBER_TO_HASH = 'numberToHash',

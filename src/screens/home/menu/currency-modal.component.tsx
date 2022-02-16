@@ -59,6 +59,8 @@ export default class CurrencyModal extends React.Component<CurrencyModalProps, C
 				<FlatList
 						data={currencies}
 						keyExtractor={item => item.iso}
+						initialNumToRender={10}
+						removeClippedSubviews
 						renderItem={({ item }) => (
 							<TouchableOpacity onPress={() => this.selectCurrency(item)}>
 								<View style={styles.currencyItem}>

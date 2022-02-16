@@ -402,8 +402,8 @@ const styles = StyleSheet.create({
 	},
 	animationContainer: {
 		alignSelf: 'center',
-		width: '80%',
-		height: '40%',
+		width: layout.window.width * 0.8,
+		height: layout.window.width * 0.8,
 		flexDirection: 'row',
 	},
 	successTextContainer: {
@@ -441,6 +441,7 @@ const styles = StyleSheet.create({
 	amountContainer: {
 		justifyContent: 'center',
 		marginBottom: 20,
+		marginTop: 10,
 	},
 	selectRecipientButton: {
 		marginTop: 10,

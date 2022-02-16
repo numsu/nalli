@@ -30,11 +30,13 @@ export default class BiometricsService {
 	}
 
 	static async authenticate(promptMessage: string): Promise<boolean> {
+		await VariableStore.setVariable(NalliVariable.DISABLE_PRIVACY_SHIELD, true);
 		const result = await LocalAuthentication.authenticateAsync({
 			disableDeviceFallback: true,
 			cancelLabel: 'Cancel',
 			promptMessage,
 		});
+		VariableStore.setVariable(NalliVariable.DISABLE_PRIVACY_SHIELD, false);
 		return result.success;
 	}
 

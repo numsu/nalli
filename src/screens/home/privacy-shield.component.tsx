@@ -54,6 +54,11 @@ class PrivacyShield extends React.Component<PrivacyShieldProps, PrivacyShieldSta
 	}
 
 	handleAppChangeState = async (nextAppState) => {
+		const disabled = await VariableStore.getVariable(NalliVariable.DISABLE_PRIVACY_SHIELD, false);
+		if (disabled && this.state.appState == NalliAppState.ACTIVE) {
+			return;
+		}
+
 		if (this.state.appState == NalliAppState.INACTIVE && nextAppState == 'active') {
 			if (new Date(this.state.sessionExpiresTime).getTime() < new Date().getTime()) {
 				await AuthStore.clearAuthentication();

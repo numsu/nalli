@@ -9,7 +9,7 @@ export default class RequestService {
 	}
 
 	static getRequestsReceived() {
-		return HttpService.get<Request[]>(`${this.uri}/received`);
+		return HttpService.get<RequestsResponse>(`${this.uri}/received`);
 	}
 
 	static cancelRequest(id: string) {
@@ -26,6 +26,11 @@ export interface NewRequest {
 	recipientId: string;
 	amount: string;
 	message: string;
+}
+
+export interface RequestsResponse {
+	hasMore: boolean;
+	requests: Request[];
 }
 
 export interface Request {

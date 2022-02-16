@@ -69,19 +69,19 @@ export default class PreferencesModal extends React.Component<PreferencesModalPr
 			if (success) {
 				await VariableStore.setVariable(NalliVariable.BIOMETRICS_TYPE, this.state.supportedBiometricsType);
 				this.setState({
-					biometricsEnabled: true,
+					isBiometricsEnabled: true,
 				});
 			}
 		} else {
 			await VariableStore.setVariable(NalliVariable.BIOMETRICS_TYPE, EBiometricsType.NO_BIOMETRICS);
 			this.setState({
-				biometricsEnabled: false,
+				isBiometricsEnabled: false,
 			});
 		}
 	}
 
-	togglePushEnabled = async (enabled) => {
-		if (enabled) {
+	togglePushEnabled = async () => {
+		if (!this.state.pushEnabled) {
 			const success = await NotificationService.registerForPushNotifications();
 			if (!success) {
 				Alert.alert(
@@ -128,7 +128,7 @@ export default class PreferencesModal extends React.Component<PreferencesModalPr
 				<ScrollView style={styles.container}>
 					{supportedBiometricsType != EBiometricsType.NO_BIOMETRICS &&
 						<Setting
-								text={EBiometricsType.getBiometricsTypeText(supportedBiometricsType)}
+								text={EBiometricsType.getBiometricsTypeText(supportedBiometricsType) + ' login'}
 								description={`Enable login with biometrics`}
 								value={isBiometricsEnabled}
 								onValueChange={() => this.toggleBiometrics()} />
@@ -137,7 +137,7 @@ export default class PreferencesModal extends React.Component<PreferencesModalPr
 							text='Notifications'
 							description='Whether or not you wish to receive push notifications'
 							value={pushEnabled}
-							onValueChange={value => this.togglePushEnabled(value)} />
+							onValueChange={() => this.togglePushEnabled()} />
 					<Setting
 							text='Show only Nalli users'
 							description='Only show registered users in contacts list'

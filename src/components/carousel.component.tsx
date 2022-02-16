@@ -86,6 +86,9 @@ export default class NalliCarousel extends React.Component<CarouselProps, Carous
 						containerCustomStyle={styles.carouselContainer}
 						onSnapToItem={this.changeAccount}
 						shouldOptimizeUpdates
+						enableSnap
+						enableMomentum
+						initialNumToRender={1}
 						lockScrollWhileSnapping={false}
 						data={accounts}
 						renderItem={(data: { item: NalliAccount; index: number }) => (
