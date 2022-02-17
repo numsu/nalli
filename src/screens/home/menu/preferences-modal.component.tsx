@@ -10,6 +10,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import NalliModal, { EModalSize } from '../../../components/modal.component';
 import Setting from '../../../components/setting.component';
 import Colors from '../../../constants/colors';
+import AuthStore from '../../../service/auth-store';
 import AuthService from '../../../service/auth.service';
 import BiometricsService, { EBiometricsType } from '../../../service/biometrics.service';
 import ClientService from '../../../service/client.service';
@@ -53,7 +54,8 @@ export default class PreferencesModal extends React.Component<PreferencesModalPr
 		const pushEnabled = await ClientService.isPushEnabled();
 		const supportedBiometricsType = await BiometricsService.getSupportedBiometricsType();
 		const isBiometricsEnabled = await BiometricsService.isBiometricsEnabled();
-		this.setState({ pushEnabled, supportedBiometricsType, isBiometricsEnabled });
+		const isPhoneNumberUser = await AuthStore.isPhoneNumberFunctionsEnabled();
+		this.setState({ pushEnabled, supportedBiometricsType, isBiometricsEnabled, isPhoneNumberUser });
 	}
 
 	toggleGeneralSetting = (key: NalliVariable, setting: any) => {
@@ -112,6 +114,7 @@ export default class PreferencesModal extends React.Component<PreferencesModalPr
 		const {
 			isBiometricsEnabled,
 			isOpen,
+			isPhoneNumberUser,
 			pushEnabled,
 			supportedBiometricsType,
 		} = this.state;
@@ -138,11 +141,13 @@ export default class PreferencesModal extends React.Component<PreferencesModalPr
 							description='Whether or not you wish to receive push notifications'
 							value={pushEnabled}
 							onValueChange={() => this.togglePushEnabled()} />
-					<Setting
-							text='Show only Nalli users'
-							description='Only show registered users in contacts list'
-							value={this.state[NalliVariable.ONLY_NALLI_USERS]}
-							onValueChange={value => this.toggleGeneralSetting(NalliVariable.ONLY_NALLI_USERS, value)} />
+					{isPhoneNumberUser &&
+						<Setting
+								text='Show only Nalli users'
+								description='Only show registered users in contacts list'
+								value={this.state[NalliVariable.ONLY_NALLI_USERS]}
+								onValueChange={value => this.toggleGeneralSetting(NalliVariable.ONLY_NALLI_USERS, value)} />
+					}
 					<View style={styles.lastBorder} />
 				</ScrollView>
 			</NalliModal>

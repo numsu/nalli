@@ -52,6 +52,10 @@ export default class AuthStore {
 		}
 	}
 
+	static async isPhoneNumberFunctionsEnabled(): Promise<boolean> {
+		return (await this.getClient()).phone !== '';
+	}
+
 	static async isValidPin(pin: string): Promise<boolean> {
 		try {
 			const hash = await SecureStore.getItemAsync(this.pinKey);

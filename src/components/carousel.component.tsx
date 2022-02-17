@@ -4,6 +4,7 @@ import Carousel, { Pagination } from 'react-native-snap-carousel';
 
 import layout from '../constants/layout';
 import CarouselCard from '../screens/home/carousel-card.component';
+import AuthStore from '../service/auth-store';
 import VariableStore, { NalliVariable } from '../service/variable-store';
 import WalletHandler, { NalliAccount } from '../service/wallet-handler.service';
 
@@ -15,9 +16,10 @@ interface CarouselProps {
 }
 
 interface CarouselState {
-	activeAccountsLength: number;
 	accounts: NalliAccount[];
 	activeAccount: number;
+	activeAccountsLength: number;
+	isPhoneNumberUser: boolean;
 	processing: boolean;
 }
 
@@ -29,14 +31,19 @@ export default class NalliCarousel extends React.Component<CarouselProps, Carous
 	constructor(props) {
 		super(props);
 		this.state = {
-			activeAccountsLength: 0,
 			accounts: [],
 			activeAccount: 0,
+			activeAccountsLength: 0,
+			isPhoneNumberUser: false,
 			processing: false,
 		};
 	}
 
 	componentDidMount = () => {
+		this.init();
+	}
+
+	init = async () => {
 		this.subscriptions.push(VariableStore.watchVariable<NalliAccount[]>(NalliVariable.ACCOUNTS_BALANCES, accounts => {
 			const accountsLength = accounts.length;
 			if (accountsLength < 6) {
@@ -53,6 +60,8 @@ export default class NalliCarousel extends React.Component<CarouselProps, Carous
 			this.setState({ processing });
 		}));
 		WalletHandler.getAccountsBalancesAndHandlePending();
+		const isPhoneNumberUser = await AuthStore.isPhoneNumberFunctionsEnabled();
+		this.setState({ isPhoneNumberUser });
 	}
 
 	componentWillUnmount = () => {
@@ -73,7 +82,13 @@ export default class NalliCarousel extends React.Component<CarouselProps, Carous
 
 	render = () => {
 		const { price, onAddNewAccount } = this.props;
-		const { accounts, activeAccount, activeAccountsLength, processing } = this.state;
+		const {
+			accounts,
+			activeAccount,
+			activeAccountsLength,
+			isPhoneNumberUser,
+			processing,
+		} = this.state;
 
 		return (
 			<View>
@@ -96,6 +111,7 @@ export default class NalliCarousel extends React.Component<CarouselProps, Carous
 								<CarouselCard
 										balance={data.item.balance}
 										price={price}
+										isPhoneNumberUser={isPhoneNumberUser}
 										accountActive={data.item.active}
 										showAddAccountView={data.index == activeAccountsLength}
 										isLastAccount={data.index !== 0 && data.index == activeAccountsLength - 1}

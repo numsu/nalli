@@ -8,6 +8,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 import NalliButton from '../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
+import AuthStore from '../../service/auth-store';
 import ContactsService from '../../service/contacts.service';
 import NotificationService from '../../service/notification.service';
 
@@ -31,7 +32,11 @@ export default class Permissions extends React.Component<NavigationInjectedProps
 	onContinuePress = async () => {
 		if (this.state.permission == 1) {
 			await NotificationService.registerForPushNotifications();
-			this.setState({ permission: 2 });
+			if (await AuthStore.isPhoneNumberFunctionsEnabled()) {
+				this.setState({ permission: 2 });
+			} else {
+				this.props.navigation.navigate('CreateWalletWelcome');
+			}
 		} else {
 			await ContactsService.askPermission()
 			this.props.navigation.navigate('CreateWalletWelcome');

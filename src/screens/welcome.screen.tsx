@@ -4,6 +4,7 @@ import {
 	Keyboard,
 	KeyboardAvoidingView,
 	StyleSheet,
+	View,
 } from 'react-native';
 import { Text } from 'react-native-elements';
 import { NavigationInjectedProps } from 'react-navigation';
@@ -15,7 +16,9 @@ import PhoneNumberInput from '../components/phone-number-input.component';
 import NalliLogo from '../components/svg/nalli-logo';
 import NalliText from '../components/text.component';
 import Colors from '../constants/colors';
+import AuthStore from '../service/auth-store';
 import AuthService from '../service/auth.service';
+import ClientService from '../service/client.service';
 import ContactsService from '../service/contacts.service';
 
 export default class WelcomeScreen extends React.Component<NavigationInjectedProps, any> {
@@ -70,6 +73,14 @@ export default class WelcomeScreen extends React.Component<NavigationInjectedPro
 		this.props.navigation.navigate('WelcomeOtp', { state: { ...this.state, otp: '', tries: 0 } });
 	}
 
+	createWallet = async () => {
+		const token = await AuthService.registerNoPhone();
+		await AuthStore.setAuthentication(token.accessToken);
+		const client = await ClientService.getClient();
+		AuthStore.setClient(client);
+		this.props.navigation.navigate('WelcomePin');
+	}
+
 	render = () => {
 		const { phoneNumber, process } = this.state;
 		return (
@@ -78,16 +89,20 @@ export default class WelcomeScreen extends React.Component<NavigationInjectedPro
 				<NalliText style={styles.text}>
 					Pay anyone, anywhere, instantly. Using just a phone number.
 				</NalliText>
+				<NalliText style={styles.smallerText}>
+					Start by creating an account with us.
+				</NalliText>
 				<KeyboardAvoidingView
 						style={styles.formContainer}
-						behavior='height'
+						behavior='padding'
 						keyboardVerticalOffset={90}>
 					<PhoneNumberInput
 							value={phoneNumber}
 							onChangeNumber={val => this.onChangeText('phoneNumber', val)}
 							onChangeCountry={val => this.onChangeText('phoneNumberCountry', val)}/>
 					<NalliButton
-							text='Send code'
+							text='Continue'
+							icon={'ios-arrow-forward'}
 							onPress={this.signUp}
 							style={styles.loginButton}
 							textStyle={styles.loginButtonText}
@@ -108,6 +123,16 @@ export default class WelcomeScreen extends React.Component<NavigationInjectedPro
 							Terms and Conditions
 						</Link>
 					</Text>
+					<View style={styles.noPhoneNumberLoginContainer}>
+						<NalliText style={styles.privacyPolicy}>Or if you would rather use the plain wallet without the awesome functionalities that phone numbers provide</NalliText>
+						<NalliButton
+							small
+							text='Create wallet'
+							onPress={this.createWallet}
+							style={styles.loginButton}
+							textStyle={styles.loginButtonText}
+							disabled={process} />
+					</View>
 				</KeyboardAvoidingView>
 			</DismissKeyboardView>
 		);
@@ -127,10 +152,16 @@ const styles = StyleSheet.create({
 		color: Colors.borderColor,
 		marginTop: 25,
 	},
+	smallerText: {
+		fontSize: 14,
+		fontWeight: '400',
+		color: Colors.borderColor,
+		marginTop: 30,
+	},
 	formContainer: {
 		flex: 1,
 		flexDirection: 'column',
-		marginTop: 30,
+		marginTop: 10,
 	},
 	loginButton: {
 		marginTop: 20,
@@ -158,5 +189,12 @@ const styles = StyleSheet.create({
 	},
 	link: {
 		color: 'white',
+	},
+	noPhoneNumberLoginContainer: {
+		position: 'absolute',
+		bottom: 0,
+		marginBottom: 40,
+		width: '80%',
+		alignSelf: 'center',
 	},
 });

@@ -4,6 +4,7 @@ import { Alert, Linking } from 'react-native';
 
 import { sleep } from '../constants/globals';
 import Convert from '../crypto/convert';
+import AuthStore from './auth-store';
 import ClientService from './client.service';
 
 const PNF = require('google-libphonenumber').PhoneNumberFormat;
@@ -43,6 +44,10 @@ export default class ContactsService {
 	}
 
 	static async getContacts(alertNoPermission = true): Promise<ContactItem[]> {
+		if (!await AuthStore.isPhoneNumberFunctionsEnabled()) {
+			return [];
+		}
+
 		while (this.isProcessing) {
 			await sleep(10);
 		}
@@ -148,8 +153,10 @@ export default class ContactsService {
 	}
 
 	static async refreshCache() {
-		this.saved.clear();
-		await ContactsService.getContacts();
+		if (await AuthStore.isPhoneNumberFunctionsEnabled()) {
+			this.saved.clear();
+			await ContactsService.getContacts();
+		}
 	}
 
 	static getContactByHash(hash: string): ContactItem {

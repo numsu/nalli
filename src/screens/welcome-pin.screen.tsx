@@ -63,8 +63,8 @@ export default class WelcomePinScreen extends React.Component<NavigationInjected
 	render = () => {
 		const pin = this.state.verify ? this.state.verifyPin : this.state.pin;
 		const text = this.state.verify
-				? 'Verify pin code'
-				: 'Please input a six number pin code for login';
+				? 'Confirm the pin code by typing it again'
+				: 'Please type a six number pin code for login';
 
 		return (
 			<DismissKeyboardView style={styles.container}>
