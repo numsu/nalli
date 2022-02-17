@@ -30,6 +30,7 @@ import ShowHide from '../../components/show-hide.component';
 import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
 import layout from '../../constants/layout';
+import AuthStore from '../../service/auth-store';
 import ClientService from '../../service/client.service';
 import ContactsService, { FormattedNumber } from '../../service/contacts.service';
 import CurrencyService from '../../service/currency.service';
@@ -52,6 +53,7 @@ export interface SendSheetState {
 	currency: string;
 	inputPhoneNumberModalOpen: boolean;
 	isNalliUser: boolean;
+	isPhoneNumberUser: boolean;
 	process: boolean;
 	recipient: SendSheetRecipient;
 	recipientAddress: string;
@@ -97,6 +99,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			currency: 'xno',
 			inputPhoneNumberModalOpen: false,
 			isNalliUser: false,
+			isPhoneNumberUser: false,
 			process: false,
 			recipient: undefined,
 			recipientAddress: undefined,
@@ -114,17 +117,30 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 	}
 
 	init = async () => {
-		const tab = await VariableStore.getVariable(NalliVariable.SEND_TAB, SendSheetTab.CONTACT);
-		this.setState({ tab });
+		const isPhoneNumberUser = await AuthStore.isPhoneNumberFunctionsEnabled();
+		const tab = await this.getTab(isPhoneNumberUser);
+
+		this.setState({ tab, isPhoneNumberUser });
 	}
 
 	toggleDonate = async (enable: boolean) => {
 		if (enable) {
 			this.setState({ tab: SendSheetTab.DONATION, recipient: {} as SendSheetRecipient });
 		} else {
-			const tab = await VariableStore.getVariable(NalliVariable.SEND_TAB, SendSheetTab.CONTACT);
+			const tab = await this.getTab();
 			this.setState({ tab });
 			this.clearRecipient();
+		}
+	}
+
+	getTab = async (isPhoneNumberUser = undefined) => {
+		if (isPhoneNumberUser === undefined) {
+			isPhoneNumberUser = this.state.isPhoneNumberUser;
+		}
+		if (isPhoneNumberUser) {
+			return await VariableStore.getVariable(NalliVariable.SEND_TAB, SendSheetTab.CONTACT);
+		} else {
+			return SendSheetTab.ADDRESS;
 		}
 	}
 
@@ -415,6 +431,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 			convertedAmount,
 			inputPhoneNumberModalOpen,
 			isNalliUser,
+			isPhoneNumberUser,
 			process,
 			recipient,
 			recipientAddress,
@@ -506,7 +523,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 										onChangeText={(sendAmount: string, convertedAmount: string, currency: string) =>
 												this.setState({ sendAmount, convertedAmount, currency })} />
 							</View>
-							{(tab != SendSheetTab.DONATION && !requestId) && // Don't show different options for donations
+							{(tab != SendSheetTab.DONATION && !requestId && isPhoneNumberUser) &&
 								<View style={styles.tabs}>
 									<TouchableOpacity
 											style={[styles.switchButton, (tab == SendSheetTab.CONTACT ? styles.selected : undefined)]}
@@ -526,6 +543,9 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 										<NalliText size={ETextSize.H2} style={styles.switchButtonText}>Address</NalliText>
 									</TouchableOpacity>
 								</View>
+							}
+							{!(tab != SendSheetTab.DONATION && !requestId && isPhoneNumberUser) &&
+								<NalliText size={ETextSize.H2}>To</NalliText>
 							}
 
 							{tab == SendSheetTab.CONTACT && !recipient &&

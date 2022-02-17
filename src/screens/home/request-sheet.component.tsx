@@ -26,6 +26,7 @@ import SelectedContact from '../../components/selected-contact.component';
 import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
 import layout from '../../constants/layout';
+import AuthStore from '../../service/auth-store';
 import ClientService from '../../service/client.service';
 import RequestService from '../../service/request.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
@@ -44,6 +45,7 @@ export interface RequestSheetState {
 	convertedAmount: string;
 	currency: string;
 	isNalliUser: boolean;
+	isPhoneNumberUser: boolean;
 	message: string;
 	process: boolean;
 	recipient: SendSheetRecipient;
@@ -76,6 +78,7 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 			convertedAmount: '0',
 			currency: 'xno',
 			isNalliUser: false,
+			isPhoneNumberUser: false,
 			message: '',
 			process: false,
 			recipient: undefined,
@@ -100,8 +103,15 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 
 	async init() {
 		const address = await VariableStore.getVariable<string>(NalliVariable.SELECTED_ACCOUNT);
-		const requestMode = await VariableStore.getVariable<RequestMode>(NalliVariable.SELECTED_REQUEST_MODE, RequestMode.CONTACT);
-		this.setState({ address, requestMode: requestMode });
+		const isPhoneNumberUser = await AuthStore.isPhoneNumberFunctionsEnabled();
+		let requestMode;
+		if (isPhoneNumberUser) {
+			requestMode = await VariableStore.getVariable<RequestMode>(NalliVariable.SELECTED_REQUEST_MODE, RequestMode.CONTACT);
+		} else {
+			requestMode = RequestMode.QR;
+		}
+
+		this.setState({ address, requestMode, isPhoneNumberUser });
 	}
 
 	onCopyPress = (address: string) => {
@@ -238,6 +248,7 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 			contactsModalOpen,
 			convertedAmount,
 			isNalliUser,
+			isPhoneNumberUser,
 			message,
 			process,
 			recipient,
@@ -357,7 +368,7 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 		}
 
 		let headerIconComponent;
-		if (!success) {
+		if (!success && isPhoneNumberUser) {
 			headerIconComponent = (
 				<TouchableOpacity
 						style={styles.toggleRequestModeButton}

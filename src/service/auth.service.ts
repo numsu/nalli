@@ -12,6 +12,10 @@ export default class AuthService {
 		return HttpService.post<LoginResponse>(`${this.uri}/register`, req);
 	}
 
+	static registerNoPhone() {
+		return HttpService.post<LoginResponse>(`${this.uri}/register-no-phone`, undefined);
+	}
+
 	static registerOtp(req: RegisterRequest) {
 		return HttpService.post<void>(`${this.uri}/register/otp`, req);
 	}

@@ -12,20 +12,21 @@ import CurrencyService from '../../service/currency.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 
 interface CarouselCardProps {
-	price: number;
-	balance: string;
-	showAddAccountView: boolean;
-	isLastAccount: boolean;
 	accountActive: boolean;
 	accountIndex: number;
-	processing: boolean;
+	balance: string;
+	isLastAccount: boolean;
+	isPhoneNumberUser: boolean;
 	onAddNewAccount: (index: number) => void;
 	onHideAccount: (index: number) => void;
+	price: number;
+	processing: boolean;
+	showAddAccountView: boolean;
 }
 
 interface CarouselCardState {
-	displayedCurrency: string;
 	currency: string;
+	displayedCurrency: string;
 }
 
 export default class CarouselCard extends React.Component<CarouselCardProps, CarouselCardState> {
@@ -93,6 +94,7 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 			accountIndex,
 			balance,
 			isLastAccount,
+			isPhoneNumberUser,
 			onAddNewAccount,
 			onHideAccount,
 			price,
@@ -105,13 +107,15 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 		if (!showAddAccountView) {
 			let headerAddonComponent;
 			if (accountActive) {
-				headerAddonComponent = (
-					<TouchableOpacity
-							onPress={this.onHomeAccountPress}
-							style={styles.homeAccount}>
-						<NalliIcon type={IconType.MATERIAL} icon='home' size={25} style={{ color: Colors.main }} />
-					</TouchableOpacity>
-				);
+				if (isPhoneNumberUser) {
+					headerAddonComponent = (
+						<TouchableOpacity
+								onPress={this.onHomeAccountPress}
+								style={styles.homeAccount}>
+							<NalliIcon type={IconType.MATERIAL} icon='home' size={25} style={{ color: Colors.main }} />
+						</TouchableOpacity>
+					);
+				}
 			} else if (isLastAccount) {
 				headerAddonComponent = (
 					<TouchableOpacity
