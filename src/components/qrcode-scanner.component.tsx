@@ -6,7 +6,6 @@ import {
 import React from 'react';
 import {
 	Alert,
-	Linking,
 	StyleSheet,
 	TouchableOpacity,
 	View,

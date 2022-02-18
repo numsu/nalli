@@ -4,7 +4,6 @@ import {
 	Alert,
 	StyleSheet,
 	TextInput,
-	TouchableOpacity,
 	View,
 } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
@@ -165,9 +164,9 @@ export default class Login extends React.Component<NavigationInjectedProps, Logi
 			<DismissKeyboardView style={styles.container}>
 				<StatusBar translucent style='light' />
 				<Loading style={LoadingStyle.LIGHT} color='white' show={process} />
-				<TouchableOpacity onPress={this.clearWalletInfo}>
+				{/* <TouchableOpacity onPress={this.clearWalletInfo}> */}
 					<NalliLogo width={150} height={60} color='white' />
-				</TouchableOpacity>
+				{/* </TouchableOpacity> */}
 				<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 					Enter pin
 				</NalliText>
