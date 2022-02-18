@@ -11,8 +11,8 @@
 		"lint": "tslint -p tsconfig.json src/**/*.{ts,tsx}",
 		"lint:fix": "tslint -p tsconfig.json src/**/*.{ts,tsx} --fix",
 		"build:eas": "eas build --profile prod",
-		"build:ios": "expo build:ios --release-channel prod-v116",
-		"build:android": "expo build:android --release-channel prod-v116"
+		"build:ios": "expo build:ios --release-channel prod-v120",
+		"build:android": "expo build:android --release-channel prod-v120"
 	},
 	"jest": {
 		"preset": "jest-expo"
