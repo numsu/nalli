@@ -1,7 +1,6 @@
 import React from 'react';
 import {
 	Alert,
-	Linking,
 	StyleSheet,
 	View,
 } from 'react-native';
@@ -10,6 +9,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import NalliModal, { EModalSize } from '../../../components/modal.component';
 import Setting from '../../../components/setting.component';
 import Colors from '../../../constants/colors';
+import { openSettings } from '../../../constants/globals';
 import AuthStore from '../../../service/auth-store';
 import AuthService from '../../../service/auth.service';
 import BiometricsService, { EBiometricsType } from '../../../service/biometrics.service';
@@ -96,7 +96,7 @@ export default class PreferencesModal extends React.Component<PreferencesModalPr
 						}, {
 							text: 'Open settings',
 							style: 'default',
-							onPress: () => Linking.openURL('app-settings:'),
+							onPress: () => openSettings(),
 						},
 					],
 				);

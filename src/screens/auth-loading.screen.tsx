@@ -62,7 +62,7 @@ export default class AuthLoadingScreen extends React.Component<NavigationInjecte
 
 			try {
 				await ClientService.getClient();
-				await ContactsService.getContacts();
+				await ContactsService.getContacts(false);
 				const wallet = await WalletStore.getWallet();
 				if (wallet) {
 					this.props.navigation.navigate('Home');

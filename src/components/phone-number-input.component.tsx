@@ -1,6 +1,7 @@
 import * as Localization from 'expo-localization';
 import React from 'react';
 import {
+	Platform,
 	StyleSheet,
 	View,
 } from 'react-native';
@@ -87,6 +88,7 @@ export default class PhoneNumberInput extends React.Component<PhoneNumberInputPr
 								value={cca2}
 								items={countrySelectList}
 								useNativeAndroidPickerStyle={false}
+								fixAndroidTouchableBug={true}
 								style={{
 									inputIOS: { ...styles.countryInput, ...countryInputTextStyle },
 									inputAndroid: { ...styles.countryInput, ...countryInputTextStyle },
@@ -113,20 +115,34 @@ const styles = StyleSheet.create({
 	countryInputContainer: {
 		backgroundColor: 'white',
 		paddingHorizontal: 10,
-		paddingVertical: 15,
+		...Platform.select({
+			ios: {
+				paddingVertical: 15,
+			},
+			android: {
+				paddingVertical: 5,
+			}
+		}),
 		borderRadius: 15,
 		width: layout.window.width * 0.25,
 	},
 	countryInput: {
-		fontSize: 13,
+		fontSize: 14,
 	},
 	phoneNumberInput: {
 		backgroundColor: 'white',
 		borderRadius: 15,
 		paddingHorizontal: 10,
-		paddingVertical: 15,
+		...Platform.select({
+			ios: {
+				paddingVertical: 15,
+			},
+			android: {
+				paddingVertical: 5,
+			}
+		}),
 		flexGrow: 1,
 		marginLeft: 5,
-		fontSize: 13,
+		fontSize: 14,
 	},
 });

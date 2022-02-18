@@ -92,6 +92,7 @@ export default class WelcomeOtpScreen extends React.Component<WelcomeOtpScreenPr
 								ref={this.codeInputRef}
 								onChangeText={this.onChangeNumberPad}
 								keyboardType={'numeric'}
+								allowFontScaling={false}
 								style={styles.numberPadPin}
 								value={otp} />
 					</View>

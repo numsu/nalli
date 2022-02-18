@@ -82,8 +82,8 @@ export default class ChangePinModal extends React.Component<ChangePinModalProps,
 					<NalliText size={ETextSize.H2} style={styles.header}>{isConfirm ? 'Confirm new PIN' : 'New PIN'}</NalliText>
 					<TextInput
 							style={styles.numberPadPin}
-							value={isConfirm ? confirm : pin}
-							secureTextEntry
+							value={'*'.repeat(isConfirm ? confirm.length : pin.length)}
+							allowFontScaling={false}
 							editable={false} />
 					<NalliNumberPad
 							style={styles.numberPad}

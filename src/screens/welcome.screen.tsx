@@ -2,7 +2,6 @@ import React from 'react';
 import {
 	Alert,
 	Keyboard,
-	KeyboardAvoidingView,
 	StyleSheet,
 	View,
 } from 'react-native';
@@ -92,48 +91,43 @@ export default class WelcomeScreen extends React.Component<NavigationInjectedPro
 				<NalliText style={styles.smallerText}>
 					Start by creating an account with us.
 				</NalliText>
-				<KeyboardAvoidingView
-						style={styles.formContainer}
-						behavior='padding'
-						keyboardVerticalOffset={90}>
-					<PhoneNumberInput
-							value={phoneNumber}
-							onChangeNumber={val => this.onChangeText('phoneNumber', val)}
-							onChangeCountry={val => this.onChangeText('phoneNumberCountry', val)}/>
+				<PhoneNumberInput
+						value={phoneNumber}
+						onChangeNumber={val => this.onChangeText('phoneNumber', val)}
+						onChangeCountry={val => this.onChangeText('phoneNumberCountry', val)}/>
+				<NalliButton
+						text='Continue'
+						icon={'ios-arrow-forward'}
+						onPress={this.signUp}
+						style={styles.loginButton}
+						textStyle={styles.loginButtonText}
+						disabled={process} />
+				<Text
+						allowFontScaling={false}
+						style={styles.privacyPolicy}>
+					By continuing to use this app, you agree that you have read, understood and accepted our
+					&nbsp;<Link
+							url='https://nalli.app/privacy-policy'
+							style={styles.link}>
+						Privacy Policy
+					</Link>
+					&nbsp;and
+					&nbsp;<Link
+							url='https://nalli.app/terms-and-conditions'
+							style={styles.link}>
+						Terms and Conditions
+					</Link>
+				</Text>
+				<View style={styles.noPhoneNumberLoginContainer}>
+					<NalliText style={styles.privacyPolicy}>Or if you would rather use the plain wallet without the awesome functionalities that phone numbers provide</NalliText>
 					<NalliButton
-							text='Continue'
-							icon={'ios-arrow-forward'}
-							onPress={this.signUp}
-							style={styles.loginButton}
-							textStyle={styles.loginButtonText}
-							disabled={process} />
-					<Text
-							allowFontScaling={false}
-							style={styles.privacyPolicy}>
-						By continuing to use this app, you agree that you have read, understood and accepted our
-						&nbsp;<Link
-								url='https://nalli.app/privacy-policy'
-								style={styles.link}>
-							Privacy Policy
-						</Link>
-						&nbsp;and
-						&nbsp;<Link
-								url='https://nalli.app/terms-and-conditions'
-								style={styles.link}>
-							Terms and Conditions
-						</Link>
-					</Text>
-					<View style={styles.noPhoneNumberLoginContainer}>
-						<NalliText style={styles.privacyPolicy}>Or if you would rather use the plain wallet without the awesome functionalities that phone numbers provide</NalliText>
-						<NalliButton
-							small
-							text='Create wallet'
-							onPress={this.createWallet}
-							style={styles.loginButton}
-							textStyle={styles.loginButtonText}
-							disabled={process} />
-					</View>
-				</KeyboardAvoidingView>
+						small
+						text='Create wallet'
+						onPress={this.createWallet}
+						style={styles.loginButton}
+						textStyle={styles.loginButtonText}
+						disabled={process} />
+				</View>
 			</DismissKeyboardView>
 		);
 	}
@@ -144,7 +138,7 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.main,
 		flex: 1,
 		paddingHorizontal: 20,
-		paddingTop: 70,
+		paddingTop: 50,
 	},
 	text: {
 		fontSize: 18,
@@ -157,6 +151,7 @@ const styles = StyleSheet.create({
 		fontWeight: '400',
 		color: Colors.borderColor,
 		marginTop: 30,
+		marginBottom: 10,
 	},
 	formContainer: {
 		flex: 1,
@@ -191,9 +186,8 @@ const styles = StyleSheet.create({
 		color: 'white',
 	},
 	noPhoneNumberLoginContainer: {
-		position: 'absolute',
-		bottom: 0,
-		marginBottom: 40,
+		marginTop: 'auto',
+		marginBottom: 25,
 		width: '80%',
 		alignSelf: 'center',
 	},

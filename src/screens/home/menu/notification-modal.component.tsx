@@ -1,7 +1,6 @@
 import React from 'react';
 import {
 	Alert,
-	Linking,
 	StyleSheet,
 	View,
 } from 'react-native';
@@ -9,6 +8,7 @@ import {
 import NalliModal from '../../../components/modal.component';
 import NalliButton from '../../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
+import { openSettings } from '../../../constants/globals';
 import AuthService from '../../../service/auth.service';
 import NotificationService from '../../../service/notification.service';
 
@@ -54,7 +54,7 @@ export default class NotificationModal extends React.Component<NotificationModal
 							}, {
 								text: 'Open settings',
 								style: 'default',
-								onPress: () => (Linking.openURL('app-settings:'), resolve(false)),
+								onPress: () => (openSettings(), resolve(false)),
 							},
 						],
 					);

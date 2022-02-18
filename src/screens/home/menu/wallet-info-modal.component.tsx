@@ -154,8 +154,8 @@ export default class WalletInfoModal extends React.Component<WalletInfoModalProp
 						<NalliText size={ETextSize.H2} style={styles.header}>Enter pin to view</NalliText>
 						<TextInput
 								style={styles.numberPadPin}
-								value={pin}
-								secureTextEntry
+								value={'*'.repeat(pin.length)}
+								allowFontScaling={false}
 								editable={false} />
 						<NalliNumberPad
 								style={styles.numberPad}

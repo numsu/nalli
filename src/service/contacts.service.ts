@@ -1,8 +1,8 @@
 import { blake2bFinal, blake2bInit, blake2bUpdate } from 'blakejs';
 import * as Contacts from 'expo-contacts';
-import { Alert, Linking } from 'react-native';
+import { Alert } from 'react-native';
 
-import { sleep } from '../constants/globals';
+import { openSettings, sleep } from '../constants/globals';
 import Convert from '../crypto/convert';
 import AuthStore from './auth-store';
 import ClientService from './client.service';
@@ -52,11 +52,10 @@ export default class ContactsService {
 			await sleep(10);
 		}
 
-		if (this.saved.size > 0) {
-			return [ ...this.saved.values() ];
-		}
-
 		if (await this.askPermission()) {
+			if (this.saved.size > 0) {
+				return [ ...this.saved.values() ];
+			}
 			this.isProcessing = true;
 			try {
 				const { data } = await Contacts.getContactsAsync({
@@ -129,7 +128,7 @@ export default class ContactsService {
 						}, {
 							text: 'Open settings',
 							style: 'default',
-							onPress: () => Linking.openURL('app-settings:'),
+							onPress: () => openSettings(),
 						},
 					],
 				);
@@ -155,7 +154,7 @@ export default class ContactsService {
 	static async refreshCache() {
 		if (await AuthStore.isPhoneNumberFunctionsEnabled()) {
 			this.saved.clear();
-			await ContactsService.getContacts();
+			await ContactsService.getContacts(false);
 		}
 	}
 

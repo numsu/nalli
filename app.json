@@ -36,6 +36,7 @@
 			"versionCode": 116,
 			"googleServicesFile": "./google-services.json",
 			"allowBackup": false,
+			"softwareKeyboardLayoutMode":"pan",
 			"permissions": [
 				"CAMERA",
 				"READ_CONTACTS",

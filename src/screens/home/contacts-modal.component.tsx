@@ -57,6 +57,12 @@ export default class ContactsModal extends React.Component<ContactsModalProps, C
 		this.subscriptions.forEach(VariableStore.unwatchVariable);
 	}
 
+	componentDidUpdate() {
+		if (this.state.isOpen) {
+			ContactsService.getContacts(); // Check for permissions
+		}
+	}
+
 	static getDerivedStateFromProps(nextProps: ContactsModalProps, prevState: ContactsModalState) {
 		if (prevState.isOpen != nextProps.isOpen) {
 			return { isOpen: nextProps.isOpen };

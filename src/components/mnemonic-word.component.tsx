@@ -42,6 +42,7 @@ export default class MnemonicWord extends React.Component<MnemonicWordProps, Mne
 							ref={reference}
 							style={styles.word}
 							secureTextEntry={false}
+							allowFontScaling={false}
 							keyboardType='visible-password'
 							autoCorrect={false}
 							autoCompleteType={'off'}

@@ -84,6 +84,7 @@ export default class NalliInput extends React.Component<NalliInputProps, NalliIn
 						maxLength={maxLength}
 						multiline={multiline}
 						numberOfLines={numberOfLines}
+						allowFontScaling={false}
 						onBlur={this.onBlur}
 						onChangeText={onChangeText}
 						onFocus={this.onFocus}

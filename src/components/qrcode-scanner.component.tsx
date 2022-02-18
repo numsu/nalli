@@ -15,6 +15,7 @@ import Modal from 'react-native-modal';
 
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 
+import { openSettings } from '../constants/globals';
 import layout from '../constants/layout';
 import NalliText, { ETextSize } from './text.component';
 
@@ -51,7 +52,7 @@ export default class QRCodeScanner extends React.Component<QRCodeScannerProps, Q
 					}, {
 						text: 'Open settings',
 						style: 'default',
-						onPress: () => Linking.openURL('app-settings:'),
+						onPress: () => openSettings(),
 					},
 				],
 			);

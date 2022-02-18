@@ -1,3 +1,5 @@
+import { Linking, Platform } from "react-native";
+
 export function sleep(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
 };
@@ -20,4 +22,12 @@ export function reviver(_, value) {
 		}
 	}
 	return value;
+}
+
+export function openSettings() {
+	if (Platform.OS == 'ios') {
+		Linking.openURL('app-settings:');
+	} else {
+		Linking.openSettings();
+	}
 }
