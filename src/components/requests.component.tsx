@@ -6,6 +6,8 @@ import Carousel from 'react-native-snap-carousel';
 
 import Colors from '../constants/colors';
 import layout from '../constants/layout';
+import { NalliAppState } from '../screens/home/privacy-shield.component';
+import AuthStore from '../service/auth-store';
 import ContactsService from '../service/contacts.service';
 import CurrencyService from '../service/currency.service';
 import RequestService, { Request } from '../service/request.service';
@@ -39,7 +41,11 @@ export default class NalliRequests extends React.Component<RequestsProps, Reques
 
 	componentDidMount = () => {
 		this.fetchRequests();
-		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.APP_STATE, () => this.fetchRequests()));
+		this.subscriptions.push(VariableStore.watchVariable<NalliAppState>(NalliVariable.APP_STATE, state => {
+			if (state == NalliAppState.ACTIVE) {
+				this.fetchRequests();
+			}
+		}));
 		// Update component every minute
 		this.interval = setInterval(() => this.forceUpdate(), 1000 * 60);
 	}
@@ -50,6 +56,10 @@ export default class NalliRequests extends React.Component<RequestsProps, Reques
 	}
 
 	fetchRequests = async () => {
+		if (!await AuthStore.isPhoneNumberFunctionsEnabled()) {
+			return;
+		}
+
 		const { requests, hasMore } = await RequestService.getRequestsReceived();
 		if (requests.length > 0) {
 			if (this.state.requests.length == 0
