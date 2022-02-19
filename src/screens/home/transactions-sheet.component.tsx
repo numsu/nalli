@@ -16,6 +16,7 @@ import NalliText, { ETextSize } from '../../components/text.component';
 import colors from '../../constants/colors';
 import { sleep } from '../../constants/globals';
 import ContactsService from '../../service/contacts.service';
+import CurrencyService from '../../service/currency.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 import WalletService, { EPendingStatus, WalletTransaction } from '../../service/wallet.service';
 import { DateUtil } from '../../util/date.util';
@@ -119,36 +120,39 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 
 		let transactionListElements;
 		if (hasTransactions) {
-			transactionListElements = transactions.map(item => (
-				<Animated.View entering={FadeIn} key={item.hash} style={styles.transactionContainer}>
-					<TouchableOpacity onPress={() => this.openTransaction(item)}>
-						<View style={styles.transactionRow}>
-							{item.type == 'send'
-								? <NalliText size={ETextSize.H2}>Sent</NalliText>
-								: item.pendingStatus == EPendingStatus.RETURNED
-									? <NalliText size={ETextSize.H2}>Returned</NalliText>
-									: <NalliText size={ETextSize.H2}>Received</NalliText>
-							}
-							<NalliText>
-								{DateUtil.getRelativeTime(item.timestamp)}
-							</NalliText>
-						</View>
-						<View style={styles.transactionRow}>
-							<NalliText style={styles.transactionTarget}>
-								{this.getContactName(item)}
-							</NalliText>
-							{item.type == 'send' ?
-								<NalliText style={styles.transactionAmount}>
-									- {item.amount}
-								</NalliText> :
-								<NalliText style={{ color: colors.main, ...styles.transactionAmount }}>
-									+ {item.amount}
+			transactionListElements = transactions.map(item => {
+				const amount = CurrencyService.formatNanoAmount(Number(item.amount));
+				return (
+					<Animated.View entering={FadeIn} key={item.hash} style={styles.transactionContainer}>
+						<TouchableOpacity onPress={() => this.openTransaction(item)}>
+							<View style={styles.transactionRow}>
+								{item.type == 'send'
+									? <NalliText size={ETextSize.H2}>Sent</NalliText>
+									: item.pendingStatus == EPendingStatus.RETURNED
+										? <NalliText size={ETextSize.H2}>Returned</NalliText>
+										: <NalliText size={ETextSize.H2}>Received</NalliText>
+								}
+								<NalliText>
+									{DateUtil.getRelativeTime(item.timestamp)}
 								</NalliText>
-							}
-						</View>
-					</TouchableOpacity>
-				</Animated.View>
-			));
+							</View>
+							<View style={styles.transactionRow}>
+								<NalliText style={styles.transactionTarget}>
+									{this.getContactName(item)}
+								</NalliText>
+								{item.type == 'send' ?
+									<NalliText style={styles.transactionAmount}>
+										- {amount}
+									</NalliText> :
+									<NalliText style={{ color: colors.main, ...styles.transactionAmount }}>
+										+ {amount}
+									</NalliText>
+								}
+							</View>
+						</TouchableOpacity>
+					</Animated.View>
+				);
+			});
 		}
 
 		return (
