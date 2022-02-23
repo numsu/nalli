@@ -35,7 +35,7 @@ interface CurrencyInputState {
 	value: string;
 }
 
-export default class CurrencyInput extends React.Component<CurrencyInputProps, CurrencyInputState> {
+export default class CurrencyInput extends React.PureComponent<CurrencyInputProps, CurrencyInputState> {
 
 	subscriptions: EmitterSubscription[] = [];
 

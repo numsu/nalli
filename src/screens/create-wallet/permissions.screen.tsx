@@ -16,7 +16,7 @@ interface PermissionsState {
 	permission: number;
 }
 
-export default class Permissions extends React.Component<NavigationInjectedProps, PermissionsState> {
+export default class Permissions extends React.PureComponent<NavigationInjectedProps, PermissionsState> {
 
 	constructor(props) {
 		super(props);

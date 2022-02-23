@@ -13,7 +13,7 @@ import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
 import AuthStore from '../../service/auth-store';
 
-export default class CreateWalletWelcome extends React.Component<NavigationInjectedProps, any> {
+export default class CreateWalletWelcome extends React.PureComponent<NavigationInjectedProps, any> {
 
 	constructor(props) {
 		super(props);

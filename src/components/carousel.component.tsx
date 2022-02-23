@@ -23,7 +23,7 @@ interface CarouselState {
 	processing: boolean;
 }
 
-export default class NalliCarousel extends React.Component<CarouselProps, CarouselState> {
+export default class NalliCarousel extends React.PureComponent<CarouselProps, CarouselState> {
 
 	carouselRef;
 	subscriptions: EmitterSubscription[] = [];

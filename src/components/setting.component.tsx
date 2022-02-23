@@ -18,7 +18,7 @@ interface SettingProps {
 interface SettingState {
 }
 
-export default class Setting extends React.Component<SettingProps, SettingState> {
+export default class Setting extends React.PureComponent<SettingProps, SettingState> {
 
 	constructor(props) {
 		super(props);

@@ -28,7 +28,7 @@ interface WelcomeOtpScreenState {
 	tries: number;
 }
 
-export default class WelcomeOtpScreen extends React.Component<WelcomeOtpScreenProps, WelcomeOtpScreenState> {
+export default class WelcomeOtpScreen extends React.PureComponent<WelcomeOtpScreenProps, WelcomeOtpScreenState> {
 
 	codeInputRef: RefObject<TextInput>;
 

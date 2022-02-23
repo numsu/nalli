@@ -6,8 +6,8 @@ export default class ClientService {
 
 	private static client: Client;
 
-	static async getClient() {
-		if (!this.client) {
+	static async getClient(fromCache = true) {
+		if (!this.client || !fromCache) {
 			this.client = await HttpService.get<Client>(`${this.uri}`);
 		}
 		return this.client;

@@ -10,7 +10,7 @@ import NalliButton from '../../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 
-export default class CreateWalletImportMnemonic extends React.Component<NavigationInjectedProps, any> {
+export default class CreateWalletImportMnemonic extends React.PureComponent<NavigationInjectedProps, any> {
 
 	constructor(props) {
 		super(props);

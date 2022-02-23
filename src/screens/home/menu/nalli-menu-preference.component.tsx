@@ -13,7 +13,7 @@ interface NalliMenuPreferenceProps {
 	subheader: string;
 }
 
-export default class NalliMenuPreference extends React.Component<NalliMenuPreferenceProps, any> {
+export default class NalliMenuPreference extends React.PureComponent<NalliMenuPreferenceProps, any> {
 
 	constructor(props) {
 		super(props);

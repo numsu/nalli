@@ -27,7 +27,7 @@ interface PhoneNumberInputState {
 	cca2: any;
 }
 
-export default class PhoneNumberInput extends React.Component<PhoneNumberInputProps, PhoneNumberInputState> {
+export default class PhoneNumberInput extends React.PureComponent<PhoneNumberInputProps, PhoneNumberInputState> {
 
 	countries: CountryItem[];
 

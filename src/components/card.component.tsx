@@ -21,7 +21,7 @@ interface CardProps {
 interface CardState {
 }
 
-export default class Card extends React.Component<CardProps, CardState> {
+export default class Card extends React.PureComponent<CardProps, CardState> {
 
 	constructor(props) {
 		super(props);

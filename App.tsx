@@ -24,7 +24,7 @@ const customFonts = {
 	'MontserratBold': require('./src/assets/fonts/Montserrat-SemiBold.ttf'),
 };
 
-export default class App extends React.Component<any, any> {
+export default class App extends React.PureComponent<any, any> {
 
 	state = {
 		isLoadingComplete: false,
@@ -54,7 +54,12 @@ export default class App extends React.Component<any, any> {
 	}
 
 	private loadResourcesAsync = async () => {
-		Promise.all([
+		if (TextEncoder == undefined || typeof TextEncoder !== 'function') {
+			TextEncoder = encoding.TextEncoder;
+			TextDecoder = encoding.TextDecoder;
+		}
+
+		await Promise.all([
 			Asset.loadAsync([
 				require('./src/assets/images/splash.png'),
 				require('./src/assets/images/icon.png'),
@@ -66,12 +71,9 @@ export default class App extends React.Component<any, any> {
 			setCustomText({
 				fontFamily: 'OpenSans',
 			});
+		}).catch(e => {
+			console.error(e);
 		});
-
-		if (TextEncoder == undefined || typeof TextEncoder !== 'function') {
-			TextEncoder = encoding.TextEncoder;
-			TextDecoder = encoding.TextDecoder;
-		}
 	}
 
 	private handleLoadingError = (error: Error) => {

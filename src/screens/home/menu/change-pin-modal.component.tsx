@@ -24,7 +24,7 @@ interface ChangePinModalState {
 	confirm: string;
 }
 
-export default class ChangePinModal extends React.Component<ChangePinModalProps, ChangePinModalState> {
+export default class ChangePinModal extends React.PureComponent<ChangePinModalProps, ChangePinModalState> {
 
 	constructor(props) {
 		super(props);

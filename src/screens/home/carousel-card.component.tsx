@@ -29,7 +29,7 @@ interface CarouselCardState {
 	displayedCurrency: string;
 }
 
-export default class CarouselCard extends React.Component<CarouselCardProps, CarouselCardState> {
+export default class CarouselCard extends React.PureComponent<CarouselCardProps, CarouselCardState> {
 
 	subscriptions: EmitterSubscription[] = [];
 

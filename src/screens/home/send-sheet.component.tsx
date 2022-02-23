@@ -10,13 +10,12 @@ import {
 	Keyboard,
 	Platform,
 	StyleSheet,
-	TouchableOpacity,
 	View,
 } from 'react-native';
 import { Avatar } from 'react-native-elements';
 
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { BottomSheetScrollView, TouchableOpacity } from '@gorhom/bottom-sheet';
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import CurrencyInput from '../../components/currency-input.component';
@@ -44,7 +43,6 @@ import PhoneNumberInputModal from './number-input-modal.component';
 
 export interface SendSheetProps {
 	onSendSuccess?: (requestPaid: boolean) => void;
-	reference: RefObject<any>;
 }
 
 export interface SendSheetState {
@@ -80,7 +78,7 @@ enum SendSheetTab {
 	DONATION,
 }
 
-export default class SendSheet extends React.Component<SendSheetProps, SendSheetState> {
+export default class SendSheet extends React.PureComponent<SendSheetProps, SendSheetState> {
 
 	sendSheetRef: RefObject<any>;
 	sendAmountRef: RefObject<any>;
@@ -92,7 +90,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 	constructor(props: SendSheetProps) {
 		super(props);
 		this.sendAmountRef = React.createRef();
-		this.sendSheetRef = props.reference;
+		this.sendSheetRef = React.createRef();
 		this.state = {
 			contactsModalOpen: false,
 			convertedAmount: '0',
@@ -121,6 +119,10 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 		const tab = await this.getTab(isPhoneNumberUser);
 
 		this.setState({ tab, isPhoneNumberUser });
+	}
+
+	open = () => {
+		this.sendSheetRef.current.snapToIndex(0);
 	}
 
 	toggleDonate = async (enable: boolean) => {
@@ -176,9 +178,9 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 		});
 	}
 
-	onSwitchModePress = async (tab: number) => {
+	onSwitchModePress = (tab: number) => {
 		if (this.state.tab != tab) {
-			await VariableStore.setVariable(NalliVariable.SEND_TAB, tab);
+			VariableStore.setVariable(NalliVariable.SEND_TAB, tab);
 			this.clearRecipient();
 			this.setState({ tab });
 		}
@@ -425,7 +427,6 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 	}
 
 	render = () => {
-		const { reference } = this.props;
 		const {
 			contactsModalOpen,
 			convertedAmount,
@@ -464,7 +465,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 		return (
 			<MyBottomSheet
 					initialSnap={-1}
-					reference={reference}
+					reference={this.sendSheetRef}
 					enablePanDownToClose={!process || success}
 					enableLinearGradient
 					onClose={this.clearState}
@@ -547,14 +548,13 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 							{!(tab != SendSheetTab.DONATION && !requestId && isPhoneNumberUser) &&
 								<NalliText size={ETextSize.H2}>To</NalliText>
 							}
-
-							{tab == SendSheetTab.CONTACT && !recipient &&
+							{(tab == SendSheetTab.CONTACT && !recipient) &&
 								<NalliButton
 										text='Select contact'
 										icon='md-person'
 										onPress={this.onSelectRecipientPress} />
 							}
-							{tab == SendSheetTab.CONTACT && recipient &&
+							{(tab == SendSheetTab.CONTACT && !!recipient) &&
 								<SelectedContact
 										contact={recipient}
 										isNalliUser={isNalliUser}
@@ -562,13 +562,13 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 										disableSwap={!!requestId}
 										onSwapPress={this.onSelectRecipientPress} />
 							}
-							{tab == SendSheetTab.PHONE && !recipient &&
+							{(tab == SendSheetTab.PHONE && !recipient) &&
 								<NalliButton
 										text='Input phone number'
 										icon='md-person'
 										onPress={this.onSelectInputNumberPress} />
 							}
-							{tab == SendSheetTab.PHONE && recipient &&
+							{(tab == SendSheetTab.PHONE && !!recipient) &&
 								<SelectedContact
 										contact={recipient}
 										isNalliUser={isNalliUser}
@@ -650,7 +650,7 @@ export default class SendSheet extends React.Component<SendSheetProps, SendSheet
 								</View>
 							}
 						</BottomSheetScrollView>
-						{(recipient || !!walletAddress) &&
+						{(!!recipient || !!walletAddress) &&
 							<View style={styles.sendTransactionButton}>
 								<NalliButton
 										text={tab == SendSheetTab.DONATION ? 'Donate' : (!!walletAddress || isNalliUser) ? 'Send' : 'Invite new user'}

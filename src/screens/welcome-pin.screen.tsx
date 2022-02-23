@@ -19,7 +19,7 @@ interface WelcomePinScreenState {
 	verify: boolean;
 }
 
-export default class WelcomePinScreen extends React.Component<NavigationInjectedProps, WelcomePinScreenState> {
+export default class WelcomePinScreen extends React.PureComponent<NavigationInjectedProps, WelcomePinScreenState> {
 
 	constructor(props) {
 		super(props);

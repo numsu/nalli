@@ -27,7 +27,7 @@ interface NalliMenuState {
 	walletInfoModalOpen: boolean;
 }
 
-export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenuState> {
+export default class NalliMenu extends React.PureComponent<NalliMenuProps, NalliMenuState> {
 
 	subscriptions: EmitterSubscription[] = [];
 

@@ -32,7 +32,7 @@ interface TransactionSheetState {
 	transactions: WalletTransaction[];
 }
 
-export default class TransactionsSheet extends React.Component<TransactionsSheetProps, TransactionSheetState> {
+export default class TransactionsSheet extends React.PureComponent<TransactionsSheetProps, TransactionSheetState> {
 
 	ref: RefObject<any>;
 	interval;

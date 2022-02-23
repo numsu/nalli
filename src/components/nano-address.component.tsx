@@ -15,7 +15,7 @@ interface NalliNanoAddressProps {
 interface NalliNanoAddressState {
 }
 
-export default class NalliNanoAddress extends React.Component<NalliNanoAddressProps, NalliNanoAddressState> {
+export default class NalliNanoAddress extends React.PureComponent<NalliNanoAddressProps, NalliNanoAddressState> {
 
 	constructor(props) {
 		super(props);

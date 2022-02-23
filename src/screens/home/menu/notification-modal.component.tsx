@@ -22,7 +22,7 @@ interface NotificationModalState {
 	isOpen: boolean;
 }
 
-export default class NotificationModal extends React.Component<NotificationModalProps, NotificationModalState> {
+export default class NotificationModal extends React.PureComponent<NotificationModalProps, NotificationModalState> {
 
 	constructor(props) {
 		super(props);

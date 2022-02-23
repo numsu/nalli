@@ -4,7 +4,7 @@ import Svg, { Circle, Path } from 'react-native-svg';
 
 import Colors from '../../constants/colors';
 
-export default class NanoLogo extends React.Component<any, any> {
+export default class NanoLogo extends React.PureComponent<any, any> {
 
 	constructor(props) {
 		super(props);

@@ -12,23 +12,23 @@ import uuid from 'react-native-uuid';
 import { NavigationInjectedProps } from 'react-navigation';
 
 import Colors from '../constants/colors';
-import PhoneNumberSigner from '../crypto/phone-number-signer';
 import AuthStore from '../service/auth-store';
 import ClientService from '../service/client.service';
 import ContactsService from '../service/contacts.service';
 import VariableStore, { NalliVariable } from '../service/variable-store';
 import WalletStore from '../service/wallet-store';
 
-export default class AuthLoadingScreen extends React.Component<NavigationInjectedProps, any> {
-
-	readonly phoneNumberSigner = new PhoneNumberSigner();
+export default class AuthLoadingScreen extends React.PureComponent<NavigationInjectedProps, any> {
 
 	constructor(props) {
 		super(props);
-		this.bootstrapAsync();
 		this.state = {
 			status: 1,
 		};
+	}
+
+	componentDidMount() {
+		this.bootstrapAsync();
 	}
 
 	async bootstrapAsync() {
@@ -61,11 +61,11 @@ export default class AuthLoadingScreen extends React.Component<NavigationInjecte
 			}
 
 			try {
-				await ClientService.getClient();
+				await ClientService.getClient(false);
 				await ContactsService.getContacts(false);
 				const wallet = await WalletStore.getWallet();
 				if (wallet) {
-					this.props.navigation.navigate('Home');
+					this.props.navigation.navigate('Main');
 				} else {
 					this.props.navigation.navigate('Permissions');
 				}

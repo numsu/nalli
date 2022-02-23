@@ -1,5 +1,5 @@
 import { wallet } from 'nanocurrency-web';
-import React, { RefObject } from 'react';
+import React from 'react';
 import {
 	EmitterSubscription,
 	KeyboardAvoidingView,
@@ -43,30 +43,25 @@ interface HomeScreenProps extends NavigationInjectedProps {
 
 interface HomeScreenState {
 	price: number;
-	isMenuOpen: boolean;
-	walletIsOpen: boolean;
 	process: boolean;
+	walletIsOpen: boolean;
 }
 
-export default class HomeScreen extends React.Component<HomeScreenProps, HomeScreenState> {
+export default class HomeScreen extends React.PureComponent<HomeScreenProps, HomeScreenState> {
 
-	requestSheetRef: RefObject<any>;
 	requestsRef: NalliRequests;
-	sendRef: SendSheet;
-	sendSheetRef: RefObject<any>;
+	sendSheetRef: SendSheet;
+	requestSheetRef: RequestSheet;
 	sidemenuRef: SideMenu;
 	subscriptions: EmitterSubscription[] = [];
 	transactionSheetRef: TransactionsSheet;
 
 	constructor(props) {
 		super(props);
-		this.sendSheetRef = React.createRef();
-		this.requestSheetRef = React.createRef();
 		this.state = {
 			price: undefined,
-			isMenuOpen: false,
-			walletIsOpen: true,
 			process: false,
+			walletIsOpen: true,
 		};
 	}
 
@@ -188,32 +183,32 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 
 	logout = async () => {
 		await AuthStore.clearAuthentication();
-		AuthStore.clearExpires();
+		await AuthStore.clearExpires();
 		await VariableStore.setVariable(NalliVariable.NO_AUTOLOGIN, true);
 		this.props.navigation.navigate('Login');
 	}
 
 	onSendPress = () => {
-		this.sendSheetRef.current.snapToIndex(0);
+		this.sendSheetRef.open();
+	}
+
+	onReceivePress = () => {
+		this.requestSheetRef.open();
 	}
 
 	onSendSuccess = () => {
 		this.requestsRef.fetchRequests();
 	}
 
-	onReceivePress = () => {
-		this.requestSheetRef.current.snapToIndex(0);
-	}
-
 	onDonatePress = () => {
 		this.sidemenuRef.openMenu(false);
 		this.onSendPress();
-		this.sendRef.toggleDonate(true);
+		this.sendSheetRef.toggleDonate(true);
 	}
 
 	onRequestAcceptPress = (request: Request) => {
 		this.onSendPress();
-		this.sendRef.fillWithRequest(request);
+		this.sendSheetRef.fillWithRequest(request);
 	}
 
 	openMenu = () => {
@@ -286,10 +281,9 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 								</View>
 								<TransactionsSheet ref={c => this.transactionSheetRef = c} />
 								<SendSheet
-										ref={c => this.sendRef = c}
-										reference={this.sendSheetRef}
+										ref={c => this.sendSheetRef = c}
 										onSendSuccess={this.onSendSuccess} />
-								<RequestSheet reference={this.requestSheetRef} />
+								<RequestSheet ref={c => this.requestSheetRef = c} />
 							</DismissKeyboardView>
 						</KeyboardAvoidingView>
 					</ScrollView>

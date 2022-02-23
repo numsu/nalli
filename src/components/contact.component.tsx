@@ -21,7 +21,7 @@ interface ContactProps {
 interface ContactState {
 }
 
-export default class Contact extends React.Component<ContactProps, ContactState> {
+class Contact extends React.PureComponent<ContactProps, ContactState> {
 
 	constructor(props) {
 		super(props);
@@ -65,6 +65,8 @@ export default class Contact extends React.Component<ContactProps, ContactState>
 	}
 
 }
+
+export default React.memo(Contact);
 
 const styles = StyleSheet.create({
 	contactContainer: {

@@ -10,7 +10,7 @@ interface NalliBadgeProps {
 interface NalliBadgeState {
 }
 
-export default class NalliBadge extends React.Component<NalliBadgeProps, NalliBadgeState> {
+export default class NalliBadge extends React.PureComponent<NalliBadgeProps, NalliBadgeState> {
 
 	constructor(props) {
 		super(props);

@@ -15,14 +15,11 @@ import NalliInput from '../../../components/nalli-input.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 import layout from '../../../constants/layout';
-import PhoneNumberSigner from '../../../crypto/phone-number-signer';
 import VariableStore, { NalliVariable } from '../../../service/variable-store';
 import WalletStore, { Wallet, WalletType } from '../../../service/wallet-store';
 import WalletService from '../../../service/wallet.service';
 
-export default class CreateWalletImportSeed extends React.Component<NavigationInjectedProps, any> {
-
-	readonly phoneNumberSigner = new PhoneNumberSigner();
+export default class CreateWalletImportSeed extends React.PureComponent<NavigationInjectedProps, any> {
 
 	constructor(props) {
 		super(props);

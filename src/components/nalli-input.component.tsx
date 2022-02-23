@@ -32,7 +32,7 @@ interface NalliInputState {
 	borderColor?: string;
 }
 
-export default class NalliInput extends React.Component<NalliInputProps, NalliInputState> {
+export default class NalliInput extends React.PureComponent<NalliInputProps, NalliInputState> {
 
 	constructor(props) {
 		super(props);

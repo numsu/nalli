@@ -22,7 +22,7 @@ interface BottomSheetProps {
 interface BottomSheetState {
 }
 
-export default class MyBottomSheet extends React.Component<BottomSheetProps, BottomSheetState> {
+export default class MyBottomSheet extends React.PureComponent<BottomSheetProps, BottomSheetState> {
 
 	constructor(props) {
 		super(props);

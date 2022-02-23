@@ -33,7 +33,7 @@ interface WalletInfoModalState {
 	walletInfo: Wallet;
 }
 
-export default class WalletInfoModal extends React.Component<WalletInfoModalProps, WalletInfoModalState> {
+export default class WalletInfoModal extends React.PureComponent<WalletInfoModalProps, WalletInfoModalState> {
 
 	subscriptions: EmitterSubscription[] = [];
 

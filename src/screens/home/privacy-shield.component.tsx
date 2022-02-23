@@ -26,7 +26,7 @@ interface PrivacyShieldState {
 	inactivationTime: string;
 }
 
-class PrivacyShield extends React.Component<PrivacyShieldProps, PrivacyShieldState> {
+class PrivacyShield extends React.PureComponent<PrivacyShieldProps, PrivacyShieldState> {
 
 	constructor(props) {
 		super(props);

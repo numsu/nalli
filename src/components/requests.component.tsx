@@ -26,7 +26,7 @@ interface RequestsState {
 	hasMore: boolean;
 }
 
-export default class NalliRequests extends React.Component<RequestsProps, RequestsState> {
+export default class NalliRequests extends React.PureComponent<RequestsProps, RequestsState> {
 
 	subscriptions: EmitterSubscription[] = [];
 	interval;
@@ -94,7 +94,7 @@ export default class NalliRequests extends React.Component<RequestsProps, Reques
 
 	render = () => {
 		if (this.state.requests.length === 0) {
-			return <></>;
+			return null;
 		}
 		const { requests } = this.state;
 		const { onAcceptPress } = this.props;

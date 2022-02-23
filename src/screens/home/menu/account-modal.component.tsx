@@ -36,7 +36,7 @@ interface AccountModalState {
 	pin: string;
 }
 
-export default class AccountModal extends React.Component<AccountModalProps, AccountModalState> {
+export default class AccountModal extends React.PureComponent<AccountModalProps, AccountModalState> {
 
 	constructor(props) {
 		super(props);

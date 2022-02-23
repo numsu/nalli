@@ -4,7 +4,7 @@ import Svg, { G, Path } from 'react-native-svg';
 
 import Colors from '../../constants/colors';
 
-export default class NalliLogo extends React.Component<any, any> {
+export default class NalliLogo extends React.PureComponent<any, any> {
 
 	constructor (props) {
 		super(props);

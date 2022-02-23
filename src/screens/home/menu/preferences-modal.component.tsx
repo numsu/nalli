@@ -22,7 +22,7 @@ interface PreferencesModalProps {
 	close: () => void;
 }
 
-export default class PreferencesModal extends React.Component<PreferencesModalProps, any> {
+export default class PreferencesModal extends React.PureComponent<PreferencesModalProps, any> {
 
 	private readonly PREFERENCES_KEYS = [
 		{ key: NalliVariable.ONLY_NALLI_USERS, def: false },

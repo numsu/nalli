@@ -36,7 +36,7 @@ interface ModalState {
 	appState: NalliAppState;
 }
 
-export default class NalliModal extends React.Component<ModalProps, ModalState> {
+export default class NalliModal extends React.PureComponent<ModalProps, ModalState> {
 
 	static animationDelay = 150;
 
@@ -96,6 +96,7 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 						isVisible={isOpen && appState == NalliAppState.ACTIVE}
 						onBackdropPress={onClose}
 						onBackButtonPress={onClose}
+						statusBarTranslucent
 						useNativeDriverForBackdrop
 						useNativeDriver>
 					<KeyboardAvoidingView
@@ -139,7 +140,7 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 				</Modal>
 			);
 		} else {
-			return (<></>);
+			return null;
 		}
 	}
 

@@ -20,7 +20,7 @@ import AuthService from '../service/auth.service';
 import ClientService from '../service/client.service';
 import ContactsService from '../service/contacts.service';
 
-export default class WelcomeScreen extends React.Component<NavigationInjectedProps, any> {
+export default class WelcomeScreen extends React.PureComponent<NavigationInjectedProps, any> {
 
 	state = {
 		phoneNumber: '',
