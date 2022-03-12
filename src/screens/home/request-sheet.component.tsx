@@ -9,11 +9,12 @@ import {
 	Keyboard,
 	Platform,
 	StyleSheet,
+	TouchableOpacity,
 	View,
 } from 'react-native';
 
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import { BottomSheetScrollView, TouchableOpacity } from '@gorhom/bottom-sheet';
+import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import CurrencyInput from '../../components/currency-input.component';

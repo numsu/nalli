@@ -3,7 +3,8 @@ import {
 	StyleSheet,
 	View,
 } from 'react-native';
-import { NavigationInjectedProps } from 'react-navigation';
+
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import NalliButton from '../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../components/text.component';
@@ -16,7 +17,7 @@ interface PermissionsState {
 	permission: number;
 }
 
-export default class Permissions extends React.PureComponent<NavigationInjectedProps, PermissionsState> {
+export default class Permissions extends React.PureComponent<NativeStackScreenProps<any>, PermissionsState> {
 
 	constructor(props) {
 		super(props);

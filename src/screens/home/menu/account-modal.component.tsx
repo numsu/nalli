@@ -6,7 +6,6 @@ import {
 	TextInput,
 	View,
 } from 'react-native';
-import { NavigationInjectedProps } from 'react-navigation';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -19,11 +18,12 @@ import layout from '../../../constants/layout';
 import AuthStore from '../../../service/auth-store';
 import BiometricsService, { EBiometricsType } from '../../../service/biometrics.service';
 import ClientService from '../../../service/client.service';
+import NavigationService from '../../../service/navigation.service';
 import VariableStore, { NalliVariable } from '../../../service/variable-store';
 import WalletStore from '../../../service/wallet-store';
 import ChangePinModal from './change-pin-modal.component';
 
-interface AccountModalProps extends NavigationInjectedProps {
+interface AccountModalProps {
 	isOpen: boolean;
 	close: () => void;
 }
@@ -129,7 +129,7 @@ export default class AccountModal extends React.PureComponent<AccountModalProps,
 			console.error(e);
 			Alert.alert('Error', 'Something went wrong deleting your information from your phone, but your information is deleted from our servers.');
 		}
-		this.props.navigation.navigate('Welcome');
+		NavigationService.navigate('Welcome');
 	}
 
 	render = () => {

@@ -6,7 +6,8 @@ import {
 	View,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
-import { NavigationInjectedProps } from 'react-navigation';
+
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import DismissKeyboardView from '../../../components/dismiss-keyboard-hoc.component';
 import Loading from '../../../components/loading.component';
@@ -19,7 +20,7 @@ import VariableStore, { NalliVariable } from '../../../service/variable-store';
 import WalletStore, { Wallet, WalletType } from '../../../service/wallet-store';
 import WalletService from '../../../service/wallet.service';
 
-export default class CreateWalletImportSeed extends React.PureComponent<NavigationInjectedProps, any> {
+export default class CreateWalletImportSeed extends React.PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);

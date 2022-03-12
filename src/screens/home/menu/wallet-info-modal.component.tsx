@@ -6,7 +6,6 @@ import {
 	TextInput,
 	View,
 } from 'react-native';
-import { Text } from 'react-native-elements';
 
 import MnemonicWord from '../../../components/mnemonic-word.component';
 import NalliModal, { EModalSize } from '../../../components/modal.component';
@@ -121,7 +120,7 @@ export default class WalletInfoModal extends React.PureComponent<WalletInfoModal
 				<View style={{ alignItems: 'center' }} key={account.accountIndex}>
 					<NalliText size={ETextSize.H2} style={styles.header}>{`Account #${account.accountIndex} private key`}</NalliText>
 					<ShowHide allowCopy copyValue={account.privateKey} confirmCopy>
-						<Text>{account.privateKey}</Text>
+						<NalliText>{account.privateKey}</NalliText>
 					</ShowHide>
 				</View>
 			));
@@ -144,7 +143,7 @@ export default class WalletInfoModal extends React.PureComponent<WalletInfoModal
 						</ShowHide>
 						<NalliText size={ETextSize.H2} style={styles.header}>Wallet seed</NalliText>
 						<ShowHide allowCopy copyValue={walletInfo.seed} confirmCopy>
-							<Text>{walletInfo.seed}</Text>
+							<NalliText>{walletInfo.seed}</NalliText>
 						</ShowHide>
 						{privateKeys}
 					</ScrollView>

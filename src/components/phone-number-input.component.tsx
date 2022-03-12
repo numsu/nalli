@@ -3,9 +3,9 @@ import React from 'react';
 import {
 	Platform,
 	StyleSheet,
+	TextInput,
 	View,
 } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
 import RNPickerSelect from 'react-native-picker-select';
 
 import Colors from '../constants/colors';

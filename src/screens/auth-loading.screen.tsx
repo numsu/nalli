@@ -9,7 +9,9 @@ import {
 	View,
 } from 'react-native';
 import uuid from 'react-native-uuid';
-import { NavigationInjectedProps } from 'react-navigation';
+
+import { StackActions } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import Colors from '../constants/colors';
 import AuthStore from '../service/auth-store';
@@ -18,7 +20,7 @@ import ContactsService from '../service/contacts.service';
 import VariableStore, { NalliVariable } from '../service/variable-store';
 import WalletStore from '../service/wallet-store';
 
-export default class AuthLoadingScreen extends React.PureComponent<NavigationInjectedProps, any> {
+export default class AuthLoadingScreen extends React.PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);
@@ -56,7 +58,7 @@ export default class AuthLoadingScreen extends React.PureComponent<NavigationInj
 			const client = await AuthStore.getClient();
 			if (!client) {
 				// If no client information set, navigate to welcome screen
-				this.props.navigation.navigate('Welcome');
+				this.props.navigation.dispatch(StackActions.replace('Welcome'));
 				return;
 			}
 
@@ -65,14 +67,14 @@ export default class AuthLoadingScreen extends React.PureComponent<NavigationInj
 				await ContactsService.getContacts(false);
 				const wallet = await WalletStore.getWallet();
 				if (wallet) {
-					this.props.navigation.navigate('Main');
+					this.props.navigation.dispatch(StackActions.replace('Home'));
 				} else {
-					this.props.navigation.navigate('Permissions');
+					this.props.navigation.dispatch(StackActions.replace('Permissions'));
 				}
 			} catch {
 				// If login token expired, navigate to pin screen
 				await AuthStore.clearAuthentication();
-				this.props.navigation.navigate('Login');
+				this.props.navigation.dispatch(StackActions.replace('Login'));
 			}
 		} catch (e) {
 			Alert.alert(

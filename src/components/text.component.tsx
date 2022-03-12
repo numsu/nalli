@@ -25,7 +25,7 @@ export enum ETextSize {
 	BUTTON_SMALL,
 }
 
-class NalliText extends React.PureComponent<TextProps, TextState> {
+export default class NalliText extends React.PureComponent<TextProps, TextState> {
 
 	constructor(props) {
 		super(props);
@@ -76,8 +76,6 @@ class NalliText extends React.PureComponent<TextProps, TextState> {
 	}
 
 }
-
-export default React.memo(NalliText);
 
 const styles = StyleSheet.create({
 	p: {

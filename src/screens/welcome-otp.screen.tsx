@@ -6,9 +6,8 @@ import {
 	View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-	NavigationInjectedProps,
-} from 'react-navigation';
+
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import NalliText, { ETextSize } from '../components/text.component';
 import Colors from '../constants/colors';
@@ -16,7 +15,7 @@ import AuthStore from '../service/auth-store';
 import AuthService from '../service/auth.service';
 import ClientService from '../service/client.service';
 
-interface WelcomeOtpScreenProps extends NavigationInjectedProps {
+interface WelcomeOtpScreenProps extends NativeStackScreenProps<any> {
 	phoneNumber: string;
 	phoneNumberCountry: string;
 }
@@ -35,7 +34,7 @@ export default class WelcomeOtpScreen extends React.PureComponent<WelcomeOtpScre
 	constructor(props: WelcomeOtpScreenProps) {
 		super(props);
 		this.codeInputRef = React.createRef();
-		this.state = props.navigation.getParam('state');
+		this.state = props.route.params.state;
 	}
 
 	componentDidMount = () => {
@@ -73,7 +72,6 @@ export default class WelcomeOtpScreen extends React.PureComponent<WelcomeOtpScre
 
 				const client = await ClientService.getClient();
 				AuthStore.setClient(client);
-
 				this.props.navigation.navigate('WelcomePin');
 			}
 		});

@@ -10,12 +10,13 @@ import {
 	Keyboard,
 	Platform,
 	StyleSheet,
+	TouchableOpacity,
 	View,
 } from 'react-native';
 import { Avatar } from 'react-native-elements';
 
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { BottomSheetScrollView, TouchableOpacity } from '@gorhom/bottom-sheet';
+import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import CurrencyInput from '../../components/currency-input.component';
@@ -522,7 +523,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 										convertedValue={convertedAmount}
 										reference={this.sendAmountRef}
 										onChangeText={(sendAmount: string, convertedAmount: string, currency: string) =>
-												this.setState({ sendAmount, convertedAmount, currency })} />
+											this.setState({ sendAmount, convertedAmount, currency })} />
 							</View>
 							{(tab != SendSheetTab.DONATION && !requestId && isPhoneNumberUser) &&
 								<View style={styles.tabs}>
@@ -531,13 +532,11 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 											onPress={() => this.onSwitchModePress(SendSheetTab.CONTACT)}>
 										<NalliText size={ETextSize.H2} style={styles.switchButtonText}>Contact</NalliText>
 									</TouchableOpacity>
-
 									<TouchableOpacity
 											style={[styles.switchButton, (tab == SendSheetTab.PHONE ? styles.selected : undefined)]}
 											onPress={() => this.onSwitchModePress(SendSheetTab.PHONE)}>
 										<NalliText size={ETextSize.H2} style={styles.switchButtonText}>Number</NalliText>
 									</TouchableOpacity>
-
 									<TouchableOpacity
 											style={[styles.switchButton, (tab == SendSheetTab.ADDRESS ? styles.selected : undefined)]}
 											onPress={() => this.onSwitchModePress(SendSheetTab.ADDRESS)}>

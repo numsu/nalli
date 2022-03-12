@@ -1,11 +1,13 @@
 import React from 'react';
 import {
 	Alert,
+	ScrollView,
 	StyleSheet,
 	View,
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { NavigationInjectedProps } from 'react-navigation';
+
+import { StackActions } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import NalliCopy from '../../../components/copy.component';
 import Loading from '../../../components/loading.component';
@@ -17,7 +19,7 @@ import VariableStore, { NalliVariable } from '../../../service/variable-store';
 import WalletStore from '../../../service/wallet-store';
 import WalletService, { Wallet } from '../../../service/wallet.service';
 
-export default class CreateWalletMnemonic extends React.PureComponent<NavigationInjectedProps, any> {
+export default class CreateWalletMnemonic extends React.PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);
@@ -63,7 +65,7 @@ export default class CreateWalletMnemonic extends React.PureComponent<Navigation
 							await WalletStore.setWallet(this.state.generated);
 							VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT, this.state.generated.accounts[0].address);
 							VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT_INDEX, 0);
-							this.props.navigation.navigate('Login');
+							this.props.navigation.dispatch(StackActions.replace('Login'));
 						} catch {
 							this.setState({ process: false });
 						}

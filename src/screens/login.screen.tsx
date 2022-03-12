@@ -7,9 +7,10 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native';
-import { NavigationInjectedProps } from 'react-navigation';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StackActions } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import DismissKeyboardView from '../components/dismiss-keyboard-hoc.component';
 import Loading, { LoadingStyle } from '../components/loading.component';
@@ -35,7 +36,7 @@ interface LoginState {
 	process: boolean;
 }
 
-export default class Login extends React.PureComponent<NavigationInjectedProps, LoginState> {
+export default class Login extends React.PureComponent<NativeStackScreenProps<any>, LoginState> {
 
 	constructor(props) {
 		super(props);
@@ -132,9 +133,9 @@ export default class Login extends React.PureComponent<NavigationInjectedProps, 
 			await ContactsService.refreshCache();
 			this.setState({ process: false, isBiometricProcess: false });
 			if (!wallet) {
-				this.props.navigation.navigate('Permissions');
+				this.props.navigation.dispatch(StackActions.replace('Permissions'));
 			} else {
-				this.props.navigation.navigate('Main');
+				this.props.navigation.dispatch(StackActions.replace('Home'));
 			}
 		} catch (e) {
 			console.error(e);
@@ -155,7 +156,7 @@ export default class Login extends React.PureComponent<NavigationInjectedProps, 
 		await AuthStore.clearPin();
 		await VariableStore.clear();
 		AsyncStorage.clear();
-		this.props.navigation.navigate('Welcome');
+		this.props.navigation.dispatch(StackActions.replace('Welcome'));
 	}
 
 	render = () => {

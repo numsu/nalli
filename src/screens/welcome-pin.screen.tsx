@@ -5,7 +5,9 @@ import {
 	TextInput,
 	View,
 } from 'react-native';
-import { NavigationInjectedProps } from 'react-navigation';
+
+import { StackActions } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import DismissKeyboardView from '../components/dismiss-keyboard-hoc.component';
 import NalliNumberPad from '../components/nalli-number-pad.component';
@@ -19,7 +21,7 @@ interface WelcomePinScreenState {
 	verify: boolean;
 }
 
-export default class WelcomePinScreen extends React.PureComponent<NavigationInjectedProps, WelcomePinScreenState> {
+export default class WelcomePinScreen extends React.PureComponent<NativeStackScreenProps<any>, WelcomePinScreenState> {
 
 	constructor(props) {
 		super(props);
@@ -40,7 +42,7 @@ export default class WelcomePinScreen extends React.PureComponent<NavigationInje
 				if (val.length == 6) {
 					if (this.state.pin == this.state.verifyPin) {
 						AuthStore.setPin(this.state.pin);
-						this.props.navigation.navigate('CreateWallet');
+						this.props.navigation.dispatch(StackActions.replace('CreateWallet'));
 					} else {
 						this.setState({
 							pin: '',

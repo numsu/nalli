@@ -2,12 +2,14 @@ import { tools, wallet } from 'nanocurrency-web';
 import React from 'react';
 import {
 	Alert,
+	ScrollView,
 	StyleSheet,
 	View,
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
-import { NavigationInjectedProps } from 'react-navigation';
+
+import { StackActions } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import Loading from '../../../components/loading.component';
 import MnemonicWord from '../../../components/mnemonic-word.component';
@@ -18,7 +20,7 @@ import VariableStore, { NalliVariable } from '../../../service/variable-store';
 import WalletStore, { Wallet, WalletType } from '../../../service/wallet-store';
 import WalletService from '../../../service/wallet.service';
 
-export default class CreateWalletImport extends React.PureComponent<NavigationInjectedProps, any> {
+export default class CreateWalletImport extends React.PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);
@@ -134,7 +136,7 @@ export default class CreateWalletImport extends React.PureComponent<NavigationIn
 			VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT, imported.accounts[0].address);
 			VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT_INDEX, 0);
 			await WalletStore.setWallet(imported);
-			this.props.navigation.navigate('Login');
+			this.props.navigation.dispatch(StackActions.replace('Login'));
 		} catch (e) {
 			console.error(e);
 			Alert.alert('Error', 'Something went wrong when saving the wallet');

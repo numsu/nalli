@@ -3,17 +3,18 @@ import React from 'react';
 import {
 	EmitterSubscription,
 	KeyboardAvoidingView,
+	ScrollView,
 	StyleSheet,
 	TouchableOpacity,
 	View,
 } from 'react-native';
 import { Avatar } from 'react-native-elements';
-import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SideMenu from 'react-native-side-menu-updated'
-import { NavigationInjectedProps } from 'react-navigation';
 
 import { Ionicons } from '@expo/vector-icons';
+import { StackActions } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import NalliCarousel from '../../components/carousel.component';
 import DismissKeyboardView from '../../components/dismiss-keyboard-hoc.component';
@@ -38,16 +39,16 @@ import RequestSheet from './request-sheet.component';
 import SendSheet from './send-sheet.component';
 import TransactionsSheet from './transactions-sheet.component';
 
-interface HomeScreenProps extends NavigationInjectedProps {
-}
-
 interface HomeScreenState {
 	price: number;
 	process: boolean;
 	walletIsOpen: boolean;
+	loaded: boolean;
 }
 
-export default class HomeScreen extends React.PureComponent<HomeScreenProps, HomeScreenState> {
+export default class HomeScreen extends React.PureComponent<NativeStackScreenProps<any>, HomeScreenState> {
+
+	static firstLoad = false;
 
 	requestsRef: NalliRequests;
 	sendSheetRef: SendSheet;
@@ -62,12 +63,9 @@ export default class HomeScreen extends React.PureComponent<HomeScreenProps, Hom
 			price: undefined,
 			process: false,
 			walletIsOpen: true,
+			loaded: true,
 		};
 	}
-
-	static navigationOptions = () => ({
-		headerShown: false,
-	});
 
 	componentDidMount = () => {
 		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.CURRENCY, () => this.getCurrentPrice()));
@@ -78,6 +76,20 @@ export default class HomeScreen extends React.PureComponent<HomeScreenProps, Hom
 		this.getCurrentPrice();
 		this.subscribeToNotifications();
 		NotificationService.checkPushNotificationRegistrationStatusAndRenewIfNecessary();
+		// if (!HomeScreen.firstLoad) {
+		// 	HomeScreen.firstLoad = true;
+		// 	this.forceUpdate();
+		// 	setTimeout(() => {
+		// 		this.props.navigation.dispatch(StackActions.reset({
+		// 			index: 0,
+		// 			key: null,
+		// 			actions: [NavigationActions.navigate({ routeName: 'Home' })]
+		// 		}));
+		// 		this.forceUpdate();
+		// 	}, 1500);
+		// } else {
+			// this.setState({ loaded: true });
+		// }
 	}
 
 	componentWillUnmount = () => {
@@ -185,7 +197,7 @@ export default class HomeScreen extends React.PureComponent<HomeScreenProps, Hom
 		await AuthStore.clearAuthentication();
 		await AuthStore.clearExpires();
 		await VariableStore.setVariable(NalliVariable.NO_AUTOLOGIN, true);
-		this.props.navigation.navigate('Login');
+		this.props.navigation.dispatch(StackActions.replace('Login'));
 	}
 
 	onSendPress = () => {
@@ -216,18 +228,19 @@ export default class HomeScreen extends React.PureComponent<HomeScreenProps, Hom
 	}
 
 	render = () => {
-		const { navigation } = this.props;
 		const {
 			price,
 			walletIsOpen,
+			loaded,
 		} = this.state;
 
 		return (
 			<PrivacyShield
+					loaded={loaded}
 					onAppStateChange={this.handleAppChangeState}>
 				<SideMenu
 						ref={menu => this.sidemenuRef = menu}
-						menu={<NalliMenu navigation={navigation} onDonatePress={this.onDonatePress} />}
+						menu={<NalliMenu onDonatePress={this.onDonatePress} />}
 						bounceBackOnOverdraw={false}
 						toleranceX={20}
 						autoClosing={false}>

@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
 	EmitterSubscription,
 	KeyboardAvoidingView,
 	Platform,
+	ScrollView,
 	StyleSheet,
 	View,
 } from 'react-native';
 import { Avatar } from 'react-native-elements';
-import { ScrollView } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
 
 import Colors from '../constants/colors';
@@ -36,7 +36,7 @@ interface ModalState {
 	appState: NalliAppState;
 }
 
-export default class NalliModal extends React.PureComponent<ModalProps, ModalState> {
+class NalliModal extends React.PureComponent<ModalProps, ModalState> {
 
 	static animationDelay = 150;
 
@@ -145,6 +145,8 @@ export default class NalliModal extends React.PureComponent<ModalProps, ModalSta
 	}
 
 }
+
+export default React.memo(NalliModal);
 
 export enum EModalSize {
 	LARGE,

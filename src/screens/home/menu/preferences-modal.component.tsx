@@ -1,10 +1,10 @@
 import React from 'react';
 import {
 	Alert,
+	ScrollView,
 	StyleSheet,
 	View,
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 
 import NalliModal, { EModalSize } from '../../../components/modal.component';
 import Setting from '../../../components/setting.component';

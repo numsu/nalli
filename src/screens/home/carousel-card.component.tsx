@@ -143,7 +143,7 @@ export default class CarouselCard extends React.PureComponent<CarouselCardProps,
 							{displayedCurrency == 'nano' &&
 								formattedBalance
 							}
-							{displayedCurrency == 'fiat' && price &&
+							{displayedCurrency == 'fiat' && !!price &&
 								(price * +balance).toFixed(2)
 							}
 							{displayedCurrency == 'fiat' && !price &&

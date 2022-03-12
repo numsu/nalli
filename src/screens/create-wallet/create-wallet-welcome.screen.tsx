@@ -1,19 +1,20 @@
 import React from 'react';
 import {
 	StyleSheet,
+	TouchableOpacity,
 	View,
 } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { NavigationInjectedProps } from 'react-navigation';
 
 import { SimpleLineIcons } from '@expo/vector-icons';
+import { StackActions } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import NalliButton from '../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
 import AuthStore from '../../service/auth-store';
 
-export default class CreateWalletWelcome extends React.PureComponent<NavigationInjectedProps, any> {
+export default class CreateWalletWelcome extends React.PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);
@@ -38,7 +39,7 @@ export default class CreateWalletWelcome extends React.PureComponent<NavigationI
 	onLogoutPress = async () => {
 		await AuthStore.clearAuthentication();
 		AuthStore.clearExpires();
-		this.props.navigation.navigate('Login');
+		this.props.navigation.dispatch(StackActions.replace('Login'));
 	}
 
 	render = () => {

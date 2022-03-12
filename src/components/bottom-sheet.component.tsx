@@ -40,6 +40,7 @@ export default class MyBottomSheet extends React.PureComponent<BottomSheetProps,
 			reference,
 			snapPoints,
 		} = this.props;
+
 		return (
 			<BottomSheet
 					index={initialSnap}

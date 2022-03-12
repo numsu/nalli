@@ -16,7 +16,7 @@ interface IconProps {
 	type: IconType,
 }
 
-class NalliIcon extends React.PureComponent<IconProps, any> {
+export default class NalliIcon extends React.PureComponent<IconProps, any> {
 
 	constructor(props) {
 		super(props);
@@ -43,5 +43,3 @@ class NalliIcon extends React.PureComponent<IconProps, any> {
 	}
 
 }
-
-export default React.memo(NalliIcon);
