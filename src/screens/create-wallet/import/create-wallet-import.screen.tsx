@@ -1,26 +1,20 @@
 import React from 'react';
 import {
+	ScrollView,
 	StyleSheet,
 	View,
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { NavigationInjectedProps } from 'react-navigation';
+
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import NalliButton from '../../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 
-export default class CreateWalletImportMnemonic extends React.Component<NavigationInjectedProps, any> {
+export default class CreateWalletImport extends React.PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);
-	}
-
-	static navigationOptions = () => {
-		return {
-			headerStyle: { height: 75, elevation: 0, shadowOpacity: 0 },
-			headerTitle: 'Import',
-		};
 	}
 
 	onRecoveryPress = () => {

@@ -4,17 +4,15 @@ import HttpService from './http.service';
 export default class WalletService {
 
 	private static readonly uri = '/wallet';
-	private static readonly phoneNumberSigner = new PhoneNumberSigner();
-
 	static async saveNewWallet(account: Account) {
 		const { privateKey, ...rest } = account;
-		const signature = await this.phoneNumberSigner.sign(privateKey);
+		const signature = await PhoneNumberSigner.sign(privateKey);
 		return HttpService.post<void>(`${this.uri}/new`, { signature, account: rest });
 	}
 
 	static async saveNewAccount(account: Account) {
 		const { privateKey, ...rest } = account;
-		const signature = await this.phoneNumberSigner.sign(privateKey);
+		const signature = await PhoneNumberSigner.sign(privateKey);
 		return HttpService.post<void>(`${this.uri}/account/new`, { signature, account: rest });
 	}
 

@@ -1,20 +1,17 @@
-import { NavigationActions } from 'react-navigation';
+import { CommonActions, createNavigationContainerRef } from "@react-navigation/native";
 
-let navigator;
+export const navigationRef = createNavigationContainerRef();
 
-const setTopLevelNavigator = (navigatorRef) => {
-	navigator = navigatorRef;
+export default class NavigationService {
+
+	static navigate = (name: string, params?: object) => {
+		if (navigationRef.isReady()) {
+			navigationRef.dispatch(CommonActions.reset({
+				index: 0,
+				key: null,
+				routes: [{ name, params }],
+			}));
+		}
+	}
+
 }
-
-const navigate = (routeName, params?) => {
-	navigator.dispatch(
-		NavigationActions.navigate({
-			routeName,
-			params,
-		}));
-}
-
-export default {
-	navigate,
-	setTopLevelNavigator,
-};

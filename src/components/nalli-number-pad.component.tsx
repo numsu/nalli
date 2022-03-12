@@ -26,7 +26,7 @@ interface NalliNumberPadState {
 	biometricsType: EBiometricsType;
 }
 
-export default class NalliNumberPad extends React.Component<NalliNumberPadProps, NalliNumberPadState> {
+export default class NalliNumberPad extends React.PureComponent<NalliNumberPadProps, NalliNumberPadState> {
 
 	numbers = '123456789';
 

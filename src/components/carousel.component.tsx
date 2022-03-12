@@ -23,7 +23,7 @@ interface CarouselState {
 	processing: boolean;
 }
 
-export default class NalliCarousel extends React.Component<CarouselProps, CarouselState> {
+export default class NalliCarousel extends React.PureComponent<CarouselProps, CarouselState> {
 
 	carouselRef;
 	subscriptions: EmitterSubscription[] = [];
@@ -52,7 +52,7 @@ export default class NalliCarousel extends React.Component<CarouselProps, Carous
 			}
 			this.setState({ accounts, activeAccountsLength: accountsLength }, async () => {
 				const index = await VariableStore.getVariable<number>(NalliVariable.SELECTED_ACCOUNT_INDEX, 0);
-				setTimeout(() => this.carouselRef.snapToItem(index, false, false), 250);
+				setTimeout(() => this.carouselRef?.snapToItem(index, false, false), 250);
 				this.setState({ activeAccount: index });
 			});
 		}));

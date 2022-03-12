@@ -4,11 +4,13 @@ import {
 	Alert,
 	StyleSheet,
 	TextInput,
+	TouchableOpacity,
 	View,
 } from 'react-native';
-import { NavigationInjectedProps } from 'react-navigation';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StackActions } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import DismissKeyboardView from '../components/dismiss-keyboard-hoc.component';
 import Loading, { LoadingStyle } from '../components/loading.component';
@@ -34,9 +36,7 @@ interface LoginState {
 	process: boolean;
 }
 
-export default class Login extends React.Component<NavigationInjectedProps, LoginState> {
-
-	readonly phoneNumberSigner = new PhoneNumberSigner();
+export default class Login extends React.PureComponent<NativeStackScreenProps<any>, LoginState> {
 
 	constructor(props) {
 		super(props);
@@ -119,7 +119,7 @@ export default class Login extends React.Component<NavigationInjectedProps, Logi
 		if (!wallet) {
 			signature = await VariableStore.getVariable(NalliVariable.DEVICE_ID);
 		} else {
-			signature = await this.phoneNumberSigner.sign();
+			signature = await PhoneNumberSigner.sign();
 		}
 
 		this.setState({ process: true });
@@ -131,10 +131,11 @@ export default class Login extends React.Component<NavigationInjectedProps, Logi
 			});
 			await AuthStore.setAuthentication(token.accessToken);
 			await ContactsService.refreshCache();
+			this.setState({ process: false, isBiometricProcess: false });
 			if (!wallet) {
-				this.props.navigation.navigate('Permissions');
+				this.props.navigation.dispatch(StackActions.replace('CreateWallet'));
 			} else {
-				this.props.navigation.navigate('Main');
+				this.props.navigation.dispatch(StackActions.replace('Home'));
 			}
 		} catch (e) {
 			console.error(e);
@@ -155,7 +156,7 @@ export default class Login extends React.Component<NavigationInjectedProps, Logi
 		await AuthStore.clearPin();
 		await VariableStore.clear();
 		AsyncStorage.clear();
-		this.props.navigation.navigate('Welcome');
+		this.props.navigation.dispatch(StackActions.replace('Auth'));
 	}
 
 	render = () => {
@@ -164,9 +165,9 @@ export default class Login extends React.Component<NavigationInjectedProps, Logi
 			<DismissKeyboardView style={styles.container}>
 				<StatusBar translucent style='light' />
 				<Loading style={LoadingStyle.LIGHT} color='white' show={process} />
-				{/* <TouchableOpacity onPress={this.clearWalletInfo}> */}
+				<TouchableOpacity onLongPress={this.clearWalletInfo}>
 					<NalliLogo width={150} height={60} color='white' />
-				{/* </TouchableOpacity> */}
+				</TouchableOpacity>
 				<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 					Enter pin
 				</NalliText>

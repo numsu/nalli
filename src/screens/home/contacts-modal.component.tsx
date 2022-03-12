@@ -27,7 +27,7 @@ interface ContactsModalState {
 	process: boolean;
 }
 
-export default class ContactsModal extends React.Component<ContactsModalProps, ContactsModalState> {
+export default class ContactsModal extends React.PureComponent<ContactsModalProps, ContactsModalState> {
 
 	contactsSearchRef: RefObject<any>;
 	subscriptions = [] as EmitterSubscription[];

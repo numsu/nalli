@@ -6,9 +6,9 @@ import {
 	View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-	NavigationInjectedProps,
-} from 'react-navigation';
+
+import { StackActions } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import NalliText, { ETextSize } from '../components/text.component';
 import Colors from '../constants/colors';
@@ -16,7 +16,7 @@ import AuthStore from '../service/auth-store';
 import AuthService from '../service/auth.service';
 import ClientService from '../service/client.service';
 
-interface WelcomeOtpScreenProps extends NavigationInjectedProps {
+interface WelcomeOtpScreenProps extends NativeStackScreenProps<any> {
 	phoneNumber: string;
 	phoneNumberCountry: string;
 }
@@ -28,14 +28,14 @@ interface WelcomeOtpScreenState {
 	tries: number;
 }
 
-export default class WelcomeOtpScreen extends React.Component<WelcomeOtpScreenProps, WelcomeOtpScreenState> {
+export default class WelcomeOtpScreen extends React.PureComponent<WelcomeOtpScreenProps, WelcomeOtpScreenState> {
 
 	codeInputRef: RefObject<TextInput>;
 
 	constructor(props: WelcomeOtpScreenProps) {
 		super(props);
 		this.codeInputRef = React.createRef();
-		this.state = props.navigation.getParam('state');
+		this.state = props.route.params.state;
 	}
 
 	componentDidMount = () => {
@@ -64,7 +64,7 @@ export default class WelcomeOtpScreen extends React.Component<WelcomeOtpScreenPr
 							'Error',
 							'Too many failed attempts. Please wait a few minutes to request a new code.',
 						);
-						this.props.navigation.navigate('Welcome');
+						this.props.navigation.dispatch(StackActions.replace('Auth'));
 					} else {
 						this.setState({ otp: '', tries: this.state.tries + 1 });
 					}
@@ -73,8 +73,7 @@ export default class WelcomeOtpScreen extends React.Component<WelcomeOtpScreenPr
 
 				const client = await ClientService.getClient();
 				AuthStore.setClient(client);
-
-				this.props.navigation.navigate('WelcomePin');
+				this.props.navigation.dispatch(StackActions.replace('WelcomePin'));
 			}
 		});
 	}

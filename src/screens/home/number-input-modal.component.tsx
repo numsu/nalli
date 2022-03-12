@@ -22,7 +22,7 @@ interface NumberInputModalState {
 	isOpen: boolean;
 }
 
-export default class PhoneNumberInputModal extends React.Component<NumberInputModalProps, NumberInputModalState> {
+export default class PhoneNumberInputModal extends React.PureComponent<NumberInputModalProps, NumberInputModalState> {
 
 	constructor(props) {
 		super(props);

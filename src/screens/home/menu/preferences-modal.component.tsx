@@ -1,10 +1,10 @@
 import React from 'react';
 import {
 	Alert,
+	ScrollView,
 	StyleSheet,
 	View,
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 
 import NalliModal, { EModalSize } from '../../../components/modal.component';
 import Setting from '../../../components/setting.component';
@@ -22,7 +22,7 @@ interface PreferencesModalProps {
 	close: () => void;
 }
 
-export default class PreferencesModal extends React.Component<PreferencesModalProps, any> {
+export default class PreferencesModal extends React.PureComponent<PreferencesModalProps, any> {
 
 	private readonly PREFERENCES_KEYS = [
 		{ key: NalliVariable.ONLY_NALLI_USERS, def: false },

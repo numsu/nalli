@@ -19,7 +19,7 @@ interface MnemonicWordProps {
 interface MnemonicWordState {
 }
 
-export default class MnemonicWord extends React.Component<MnemonicWordProps, MnemonicWordState> {
+export default class MnemonicWord extends React.PureComponent<MnemonicWordProps, MnemonicWordState> {
 
 	constructor(props) {
 		super(props);

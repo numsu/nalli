@@ -1,19 +1,20 @@
 import { wallet } from 'nanocurrency-web';
-import React, { RefObject } from 'react';
+import React from 'react';
 import {
 	EmitterSubscription,
 	KeyboardAvoidingView,
+	ScrollView,
 	StyleSheet,
 	TouchableOpacity,
 	View,
 } from 'react-native';
 import { Avatar } from 'react-native-elements';
-import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SideMenu from 'react-native-side-menu-updated'
-import { NavigationInjectedProps } from 'react-navigation';
 
 import { Ionicons } from '@expo/vector-icons';
+import { CommonActions, StackActions } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import NalliCarousel from '../../components/carousel.component';
 import DismissKeyboardView from '../../components/dismiss-keyboard-hoc.component';
@@ -38,41 +39,33 @@ import RequestSheet from './request-sheet.component';
 import SendSheet from './send-sheet.component';
 import TransactionsSheet from './transactions-sheet.component';
 
-interface HomeScreenProps extends NavigationInjectedProps {
-}
-
 interface HomeScreenState {
 	price: number;
-	isMenuOpen: boolean;
-	walletIsOpen: boolean;
 	process: boolean;
+	walletIsOpen: boolean;
+	loaded: boolean;
 }
 
-export default class HomeScreen extends React.Component<HomeScreenProps, HomeScreenState> {
+export default class HomeScreen extends React.PureComponent<NativeStackScreenProps<any>, HomeScreenState> {
 
-	requestSheetRef: RefObject<any>;
+	static firstLoad = false;
+
 	requestsRef: NalliRequests;
-	sendRef: SendSheet;
-	sendSheetRef: RefObject<any>;
+	sendSheetRef: SendSheet;
+	requestSheetRef: RequestSheet;
 	sidemenuRef: SideMenu;
 	subscriptions: EmitterSubscription[] = [];
 	transactionSheetRef: TransactionsSheet;
 
 	constructor(props) {
 		super(props);
-		this.sendSheetRef = React.createRef();
-		this.requestSheetRef = React.createRef();
 		this.state = {
 			price: undefined,
-			isMenuOpen: false,
-			walletIsOpen: true,
 			process: false,
+			walletIsOpen: true,
+			loaded: false,
 		};
 	}
-
-	static navigationOptions = () => ({
-		headerShown: false,
-	});
 
 	componentDidMount = () => {
 		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.CURRENCY, () => this.getCurrentPrice()));
@@ -83,6 +76,28 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 		this.getCurrentPrice();
 		this.subscribeToNotifications();
 		NotificationService.checkPushNotificationRegistrationStatusAndRenewIfNecessary();
+		this.executeUglyFixForDuplicateElementsOnTheScreen();
+	}
+
+	/**
+	 * When loading the application for the first time, for some reason elements render on top of each other.
+	 * In that case, reset the screen and basically load it twice. Display a loading overlay during that time.
+	 */
+	executeUglyFixForDuplicateElementsOnTheScreen = () => {
+		if (!HomeScreen.firstLoad) {
+			HomeScreen.firstLoad = true;
+			this.forceUpdate();
+			setTimeout(() => {
+				this.props.navigation.dispatch(CommonActions.reset({
+					index: 0,
+					key: null,
+					routes: [{ name: 'Home' }],
+				}));
+				this.forceUpdate();
+			}, 1500);
+		} else {
+			this.setState({ loaded: true });
+		}
 	}
 
 	componentWillUnmount = () => {
@@ -188,32 +203,32 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 
 	logout = async () => {
 		await AuthStore.clearAuthentication();
-		AuthStore.clearExpires();
+		await AuthStore.clearExpires();
 		await VariableStore.setVariable(NalliVariable.NO_AUTOLOGIN, true);
-		this.props.navigation.navigate('Login');
+		this.props.navigation.dispatch(StackActions.replace('Login'));
 	}
 
 	onSendPress = () => {
-		this.sendSheetRef.current.snapToIndex(0);
+		this.sendSheetRef.open();
+	}
+
+	onReceivePress = () => {
+		this.requestSheetRef.open();
 	}
 
 	onSendSuccess = () => {
 		this.requestsRef.fetchRequests();
 	}
 
-	onReceivePress = () => {
-		this.requestSheetRef.current.snapToIndex(0);
-	}
-
 	onDonatePress = () => {
 		this.sidemenuRef.openMenu(false);
 		this.onSendPress();
-		this.sendRef.toggleDonate(true);
+		this.sendSheetRef.toggleDonate(true);
 	}
 
 	onRequestAcceptPress = (request: Request) => {
 		this.onSendPress();
-		this.sendRef.fillWithRequest(request);
+		this.sendSheetRef.fillWithRequest(request);
 	}
 
 	openMenu = () => {
@@ -221,18 +236,19 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 	}
 
 	render = () => {
-		const { navigation } = this.props;
 		const {
 			price,
 			walletIsOpen,
+			loaded,
 		} = this.state;
 
 		return (
 			<PrivacyShield
+					loaded={loaded}
 					onAppStateChange={this.handleAppChangeState}>
 				<SideMenu
 						ref={menu => this.sidemenuRef = menu}
-						menu={<NalliMenu navigation={navigation} onDonatePress={this.onDonatePress} />}
+						menu={<NalliMenu onDonatePress={this.onDonatePress} />}
 						bounceBackOnOverdraw={false}
 						toleranceX={20}
 						autoClosing={false}>
@@ -286,10 +302,9 @@ export default class HomeScreen extends React.Component<HomeScreenProps, HomeScr
 								</View>
 								<TransactionsSheet ref={c => this.transactionSheetRef = c} />
 								<SendSheet
-										ref={c => this.sendRef = c}
-										reference={this.sendSheetRef}
+										ref={c => this.sendSheetRef = c}
 										onSendSuccess={this.onSendSuccess} />
-								<RequestSheet reference={this.requestSheetRef} />
+								<RequestSheet ref={c => this.requestSheetRef = c} />
 							</DismissKeyboardView>
 						</KeyboardAvoidingView>
 					</ScrollView>

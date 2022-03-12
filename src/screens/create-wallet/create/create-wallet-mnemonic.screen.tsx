@@ -1,11 +1,13 @@
 import React from 'react';
 import {
 	Alert,
+	ScrollView,
 	StyleSheet,
 	View,
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { NavigationInjectedProps } from 'react-navigation';
+
+import { StackActions } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import NalliCopy from '../../../components/copy.component';
 import Loading from '../../../components/loading.component';
@@ -13,14 +15,11 @@ import MnemonicWord from '../../../components/mnemonic-word.component';
 import NalliButton from '../../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
-import PhoneNumberSigner from '../../../crypto/phone-number-signer';
 import VariableStore, { NalliVariable } from '../../../service/variable-store';
 import WalletStore from '../../../service/wallet-store';
 import WalletService, { Wallet } from '../../../service/wallet.service';
 
-export default class CreateWalletMnemonic extends React.Component<NavigationInjectedProps, any> {
-
-	readonly phoneNumberSigner = new PhoneNumberSigner();
+export default class CreateWalletMnemonic extends React.PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);
@@ -28,14 +27,7 @@ export default class CreateWalletMnemonic extends React.Component<NavigationInje
 			process: false,
 			started: false,
 			wordDisplay: false,
-			generated: props.navigation.getParam('generated') as Wallet,
-		};
-	}
-
-	static navigationOptions = () => {
-		return {
-			headerStyle: { height: 75, elevation: 0, shadowOpacity: 0 },
-			headerTitle: 'New wallet',
+			generated: props.route.params.generated as Wallet,
 		};
 	}
 
@@ -66,7 +58,7 @@ export default class CreateWalletMnemonic extends React.Component<NavigationInje
 							await WalletStore.setWallet(this.state.generated);
 							VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT, this.state.generated.accounts[0].address);
 							VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT_INDEX, 0);
-							this.props.navigation.navigate('Login');
+							this.props.navigation.dispatch(StackActions.replace('Login'));
 						} catch {
 							this.setState({ process: false });
 						}

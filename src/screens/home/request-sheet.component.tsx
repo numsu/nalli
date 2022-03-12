@@ -10,11 +10,10 @@ import {
 	Platform,
 	StyleSheet,
 	TouchableOpacity,
-	View,
 } from 'react-native';
 
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import CurrencyInput from '../../components/currency-input.component';
@@ -36,7 +35,6 @@ import { SendSheetRecipient } from './send-sheet.component';
 const logo = require('../../assets/images/icon.png');
 
 export interface RequestSheetProps {
-	reference: RefObject<any>;
 }
 
 export interface RequestSheetState {
@@ -63,7 +61,7 @@ enum RequestMode {
 	QR,
 }
 
-export default class RequestSheet extends React.Component<RequestSheetProps, RequestSheetState> {
+export default class RequestSheet extends React.PureComponent<RequestSheetProps, RequestSheetState> {
 
 	requestSheetRef: RefObject<any>;
 	sendAnimation;
@@ -71,7 +69,7 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 
 	constructor(props) {
 		super(props);
-		this.requestSheetRef = props.reference;
+		this.requestSheetRef = React.createRef();
 		this.state = {
 			address: '',
 			contactsModalOpen: false,
@@ -112,6 +110,10 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 		}
 
 		this.setState({ address, requestMode, isPhoneNumberUser });
+	}
+
+	open = () => {
+		this.requestSheetRef.current.snapToIndex(0);
 	}
 
 	onCopyPress = (address: string) => {
@@ -242,7 +244,6 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 	}
 
 	render = () => {
-		const { reference } = this.props;
 		const {
 			address,
 			contactsModalOpen,
@@ -262,8 +263,8 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 		let view;
 		if (success) {
 			view = (
-				<View style={styles.sendingContainer}>
-					<View style={styles.animationContainer}>
+				<BottomSheetView style={styles.sendingContainer}>
+					<BottomSheetView style={styles.animationContainer}>
 						<LottieView
 								ref={animation => {
 									this.sendAnimation = animation;
@@ -272,35 +273,35 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 								loop={false}
 								resizeMode='cover'
 								source={require('../../assets/lottie/sent.json')} />
-					</View>
-					<View style={styles.successTextContainer}>
+					</BottomSheetView>
+					<BottomSheetView style={styles.successTextContainer}>
 						<NalliText style={styles.successText}>You requested <NalliText style={[styles.successText, styles.successTextColor]}>Ӿ&nbsp;{requestAmount}</NalliText></NalliText>
 						<NalliText style={styles.successText}>from <NalliText style={[styles.successText, styles.successTextColor]}>{recipient.name}</NalliText></NalliText>
-					</View>
-					<View style={styles.confirmButton}>
+					</BottomSheetView>
+					<BottomSheetView style={styles.confirmButton}>
 						<NalliButton
 								text={'Close'}
 								solid
 								onPress={() => (this.clearState(), this.requestSheetRef.current.close())} />
-					</View>
-				</View>
+					</BottomSheetView>
+				</BottomSheetView>
 			);
 		} else {
 			if (requestMode == RequestMode.QR) {
 				view = (
 					<BottomSheetScrollView keyboardDismissMode={'interactive'} style={styles.transactionSheetContent}>
-						<View style={styles.qrcodeContainer}>
+						<BottomSheetView style={styles.qrcodeContainer}>
 							<NalliText style={styles.text}>
 								Scan the QR-code below to send Nano to this wallet
 							</NalliText>
-							<View style={styles.qrcode}>
+							<BottomSheetView style={styles.qrcode}>
 								<QRCode
 										value={`nano:${address}`}
 										logo={logo}
 										logoBorderRadius={0}
 										quietZone={4}
 										size={200} />
-							</View>
+							</BottomSheetView>
 							<NalliNanoAddress
 									contentContainerStyle={styles.addressContainer}
 									style={styles.text}>
@@ -312,21 +313,21 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 									text={showCopiedText ? 'Copied' : 'Copy address'}
 									style={styles.copyButton}
 									onPress={() => this.onCopyPress(address)} />
-						</View>
+						</BottomSheetView>
 					</BottomSheetScrollView>
 				);
 			} else {
 				view = (
-					<View style={styles.transactionSheetContent}>
+					<BottomSheetView style={styles.transactionSheetContent}>
 						<BottomSheetScrollView keyboardDismissMode={'interactive'}>
-							<View style={styles.amountContainer}>
+							<BottomSheetView style={styles.amountContainer}>
 								<CurrencyInput
 										value={requestAmount}
 										convertedValue={convertedAmount}
 										hideMaxButton
 										onChangeText={(requestAmount: string, convertedAmount: string, currency: string) =>
 												this.setState({ requestAmount: requestAmount, convertedAmount, currency })} />
-							</View>
+							</BottomSheetView>
 							<NalliInput
 									style={styles.messageInput}
 									value={message}
@@ -350,19 +351,19 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 							}
 						</BottomSheetScrollView>
 						{recipient &&
-							<View style={styles.confirmButton}>
+							<BottomSheetView style={styles.confirmButton}>
 								<NalliButton
 										text='Request'
 										solid
 										onPress={this.confirmRequest}
 										disabled={!recipient || !requestAmount || process} />
-							</View>
+							</BottomSheetView>
 						}
 						<ContactsModal
 								isOpen={contactsModalOpen}
 								onlyNalliUsers
 								onSelectContact={this.onConfirmRecipient} />
-					</View>
+					</BottomSheetView>
 				)
 			}
 		}
@@ -386,13 +387,13 @@ export default class RequestSheet extends React.Component<RequestSheetProps, Req
 				</TouchableOpacity>
 			);
 		} else {
-			headerIconComponent = <></>;
+			headerIconComponent = null;
 		}
 
 		return (
 			<MyBottomSheet
 					initialSnap={-1}
-					reference={reference}
+					reference={this.requestSheetRef}
 					enablePanDownToClose={!process}
 					enableLinearGradient
 					snapPoints={['88%']}

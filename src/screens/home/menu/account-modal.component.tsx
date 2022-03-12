@@ -6,7 +6,6 @@ import {
 	TextInput,
 	View,
 } from 'react-native';
-import { NavigationInjectedProps } from 'react-navigation';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -15,15 +14,17 @@ import NalliButton from '../../../components/nalli-button.component';
 import NalliNumberPad from '../../../components/nalli-number-pad.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
+import { ANIMATION_DELAY } from '../../../constants/globals';
 import layout from '../../../constants/layout';
 import AuthStore from '../../../service/auth-store';
 import BiometricsService, { EBiometricsType } from '../../../service/biometrics.service';
 import ClientService from '../../../service/client.service';
+import NavigationService from '../../../service/navigation.service';
 import VariableStore, { NalliVariable } from '../../../service/variable-store';
 import WalletStore from '../../../service/wallet-store';
 import ChangePinModal from './change-pin-modal.component';
 
-interface AccountModalProps extends NavigationInjectedProps {
+interface AccountModalProps {
 	isOpen: boolean;
 	close: () => void;
 }
@@ -36,7 +37,7 @@ interface AccountModalState {
 	pin: string;
 }
 
-export default class AccountModal extends React.Component<AccountModalProps, AccountModalState> {
+export default class AccountModal extends React.PureComponent<AccountModalProps, AccountModalState> {
 
 	constructor(props) {
 		super(props);
@@ -85,7 +86,7 @@ export default class AccountModal extends React.Component<AccountModalProps, Acc
 	}
 
 	closeAndLock = () => {
-		setTimeout(() => this.setState({ isUnlocked: false }), NalliModal.animationDelay); // Wait for animation
+		setTimeout(() => this.setState({ isUnlocked: false }), ANIMATION_DELAY); // Wait for animation
 		this.props.close();
 	}
 
@@ -129,7 +130,7 @@ export default class AccountModal extends React.Component<AccountModalProps, Acc
 			console.error(e);
 			Alert.alert('Error', 'Something went wrong deleting your information from your phone, but your information is deleted from our servers.');
 		}
-		this.props.navigation.navigate('Welcome');
+		NavigationService.navigate('Auth');
 	}
 
 	render = () => {

@@ -26,7 +26,7 @@ interface QRCodeScannerState {
 	open: boolean;
 }
 
-export default class QRCodeScanner extends React.Component<QRCodeScannerProps, QRCodeScannerState> {
+export default class QRCodeScanner extends React.PureComponent<QRCodeScannerProps, QRCodeScannerState> {
 
 	constructor(props) {
 		super(props);

@@ -10,7 +10,7 @@ export default class PhoneNumberSigner {
 	 *
 	 * @returns a hexadecimal string which is the phone number signed with the seed
 	 */
-	async sign(privateKey?: string): Promise<string> {
+	static async sign(privateKey?: string): Promise<string> {
 		const client = await AuthStore.getClient();
 
 		if (!privateKey) {

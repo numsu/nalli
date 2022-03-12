@@ -17,7 +17,7 @@ interface LoadingProps {
 	color?: 'main' | 'white';
 }
 
-export default class Loading extends React.Component<LoadingProps, any> {
+export default class Loading extends React.PureComponent<LoadingProps, any> {
 
 	animation;
 
@@ -70,7 +70,7 @@ export default class Loading extends React.Component<LoadingProps, any> {
 				);
 			}
 		} else {
-			return (<></>);
+			return null;
 		}
 	}
 

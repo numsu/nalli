@@ -1,30 +1,24 @@
 import { wallet } from 'nanocurrency-web';
 import React from 'react';
 import {
+	ScrollView,
 	StyleSheet,
 	View,
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { NavigationInjectedProps } from 'react-navigation';
+
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import NalliButton from '../../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 import { Wallet, WalletType } from '../../../service/wallet-store';
 
-export default class CreateWalletNew extends React.Component<NavigationInjectedProps, any> {
+export default class CreateWalletNew extends React.PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);
 		this.state = {
 			process: false,
-		};
-	}
-
-	static navigationOptions = () => {
-		return {
-			headerStyle: { height: 75, elevation: 0, shadowOpacity: 0 },
-			headerTitle: 'New wallet',
 		};
 	}
 

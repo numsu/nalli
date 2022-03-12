@@ -27,7 +27,7 @@ export interface TransactionModalState {
 	transaction: WalletTransaction;
 }
 
-export default class TransactionModal extends React.Component<TransactionModalProps, TransactionModalState> {
+export default class TransactionModal extends React.PureComponent<TransactionModalProps, TransactionModalState> {
 
 	constructor(props) {
 		super(props);

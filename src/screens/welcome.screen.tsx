@@ -5,8 +5,8 @@ import {
 	StyleSheet,
 	View,
 } from 'react-native';
-import { Text } from 'react-native-elements';
-import { NavigationInjectedProps } from 'react-navigation';
+
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import DismissKeyboardView from '../components/dismiss-keyboard-hoc.component';
 import Link from '../components/link.component';
@@ -20,7 +20,7 @@ import AuthService from '../service/auth.service';
 import ClientService from '../service/client.service';
 import ContactsService from '../service/contacts.service';
 
-export default class WelcomeScreen extends React.Component<NavigationInjectedProps, any> {
+export default class WelcomeScreen extends React.PureComponent<NativeStackScreenProps<any>, any> {
 
 	state = {
 		phoneNumber: '',
@@ -102,8 +102,7 @@ export default class WelcomeScreen extends React.Component<NavigationInjectedPro
 						style={styles.loginButton}
 						textStyle={styles.loginButtonText}
 						disabled={process} />
-				<Text
-						allowFontScaling={false}
+				<NalliText
 						style={styles.privacyPolicy}>
 					By continuing to use this app, you agree that you have read, understood and accepted our
 					&nbsp;<Link
@@ -117,7 +116,7 @@ export default class WelcomeScreen extends React.Component<NavigationInjectedPro
 							style={styles.link}>
 						Terms and Conditions
 					</Link>
-				</Text>
+				</NalliText>
 				<View style={styles.noPhoneNumberLoginContainer}>
 					<NalliText style={styles.privacyPolicy}>Or if you would rather use the plain wallet without the awesome functionalities that phone numbers provide</NalliText>
 					<NalliButton

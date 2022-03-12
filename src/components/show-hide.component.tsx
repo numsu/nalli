@@ -22,7 +22,7 @@ interface ShowHideState {
 	show: boolean;
 }
 
-export default class ShowHide extends React.Component<ShowHideProps, ShowHideState> {
+export default class ShowHide extends React.PureComponent<ShowHideProps, ShowHideState> {
 
 	constructor(props) {
 		super(props);

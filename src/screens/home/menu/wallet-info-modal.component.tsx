@@ -6,7 +6,6 @@ import {
 	TextInput,
 	View,
 } from 'react-native';
-import { Text } from 'react-native-elements';
 
 import MnemonicWord from '../../../components/mnemonic-word.component';
 import NalliModal, { EModalSize } from '../../../components/modal.component';
@@ -14,6 +13,7 @@ import NalliNumberPad from '../../../components/nalli-number-pad.component';
 import ShowHide from '../../../components/show-hide.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
+import { ANIMATION_DELAY } from '../../../constants/globals';
 import layout from '../../../constants/layout';
 import AuthStore from '../../../service/auth-store';
 import BiometricsService, { EBiometricsType } from '../../../service/biometrics.service';
@@ -33,7 +33,7 @@ interface WalletInfoModalState {
 	walletInfo: Wallet;
 }
 
-export default class WalletInfoModal extends React.Component<WalletInfoModalProps, WalletInfoModalState> {
+export default class WalletInfoModal extends React.PureComponent<WalletInfoModalProps, WalletInfoModalState> {
 
 	subscriptions: EmitterSubscription[] = [];
 
@@ -98,7 +98,7 @@ export default class WalletInfoModal extends React.Component<WalletInfoModalProp
 	}
 
 	closeAndLock = () => {
-		setTimeout(() => this.setState({ isUnlocked: false }), NalliModal.animationDelay); // Wait for animation
+		setTimeout(() => this.setState({ isUnlocked: false }), ANIMATION_DELAY); // Wait for animation
 		this.props.close();
 	}
 
@@ -121,7 +121,7 @@ export default class WalletInfoModal extends React.Component<WalletInfoModalProp
 				<View style={{ alignItems: 'center' }} key={account.accountIndex}>
 					<NalliText size={ETextSize.H2} style={styles.header}>{`Account #${account.accountIndex} private key`}</NalliText>
 					<ShowHide allowCopy copyValue={account.privateKey} confirmCopy>
-						<Text>{account.privateKey}</Text>
+						<NalliText>{account.privateKey}</NalliText>
 					</ShowHide>
 				</View>
 			));
@@ -144,7 +144,7 @@ export default class WalletInfoModal extends React.Component<WalletInfoModalProp
 						</ShowHide>
 						<NalliText size={ETextSize.H2} style={styles.header}>Wallet seed</NalliText>
 						<ShowHide allowCopy copyValue={walletInfo.seed} confirmCopy>
-							<Text>{walletInfo.seed}</Text>
+							<NalliText>{walletInfo.seed}</NalliText>
 						</ShowHide>
 						{privateKeys}
 					</ScrollView>

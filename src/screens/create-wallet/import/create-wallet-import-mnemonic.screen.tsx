@@ -2,26 +2,25 @@ import { tools, wallet } from 'nanocurrency-web';
 import React from 'react';
 import {
 	Alert,
+	ScrollView,
 	StyleSheet,
 	View,
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
-import { NavigationInjectedProps } from 'react-navigation';
+
+import { StackActions } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import Loading from '../../../components/loading.component';
 import MnemonicWord from '../../../components/mnemonic-word.component';
 import NalliButton from '../../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
-import PhoneNumberSigner from '../../../crypto/phone-number-signer';
 import VariableStore, { NalliVariable } from '../../../service/variable-store';
 import WalletStore, { Wallet, WalletType } from '../../../service/wallet-store';
 import WalletService from '../../../service/wallet.service';
 
-export default class CreateWalletImport extends React.Component<NavigationInjectedProps, any> {
-
-	readonly phoneNumberSigner = new PhoneNumberSigner();
+export default class CreateWalletImportMnemonic extends React.PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);
@@ -30,13 +29,6 @@ export default class CreateWalletImport extends React.Component<NavigationInject
 			words,
 			refs: words.map(() => React.createRef()),
 			process: false,
-		};
-	}
-
-	static navigationOptions = () => {
-		return {
-			headerStyle: { height: 75, elevation: 0, shadowOpacity: 0 },
-			headerTitle: 'Recovery phrase',
 		};
 	}
 
@@ -51,6 +43,7 @@ export default class CreateWalletImport extends React.Component<NavigationInject
 				currentIndex++;
 			}
 			this.setState({ words });
+			this.forceUpdate();
 		} else if (inputWords.length == 1 || (inputWords.length == 2 && !inputWords[1])) {
 			if (input.endsWith(' ')) {
 				if (wordIndex < 24) {
@@ -137,7 +130,7 @@ export default class CreateWalletImport extends React.Component<NavigationInject
 			VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT, imported.accounts[0].address);
 			VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT_INDEX, 0);
 			await WalletStore.setWallet(imported);
-			this.props.navigation.navigate('Login');
+			this.props.navigation.dispatch(StackActions.replace('Login'));
 		} catch (e) {
 			console.error(e);
 			Alert.alert('Error', 'Something went wrong when saving the wallet');
@@ -155,10 +148,10 @@ export default class CreateWalletImport extends React.Component<NavigationInject
 				<KeyboardAwareScrollView>
 					<ScrollView contentContainerStyle={styles.content}>
 						<NalliText size={ETextSize.H1} style={styles.h1}>
-							Recovery phrase
+							Import with recovery phrase
 						</NalliText>
 						<NalliText size={ETextSize.P_LARGE} style={styles.text}>
-							Write down 24 words of your recovery phrase.
+							Write down or paste the 24 words of your recovery phrase.
 						</NalliText>
 						<View style={styles.wordsContainer}>
 							{words.map(word => (

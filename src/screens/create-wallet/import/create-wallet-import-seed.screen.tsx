@@ -6,7 +6,8 @@ import {
 	View,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
-import { NavigationInjectedProps } from 'react-navigation';
+
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import DismissKeyboardView from '../../../components/dismiss-keyboard-hoc.component';
 import Loading from '../../../components/loading.component';
@@ -15,27 +16,17 @@ import NalliInput from '../../../components/nalli-input.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 import layout from '../../../constants/layout';
-import PhoneNumberSigner from '../../../crypto/phone-number-signer';
 import VariableStore, { NalliVariable } from '../../../service/variable-store';
 import WalletStore, { Wallet, WalletType } from '../../../service/wallet-store';
 import WalletService from '../../../service/wallet.service';
 
-export default class CreateWalletImportSeed extends React.Component<NavigationInjectedProps, any> {
-
-	readonly phoneNumberSigner = new PhoneNumberSigner();
+export default class CreateWalletImportSeed extends React.PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);
 		this.state = {
 			seed: '',
 			process: false,
-		};
-	}
-
-	static navigationOptions = () => {
-		return {
-			headerStyle: { height: 75, elevation: 0, shadowOpacity: 0 },
-			headerTitle: 'Seed',
 		};
 	}
 

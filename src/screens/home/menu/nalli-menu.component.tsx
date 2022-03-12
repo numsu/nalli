@@ -1,6 +1,5 @@
 import React from 'react';
 import { Alert, EmitterSubscription, Linking, ScrollView, StyleSheet, View } from 'react-native';
-import { NavigationInjectedProps } from 'react-navigation';
 
 import { IconType } from '../../../components/icon.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
@@ -13,7 +12,7 @@ import NalliMenuPreference from './nalli-menu-preference.component';
 import PreferencesModal from './preferences-modal.component';
 import WalletInfoModal from './wallet-info-modal.component';
 
-interface NalliMenuProps extends NavigationInjectedProps {
+interface NalliMenuProps {
 	onDonatePress: () => void;
 }
 
@@ -27,7 +26,7 @@ interface NalliMenuState {
 	walletInfoModalOpen: boolean;
 }
 
-export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenuState> {
+export default class NalliMenu extends React.PureComponent<NalliMenuProps, NalliMenuState> {
 
 	subscriptions: EmitterSubscription[] = [];
 
@@ -114,7 +113,7 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 			preferencesModalOpen,
 			walletInfoModalOpen,
 		} = this.state;
-		const { onDonatePress, navigation } = this.props;
+		const { onDonatePress } = this.props;
 
 		return (
 			<ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 30 }}>
@@ -185,7 +184,6 @@ export default class NalliMenu extends React.Component<NalliMenuProps, NalliMenu
 						isOpen={walletInfoModalOpen}
 						close={this.toggleWalletInfoModal} />
 				<AccountModal
-						navigation={navigation}
 						isOpen={accountModalOpen}
 						close={this.toggleAccountModal} />
 			</ScrollView>

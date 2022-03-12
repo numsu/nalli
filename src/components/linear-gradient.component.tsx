@@ -13,7 +13,7 @@ interface LinearGradientProps {
 interface LinearGradientState {
 }
 
-export default class NalliLinearGradient extends React.Component<LinearGradientProps, LinearGradientState> {
+export default class NalliLinearGradient extends React.PureComponent<LinearGradientProps, LinearGradientState> {
 
 	constructor(props) {
 		super(props);

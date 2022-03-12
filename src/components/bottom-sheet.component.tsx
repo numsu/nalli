@@ -1,7 +1,7 @@
 import React, { ReactNode, RefObject } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
-import BottomSheet from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 
 import Colors from '../constants/colors';
 import NalliLinearGradient from './linear-gradient.component';
@@ -14,6 +14,8 @@ interface BottomSheetProps {
 	header: string;
 	headerIconComponent?: any;
 	initialSnap: number;
+	linearGradientTopStart?: number;
+	linearGradientTopStyle?: any;
 	onClose?: () => void;
 	reference?: RefObject<any>;
 	snapPoints: (string | number)[];
@@ -22,7 +24,7 @@ interface BottomSheetProps {
 interface BottomSheetState {
 }
 
-export default class MyBottomSheet extends React.Component<BottomSheetProps, BottomSheetState> {
+export default class MyBottomSheet extends React.PureComponent<BottomSheetProps, BottomSheetState> {
 
 	constructor(props) {
 		super(props);
@@ -36,10 +38,13 @@ export default class MyBottomSheet extends React.Component<BottomSheetProps, Bot
 			header,
 			headerIconComponent,
 			initialSnap,
+			linearGradientTopStyle,
+			linearGradientTopStart,
 			onClose,
 			reference,
 			snapPoints,
 		} = this.props;
+
 		return (
 			<BottomSheet
 					index={initialSnap}
@@ -50,17 +55,17 @@ export default class MyBottomSheet extends React.Component<BottomSheetProps, Bot
 					onClose={onClose}
 					handleIndicatorStyle={styles.panelHandle}
 					style={styles.shadow}>
-				<View style={styles.headerContainer}>
+				<BottomSheetView style={styles.headerContainer}>
 					<NalliText
 							size={ETextSize.H1}>
 						{header}
 					</NalliText>
 					{headerIconComponent}
-				</View>
-				<View style={{ height: '100%' }}>
-					{enableLinearGradient && <NalliLinearGradient />}
+				</BottomSheetView>
+				<BottomSheetView style={styles.contentContainer}>
+					{enableLinearGradient && <NalliLinearGradient style={linearGradientTopStyle} start={linearGradientTopStart} />}
 					{children}
-				</View>
+				</BottomSheetView>
 				{enableLinearGradient && <NalliLinearGradient bottom />}
 			</BottomSheet>
 		);
@@ -77,6 +82,12 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		paddingHorizontal: 15,
+		zIndex: 100,
+	},
+	contentContainer: {
+		height: '100%',
+		marginTop: -20,
+		zIndex: 1,
 	},
 	shadow: {
 		shadowOffset: { width: 0, height: -5 },

@@ -13,7 +13,7 @@ interface NalliCopyProps {
 interface NalliCopyState {
 }
 
-export default class NalliCopy extends React.Component<NalliCopyProps, NalliCopyState> {
+export default class NalliCopy extends React.PureComponent<NalliCopyProps, NalliCopyState> {
 
 	constructor(props) {
 		super(props);

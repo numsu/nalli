@@ -18,7 +18,7 @@ interface LinkProps {
 interface LinkState {
 }
 
-export default class Link extends React.Component<LinkProps, LinkState> {
+export default class Link extends React.PureComponent<LinkProps, LinkState> {
 
 	constructor(props) {
 		super(props);

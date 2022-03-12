@@ -21,7 +21,7 @@ interface CurrencyModalState {
 	isOpen: boolean;
 }
 
-export default class CurrencyModal extends React.Component<CurrencyModalProps, CurrencyModalState> {
+export default class CurrencyModal extends React.PureComponent<CurrencyModalProps, CurrencyModalState> {
 
 	constructor(props) {
 		super(props);

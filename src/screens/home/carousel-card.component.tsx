@@ -29,7 +29,7 @@ interface CarouselCardState {
 	displayedCurrency: string;
 }
 
-export default class CarouselCard extends React.Component<CarouselCardProps, CarouselCardState> {
+export default class CarouselCard extends React.PureComponent<CarouselCardProps, CarouselCardState> {
 
 	subscriptions: EmitterSubscription[] = [];
 
@@ -143,7 +143,7 @@ export default class CarouselCard extends React.Component<CarouselCardProps, Car
 							{displayedCurrency == 'nano' &&
 								formattedBalance
 							}
-							{displayedCurrency == 'fiat' && price &&
+							{displayedCurrency == 'fiat' && !!price &&
 								(price * +balance).toFixed(2)
 							}
 							{displayedCurrency == 'fiat' && !price &&

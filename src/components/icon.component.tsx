@@ -16,10 +16,7 @@ interface IconProps {
 	type: IconType,
 }
 
-interface IconState {
-}
-
-export default class NalliIcon extends React.Component<IconProps, IconState> {
+export default class NalliIcon extends React.PureComponent<IconProps, any> {
 
 	constructor(props) {
 		super(props);

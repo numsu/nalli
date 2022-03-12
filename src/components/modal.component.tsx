@@ -3,15 +3,15 @@ import {
 	EmitterSubscription,
 	KeyboardAvoidingView,
 	Platform,
+	ScrollView,
 	StyleSheet,
 	View,
 } from 'react-native';
 import { Avatar } from 'react-native-elements';
-import { ScrollView } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
 
 import Colors from '../constants/colors';
-import { sleep } from '../constants/globals';
+import { ANIMATION_DELAY, sleep } from '../constants/globals';
 import layout from '../constants/layout';
 import { NalliAppState } from '../screens/home/privacy-shield.component';
 import VariableStore, { NalliVariable } from '../service/variable-store';
@@ -36,9 +36,7 @@ interface ModalState {
 	appState: NalliAppState;
 }
 
-export default class NalliModal extends React.Component<ModalProps, ModalState> {
-
-	static animationDelay = 150;
+class NalliModal extends React.PureComponent<ModalProps, ModalState> {
 
 	constructor(props) {
 		super(props);
@@ -63,7 +61,7 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 		if (this.props.isOpen != this.state.isOpen) {
 			this.setState({ isOpen: this.props.isOpen });
 			if (this.props.isOpen == false) {
-				await sleep(NalliModal.animationDelay * 2);
+				await sleep(ANIMATION_DELAY * 2);
 			}
 			this.setState({ isRendered: this.props.isOpen });
 		}
@@ -91,11 +89,12 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 						hideModalContentWhileAnimating
 						animationIn={'zoomIn'}
 						animationOut={'fadeOut'}
-						animationInTiming={NalliModal.animationDelay}
-						animationOutTiming={NalliModal.animationDelay}
+						animationInTiming={ANIMATION_DELAY}
+						animationOutTiming={ANIMATION_DELAY}
 						isVisible={isOpen && appState == NalliAppState.ACTIVE}
 						onBackdropPress={onClose}
 						onBackButtonPress={onClose}
+						statusBarTranslucent
 						useNativeDriverForBackdrop
 						useNativeDriver>
 					<KeyboardAvoidingView
@@ -139,11 +138,13 @@ export default class NalliModal extends React.Component<ModalProps, ModalState> 
 				</Modal>
 			);
 		} else {
-			return (<></>);
+			return null;
 		}
 	}
 
 }
+
+export default React.memo(NalliModal);
 
 export enum EModalSize {
 	LARGE,

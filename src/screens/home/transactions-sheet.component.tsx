@@ -1,20 +1,19 @@
 import React, { RefObject } from 'react';
 import {
 	EmitterSubscription,
+	LogBox,
 	StyleSheet,
 	TouchableOpacity,
-	View,
 } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
-import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { BottomSheetFlatList, BottomSheetView } from '@gorhom/bottom-sheet';
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
-import NalliModal from '../../components/modal.component';
 import NalliButton from '../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../components/text.component';
 import colors from '../../constants/colors';
-import { sleep } from '../../constants/globals';
+import { ANIMATION_DELAY, sleep } from '../../constants/globals';
 import ContactsService from '../../service/contacts.service';
 import CurrencyService from '../../service/currency.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
@@ -32,7 +31,7 @@ interface TransactionSheetState {
 	transactions: WalletTransaction[];
 }
 
-export default class TransactionsSheet extends React.Component<TransactionsSheetProps, TransactionSheetState> {
+export default class TransactionsSheet extends React.PureComponent<TransactionsSheetProps, TransactionSheetState> {
 
 	ref: RefObject<any>;
 	interval;
@@ -50,6 +49,8 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 	}
 
 	componentDidMount = () => {
+		// Disable the error because it's complaining about the home screen's scrollview
+		LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
 		// Update component every minute
 		this.interval = setInterval(() => this.forceUpdate(), 1000 * 60);
 		this.init();
@@ -104,7 +105,7 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 
 	closeTransaction = async () => {
 		this.setState({ transactionModalOpen: false });
-		await sleep(NalliModal.animationDelay);
+		await sleep(ANIMATION_DELAY);
 		this.setState({ selectedTransaction: {} as WalletTransaction });
 	}
 
@@ -118,73 +119,80 @@ export default class TransactionsSheet extends React.Component<TransactionsSheet
 
 		const hasTransactions = transactions?.length > 0;
 
-		let transactionListElements;
-		if (hasTransactions) {
-			transactionListElements = transactions.map(item => {
-				const amount = CurrencyService.formatNanoAmount(Number(item.amount));
-				return (
-					<Animated.View entering={FadeIn} key={item.hash} style={styles.transactionContainer}>
-						<TouchableOpacity onPress={() => this.openTransaction(item)}>
-							<View style={styles.transactionRow}>
-								{item.type == 'send'
-									? <NalliText size={ETextSize.H2}>Sent</NalliText>
-									: item.pendingStatus == EPendingStatus.RETURNED
-										? <NalliText size={ETextSize.H2}>Returned</NalliText>
-										: <NalliText size={ETextSize.H2}>Received</NalliText>
-								}
-								<NalliText>
-									{DateUtil.getRelativeTime(item.timestamp)}
-								</NalliText>
-							</View>
-							<View style={styles.transactionRow}>
-								<NalliText style={styles.transactionTarget}>
-									{this.getContactName(item)}
-								</NalliText>
-								{item.type == 'send' ?
-									<NalliText style={styles.transactionAmount}>
-										- {amount}
-									</NalliText> :
-									<NalliText style={{ color: colors.main, ...styles.transactionAmount }}>
-										+ {amount}
-									</NalliText>
-								}
-							</View>
-						</TouchableOpacity>
-					</Animated.View>
-				);
-			});
-		}
-
 		return (
 			<MyBottomSheet
 					reference={this.ref}
 					initialSnap={-1}
 					snapPoints={['25%', '87.5%']}
 					enableLinearGradient
+					linearGradientTopStyle={{ height: 35, top: 20 }}
 					header='Transactions'>
-				{!hasTransactions &&
-					<NalliText style={styles.noMoreText}>Your transactions will appear here</NalliText>
-				}
-				{hasTransactions &&
-					<BottomSheetScrollView style={styles.transactionList}>
-						{transactionListElements}
-						{hasMoreTransactions &&
-							<NalliButton
-									style={styles.fetchMoreButton}
-									small
-									text='Fetch more'
-									onPress={this.getMoreTransactions} />
-						}
-						{!hasMoreTransactions &&
-							<NalliText style={styles.noMoreText}>Nothing more to see here</NalliText>
-						}
-						<TransactionModal
-								isOpen={selectedTransaction && transactionModalOpen}
-								transaction={selectedTransaction}
-								contactName={this.getContactName(selectedTransaction)}
-								onClose={this.closeTransaction} />
-					</BottomSheetScrollView>
-				}
+				<BottomSheetView style={styles.transactionList}>
+					<BottomSheetFlatList
+							data={transactions}
+							keyExtractor={(item => item.hash)}
+							initialNumToRender={10}
+							showsVerticalScrollIndicator={false}
+							ListHeaderComponent={() => <BottomSheetView style={{ paddingTop: 20 }}><></></BottomSheetView>}
+							ListEmptyComponent={() => <NalliText style={styles.noMoreText}>Your transactions will appear here</NalliText>}
+							renderItem={itemInfo => {
+								const item = itemInfo.item;
+								const amount = CurrencyService.formatNanoAmount(Number(item.amount));
+								return (
+									<Animated.View entering={FadeIn} key={item.hash} style={styles.transactionContainer}>
+										<TouchableOpacity onPress={() => this.openTransaction(item)}>
+											<BottomSheetView style={styles.transactionRow}>
+												{item.type == 'send'
+													? <NalliText size={ETextSize.H2}>Sent</NalliText>
+													: item.pendingStatus == EPendingStatus.RETURNED
+														? <NalliText size={ETextSize.H2}>Returned</NalliText>
+														: <NalliText size={ETextSize.H2}>Received</NalliText>
+												}
+												<NalliText>
+													{DateUtil.getRelativeTime(item.timestamp)}
+												</NalliText>
+											</BottomSheetView>
+											<BottomSheetView style={styles.transactionRow}>
+												<NalliText style={styles.transactionTarget}>
+													{this.getContactName(item)}
+												</NalliText>
+												{item.type == 'send' ?
+													<NalliText style={styles.transactionAmount}>
+														- {amount}
+													</NalliText> :
+													<NalliText style={{ color: colors.main, ...styles.transactionAmount }}>
+														+ {amount}
+													</NalliText>
+												}
+											</BottomSheetView>
+										</TouchableOpacity>
+									</Animated.View>
+								);
+							}}
+							ListFooterComponent={() => {
+								if (!hasTransactions) {
+									return null;
+								}
+								if (hasMoreTransactions) {
+									return (
+										<NalliButton
+												style={styles.fetchMoreButton}
+												small
+												text='Fetch more'
+												onPress={this.getMoreTransactions} />
+									);
+								} else {
+									return (
+										<NalliText style={styles.noMoreText}>Nothing more to see here</NalliText>
+									);
+								}
+							}} />
+					<TransactionModal
+							isOpen={selectedTransaction && transactionModalOpen}
+							transaction={selectedTransaction}
+							contactName={this.getContactName(selectedTransaction)}
+							onClose={this.closeTransaction} />
+				</BottomSheetView>
 			</MyBottomSheet>
 		);
 	}
@@ -197,7 +205,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 15,
 		minHeight: '100%',
 		zIndex: -1,
-		paddingTop: 20,
+		paddingTop: 25,
 	},
 	transactionContainer: {
 		justifyContent: 'space-between',

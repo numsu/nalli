@@ -23,7 +23,7 @@ interface NalliButtonProps {
 interface NalliButtonState {
 }
 
-export default class NalliButton extends React.Component<NalliButtonProps, NalliButtonState> {
+export default class NalliButton extends React.PureComponent<NalliButtonProps, NalliButtonState> {
 
 	constructor(props) {
 		super(props);

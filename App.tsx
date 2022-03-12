@@ -1,16 +1,20 @@
+import 'react-native-gesture-handler';
+
 import AppLoading from 'expo-app-loading';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
-import { setCustomText } from 'react-native-global-props';
+import { Alert, StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as encoding from 'text-encoding';
 
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import AppNavigator from './src/navigation/app.navigator';
-import NavigationService from './src/service/navigation.service';
+import MainNavigator from './src/navigation/app.navigator';
+import { navigationRef } from './src/service/navigation.service';
 
 const customFonts = {
 	...Ionicons.font,
@@ -24,7 +28,9 @@ const customFonts = {
 	'MontserratBold': require('./src/assets/fonts/Montserrat-SemiBold.ttf'),
 };
 
-export default class App extends React.Component<any, any> {
+const Stack = createNativeStackNavigator();
+
+export default class App extends React.PureComponent<any, any> {
 
 	state = {
 		isLoadingComplete: false,
@@ -44,17 +50,25 @@ export default class App extends React.Component<any, any> {
 			);
 		} else {
 			return (
-				<View style={styles.container}>
-					<StatusBar translucent hidden={false} style='dark' />
-					<AppNavigator
-							ref={navigatorRef => NavigationService.setTopLevelNavigator(navigatorRef)} />
-				</View>
+				<NavigationContainer ref={navigationRef}>
+					<GestureHandlerRootView style={styles.container}>
+						<StatusBar translucent hidden={false} style='dark' />
+						<Stack.Navigator initialRouteName='Main' screenOptions={{ headerShown: false }}>
+							<Stack.Screen name='Main' component={MainNavigator} />
+						</Stack.Navigator>
+					</GestureHandlerRootView>
+				</NavigationContainer>
 			);
 		}
 	}
 
 	private loadResourcesAsync = async () => {
-		Promise.all([
+		if (TextEncoder == undefined || typeof TextEncoder !== 'function') {
+			TextEncoder = encoding.TextEncoder;
+			TextDecoder = encoding.TextDecoder;
+		}
+
+		await Promise.all([
 			Asset.loadAsync([
 				require('./src/assets/images/splash.png'),
 				require('./src/assets/images/icon.png'),
@@ -62,16 +76,9 @@ export default class App extends React.Component<any, any> {
 			Font.loadAsync({
 				...customFonts,
 			}),
-		]).then(() => {
-			setCustomText({
-				fontFamily: 'OpenSans',
-			});
+		]).catch(e => {
+			console.error(e);
 		});
-
-		if (TextEncoder == undefined || typeof TextEncoder !== 'function') {
-			TextEncoder = encoding.TextEncoder;
-			TextDecoder = encoding.TextDecoder;
-		}
 	}
 
 	private handleLoadingError = (error: Error) => {
