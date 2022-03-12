@@ -20,10 +20,6 @@ export default class CreateWalletWelcome extends React.PureComponent<NativeStack
 		super(props);
 	}
 
-	static navigationOptions = () => ({
-		headerShown: false,
-	})
-
 	onChangeText = (key, val) => {
 		this.setState({ [key]: val });
 	}

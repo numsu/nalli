@@ -133,7 +133,7 @@ export default class Login extends React.PureComponent<NativeStackScreenProps<an
 			await ContactsService.refreshCache();
 			this.setState({ process: false, isBiometricProcess: false });
 			if (!wallet) {
-				this.props.navigation.dispatch(StackActions.replace('Permissions'));
+				this.props.navigation.dispatch(StackActions.replace('CreateWallet'));
 			} else {
 				this.props.navigation.dispatch(StackActions.replace('Home'));
 			}
@@ -156,7 +156,7 @@ export default class Login extends React.PureComponent<NativeStackScreenProps<an
 		await AuthStore.clearPin();
 		await VariableStore.clear();
 		AsyncStorage.clear();
-		this.props.navigation.dispatch(StackActions.replace('Welcome'));
+		this.props.navigation.dispatch(StackActions.replace('Auth'));
 	}
 
 	render = () => {

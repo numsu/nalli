@@ -22,13 +22,6 @@ export default class CreateWalletNew extends React.PureComponent<NativeStackScre
 		};
 	}
 
-	static navigationOptions = () => {
-		return {
-			headerStyle: { height: 75, elevation: 0, shadowOpacity: 0 },
-			headerTitle: 'New wallet',
-		};
-	}
-
 	onChangeText = (key, val) => {
 		this.setState({ [key]: val });
 	}

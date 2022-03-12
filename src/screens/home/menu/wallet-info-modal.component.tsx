@@ -13,6 +13,7 @@ import NalliNumberPad from '../../../components/nalli-number-pad.component';
 import ShowHide from '../../../components/show-hide.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
+import { ANIMATION_DELAY } from '../../../constants/globals';
 import layout from '../../../constants/layout';
 import AuthStore from '../../../service/auth-store';
 import BiometricsService, { EBiometricsType } from '../../../service/biometrics.service';
@@ -97,7 +98,7 @@ export default class WalletInfoModal extends React.PureComponent<WalletInfoModal
 	}
 
 	closeAndLock = () => {
-		setTimeout(() => this.setState({ isUnlocked: false }), NalliModal.animationDelay); // Wait for animation
+		setTimeout(() => this.setState({ isUnlocked: false }), ANIMATION_DELAY); // Wait for animation
 		this.props.close();
 	}
 

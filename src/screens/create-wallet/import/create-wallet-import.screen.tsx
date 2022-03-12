@@ -11,17 +11,10 @@ import NalliButton from '../../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 
-export default class CreateWalletImportMnemonic extends React.PureComponent<NativeStackScreenProps<any>, any> {
+export default class CreateWalletImport extends React.PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);
-	}
-
-	static navigationOptions = () => {
-		return {
-			headerStyle: { height: 75, elevation: 0, shadowOpacity: 0 },
-			headerTitle: 'Import',
-		};
 	}
 
 	onRecoveryPress = () => {

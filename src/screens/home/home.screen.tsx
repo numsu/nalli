@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import SideMenu from 'react-native-side-menu-updated'
 
 import { Ionicons } from '@expo/vector-icons';
-import { StackActions } from '@react-navigation/native';
+import { CommonActions, StackActions } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import NalliCarousel from '../../components/carousel.component';
@@ -63,7 +63,7 @@ export default class HomeScreen extends React.PureComponent<NativeStackScreenPro
 			price: undefined,
 			process: false,
 			walletIsOpen: true,
-			loaded: true,
+			loaded: false,
 		};
 	}
 
@@ -76,20 +76,28 @@ export default class HomeScreen extends React.PureComponent<NativeStackScreenPro
 		this.getCurrentPrice();
 		this.subscribeToNotifications();
 		NotificationService.checkPushNotificationRegistrationStatusAndRenewIfNecessary();
-		// if (!HomeScreen.firstLoad) {
-		// 	HomeScreen.firstLoad = true;
-		// 	this.forceUpdate();
-		// 	setTimeout(() => {
-		// 		this.props.navigation.dispatch(StackActions.reset({
-		// 			index: 0,
-		// 			key: null,
-		// 			actions: [NavigationActions.navigate({ routeName: 'Home' })]
-		// 		}));
-		// 		this.forceUpdate();
-		// 	}, 1500);
-		// } else {
-			// this.setState({ loaded: true });
-		// }
+		this.executeUglyFixForDuplicateElementsOnTheScreen();
+	}
+
+	/**
+	 * When loading the application for the first time, for some reason elements render on top of each other.
+	 * In that case, reset the screen and basically load it twice. Display a loading overlay during that time.
+	 */
+	executeUglyFixForDuplicateElementsOnTheScreen = () => {
+		if (!HomeScreen.firstLoad) {
+			HomeScreen.firstLoad = true;
+			this.forceUpdate();
+			setTimeout(() => {
+				this.props.navigation.dispatch(CommonActions.reset({
+					index: 0,
+					key: null,
+					routes: [{ name: 'Home' }],
+				}));
+				this.forceUpdate();
+			}, 1500);
+		} else {
+			this.setState({ loaded: true });
+		}
 	}
 
 	componentWillUnmount = () => {

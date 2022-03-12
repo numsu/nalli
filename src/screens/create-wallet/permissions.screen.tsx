@@ -4,6 +4,7 @@ import {
 	View,
 } from 'react-native';
 
+import { StackActions } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import NalliButton from '../../components/nalli-button.component';
@@ -26,21 +27,17 @@ export default class Permissions extends React.PureComponent<NativeStackScreenPr
 		};
 	}
 
-	static navigationOptions = () => ({
-		headerShown: false,
-	})
-
 	onContinuePress = async () => {
 		if (this.state.permission == 1) {
 			await NotificationService.registerForPushNotifications();
 			if (await AuthStore.isPhoneNumberFunctionsEnabled()) {
 				this.setState({ permission: 2 });
 			} else {
-				this.props.navigation.navigate('CreateWalletWelcome');
+				this.props.navigation.dispatch(StackActions.replace('CreateWalletWelcome'));
 			}
 		} else {
-			await ContactsService.askPermission()
-			this.props.navigation.navigate('CreateWalletWelcome');
+			await ContactsService.askPermission();
+			this.props.navigation.dispatch(StackActions.replace('CreateWalletWelcome'));
 		}
 	}
 

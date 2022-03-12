@@ -9,6 +9,7 @@ import NalliModal, { EModalSize } from '../../../components/modal.component';
 import NalliNumberPad from '../../../components/nalli-number-pad.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
+import { ANIMATION_DELAY } from '../../../constants/globals';
 import layout from '../../../constants/layout';
 import AuthStore from '../../../service/auth-store';
 
@@ -60,7 +61,7 @@ export default class ChangePinModal extends React.PureComponent<ChangePinModalPr
 	}
 
 	close = () => {
-		setTimeout(() => this.setState({ isConfirm: false, pin: '', confirm: '' }), NalliModal.animationDelay);
+		setTimeout(() => this.setState({ isConfirm: false, pin: '', confirm: '' }), ANIMATION_DELAY);
 		this.props.close();
 	}
 

@@ -1,12 +1,16 @@
-import { StackActions, createNavigationContainerRef } from "@react-navigation/native";
+import { CommonActions, createNavigationContainerRef } from "@react-navigation/native";
 
 export const navigationRef = createNavigationContainerRef();
 
 export default class NavigationService {
 
-	static navigate = (routeName: string, params?: object) => {
+	static navigate = (name: string, params?: object) => {
 		if (navigationRef.isReady()) {
-			navigationRef.dispatch(StackActions.replace(routeName, params));
+			navigationRef.dispatch(CommonActions.reset({
+				index: 0,
+				key: null,
+				routes: [{ name, params }],
+			}));
 		}
 	}
 

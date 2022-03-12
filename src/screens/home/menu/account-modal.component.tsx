@@ -14,6 +14,7 @@ import NalliButton from '../../../components/nalli-button.component';
 import NalliNumberPad from '../../../components/nalli-number-pad.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
+import { ANIMATION_DELAY } from '../../../constants/globals';
 import layout from '../../../constants/layout';
 import AuthStore from '../../../service/auth-store';
 import BiometricsService, { EBiometricsType } from '../../../service/biometrics.service';
@@ -85,7 +86,7 @@ export default class AccountModal extends React.PureComponent<AccountModalProps,
 	}
 
 	closeAndLock = () => {
-		setTimeout(() => this.setState({ isUnlocked: false }), NalliModal.animationDelay); // Wait for animation
+		setTimeout(() => this.setState({ isUnlocked: false }), ANIMATION_DELAY); // Wait for animation
 		this.props.close();
 	}
 
@@ -129,7 +130,7 @@ export default class AccountModal extends React.PureComponent<AccountModalProps,
 			console.error(e);
 			Alert.alert('Error', 'Something went wrong deleting your information from your phone, but your information is deleted from our servers.');
 		}
-		NavigationService.navigate('Welcome');
+		NavigationService.navigate('Auth');
 	}
 
 	render = () => {

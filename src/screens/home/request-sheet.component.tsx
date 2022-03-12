@@ -10,11 +10,10 @@ import {
 	Platform,
 	StyleSheet,
 	TouchableOpacity,
-	View,
 } from 'react-native';
 
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import CurrencyInput from '../../components/currency-input.component';
@@ -264,8 +263,8 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 		let view;
 		if (success) {
 			view = (
-				<View style={styles.sendingContainer}>
-					<View style={styles.animationContainer}>
+				<BottomSheetView style={styles.sendingContainer}>
+					<BottomSheetView style={styles.animationContainer}>
 						<LottieView
 								ref={animation => {
 									this.sendAnimation = animation;
@@ -274,35 +273,35 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 								loop={false}
 								resizeMode='cover'
 								source={require('../../assets/lottie/sent.json')} />
-					</View>
-					<View style={styles.successTextContainer}>
+					</BottomSheetView>
+					<BottomSheetView style={styles.successTextContainer}>
 						<NalliText style={styles.successText}>You requested <NalliText style={[styles.successText, styles.successTextColor]}>Ӿ&nbsp;{requestAmount}</NalliText></NalliText>
 						<NalliText style={styles.successText}>from <NalliText style={[styles.successText, styles.successTextColor]}>{recipient.name}</NalliText></NalliText>
-					</View>
-					<View style={styles.confirmButton}>
+					</BottomSheetView>
+					<BottomSheetView style={styles.confirmButton}>
 						<NalliButton
 								text={'Close'}
 								solid
 								onPress={() => (this.clearState(), this.requestSheetRef.current.close())} />
-					</View>
-				</View>
+					</BottomSheetView>
+				</BottomSheetView>
 			);
 		} else {
 			if (requestMode == RequestMode.QR) {
 				view = (
 					<BottomSheetScrollView keyboardDismissMode={'interactive'} style={styles.transactionSheetContent}>
-						<View style={styles.qrcodeContainer}>
+						<BottomSheetView style={styles.qrcodeContainer}>
 							<NalliText style={styles.text}>
 								Scan the QR-code below to send Nano to this wallet
 							</NalliText>
-							<View style={styles.qrcode}>
+							<BottomSheetView style={styles.qrcode}>
 								<QRCode
 										value={`nano:${address}`}
 										logo={logo}
 										logoBorderRadius={0}
 										quietZone={4}
 										size={200} />
-							</View>
+							</BottomSheetView>
 							<NalliNanoAddress
 									contentContainerStyle={styles.addressContainer}
 									style={styles.text}>
@@ -314,21 +313,21 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 									text={showCopiedText ? 'Copied' : 'Copy address'}
 									style={styles.copyButton}
 									onPress={() => this.onCopyPress(address)} />
-						</View>
+						</BottomSheetView>
 					</BottomSheetScrollView>
 				);
 			} else {
 				view = (
-					<View style={styles.transactionSheetContent}>
+					<BottomSheetView style={styles.transactionSheetContent}>
 						<BottomSheetScrollView keyboardDismissMode={'interactive'}>
-							<View style={styles.amountContainer}>
+							<BottomSheetView style={styles.amountContainer}>
 								<CurrencyInput
 										value={requestAmount}
 										convertedValue={convertedAmount}
 										hideMaxButton
 										onChangeText={(requestAmount: string, convertedAmount: string, currency: string) =>
 												this.setState({ requestAmount: requestAmount, convertedAmount, currency })} />
-							</View>
+							</BottomSheetView>
 							<NalliInput
 									style={styles.messageInput}
 									value={message}
@@ -352,19 +351,19 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 							}
 						</BottomSheetScrollView>
 						{recipient &&
-							<View style={styles.confirmButton}>
+							<BottomSheetView style={styles.confirmButton}>
 								<NalliButton
 										text='Request'
 										solid
 										onPress={this.confirmRequest}
 										disabled={!recipient || !requestAmount || process} />
-							</View>
+							</BottomSheetView>
 						}
 						<ContactsModal
 								isOpen={contactsModalOpen}
 								onlyNalliUsers
 								onSelectContact={this.onConfirmRecipient} />
-					</View>
+					</BottomSheetView>
 				)
 			}
 		}

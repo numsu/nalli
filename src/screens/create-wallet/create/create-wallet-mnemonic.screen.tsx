@@ -27,14 +27,7 @@ export default class CreateWalletMnemonic extends React.PureComponent<NativeStac
 			process: false,
 			started: false,
 			wordDisplay: false,
-			generated: props.navigation.getParam('generated') as Wallet,
-		};
-	}
-
-	static navigationOptions = () => {
-		return {
-			headerStyle: { height: 75, elevation: 0, shadowOpacity: 0 },
-			headerTitle: 'New wallet',
+			generated: props.route.params.generated as Wallet,
 		};
 	}
 

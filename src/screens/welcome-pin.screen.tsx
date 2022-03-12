@@ -32,10 +32,6 @@ export default class WelcomePinScreen extends React.PureComponent<NativeStackScr
 		};
 	}
 
-	static navigationOptions = () => ({
-		headerShown: false,
-	})
-
 	onChangeNumberPad = (val: string) => {
 		if (this.state.verify) {
 			this.setState({ verifyPin: val }, () => {

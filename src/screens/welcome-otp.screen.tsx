@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { StackActions } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import NalliText, { ETextSize } from '../components/text.component';
@@ -63,7 +64,7 @@ export default class WelcomeOtpScreen extends React.PureComponent<WelcomeOtpScre
 							'Error',
 							'Too many failed attempts. Please wait a few minutes to request a new code.',
 						);
-						this.props.navigation.navigate('Welcome');
+						this.props.navigation.dispatch(StackActions.replace('Auth'));
 					} else {
 						this.setState({ otp: '', tries: this.state.tries + 1 });
 					}
@@ -72,7 +73,7 @@ export default class WelcomeOtpScreen extends React.PureComponent<WelcomeOtpScre
 
 				const client = await ClientService.getClient();
 				AuthStore.setClient(client);
-				this.props.navigation.navigate('WelcomePin');
+				this.props.navigation.dispatch(StackActions.replace('WelcomePin'));
 			}
 		});
 	}

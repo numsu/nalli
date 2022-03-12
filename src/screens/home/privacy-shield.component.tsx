@@ -62,18 +62,22 @@ export default class PrivacyShield extends React.PureComponent<PrivacyShieldProp
 		}
 
 		if (this.state.appState == NalliAppState.INACTIVE && nextAppState == 'active') {
-			if (new Date(this.state.sessionExpiresTime).getTime() < new Date().getTime()) {
-				await AuthStore.clearAuthentication();
-				AuthStore.clearExpires();
-				NavigationService.navigate('Login');
-			} else if (new Date(this.state.inactivationTime) < new Date(new Date().getTime() - 60000)) {
-				ClientService.refresh();
-			}
+			try {
+				if (new Date(this.state.sessionExpiresTime).getTime() < new Date().getTime()) {
+					AuthStore.clearAuthentication();
+					AuthStore.clearExpires();
+					NavigationService.navigate('Login');
+					return;
+				} else if (new Date(this.state.inactivationTime) < new Date(new Date().getTime() - 60000)) {
+					ClientService.refresh();
+				}
 
-			await ContactsService.refreshCache();
-			VariableStore.setVariable(NalliVariable.APP_STATE, NalliAppState.ACTIVE);
-			this.props.onAppStateChange(NalliAppState.ACTIVE);
-			this.setState({ appState: NalliAppState.ACTIVE, sessionExpiresTime: '', inactivationTime: '' });
+				this.props.onAppStateChange(NalliAppState.ACTIVE);
+				await ContactsService.refreshCache();
+			} finally {
+				VariableStore.setVariable(NalliVariable.APP_STATE, NalliAppState.ACTIVE);
+				this.setState({ appState: NalliAppState.ACTIVE, sessionExpiresTime: '', inactivationTime: '' });
+			}
 		} else if (this.state.appState == NalliAppState.ACTIVE
 				&& nextAppState.match(/inactive|background/)) {
 			WsService.unsubscribe();

@@ -11,12 +11,11 @@ import {
 	Platform,
 	StyleSheet,
 	TouchableOpacity,
-	View,
 } from 'react-native';
 import { Avatar } from 'react-native-elements';
 
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import CurrencyInput from '../../components/currency-input.component';
@@ -473,8 +472,8 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 					snapPoints={layout.isSmallDevice ? ['88%'] : ['71.5%']}
 					header={header}>
 				{process &&
-					<View style={styles.sendingContainer}>
-						<View style={styles.animationContainer}>
+					<BottomSheetView style={styles.sendingContainer}>
+						<BottomSheetView style={styles.animationContainer}>
 							{success &&
 								<LottieView
 										ref={animation => {
@@ -495,27 +494,27 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 										resizeMode='contain'
 										source={require('../../assets/lottie/sending.json')} />
 							}
-						</View>
+						</BottomSheetView>
 						{success &&
-							<View style={styles.successTextContainer}>
+							<BottomSheetView style={styles.successTextContainer}>
 								<NalliText style={styles.successText}>You sent <NalliText style={[styles.successText, styles.successTextColor]}>Ӿ {sendAmount}</NalliText></NalliText>
 								<NalliText style={styles.successText}>to <NalliText style={[styles.successText, styles.successTextColor]}>{recipientText}</NalliText></NalliText>
-							</View>
+							</BottomSheetView>
 						}
 						{success &&
-							<View style={styles.sendTransactionButton}>
+							<BottomSheetView style={styles.sendTransactionButton}>
 								<NalliButton
 										text={'Close'}
 										solid
 										onPress={() => (this.clearState(), this.sendSheetRef.current.close())} />
-							</View>
+							</BottomSheetView>
 						}
-					</View>
+					</BottomSheetView>
 				}
 				{!process &&
-					<View style={styles.transactionSheetContent}>
+					<BottomSheetView style={styles.transactionSheetContent}>
 						<BottomSheetScrollView keyboardDismissMode={'interactive'}>
-							<View style={styles.transactionMoneyInputContainer}>
+							<BottomSheetView style={styles.transactionMoneyInputContainer}>
 								<CurrencyInput
 										disabled={!!requestId}
 										ref={c => this.currencyInputRef = c}
@@ -524,9 +523,9 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 										reference={this.sendAmountRef}
 										onChangeText={(sendAmount: string, convertedAmount: string, currency: string) =>
 											this.setState({ sendAmount, convertedAmount, currency })} />
-							</View>
+							</BottomSheetView>
 							{(tab != SendSheetTab.DONATION && !requestId && isPhoneNumberUser) &&
-								<View style={styles.tabs}>
+								<BottomSheetView style={styles.tabs}>
 									<TouchableOpacity
 											style={[styles.switchButton, (tab == SendSheetTab.CONTACT ? styles.selected : undefined)]}
 											onPress={() => this.onSwitchModePress(SendSheetTab.CONTACT)}>
@@ -542,7 +541,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 											onPress={() => this.onSwitchModePress(SendSheetTab.ADDRESS)}>
 										<NalliText size={ETextSize.H2} style={styles.switchButtonText}>Address</NalliText>
 									</TouchableOpacity>
-								</View>
+								</BottomSheetView>
 							}
 							{!(tab != SendSheetTab.DONATION && !requestId && isPhoneNumberUser) &&
 								<NalliText size={ETextSize.H2}>To</NalliText>
@@ -575,8 +574,8 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 										onSwapPress={this.onSelectInputNumberPress} />
 							}
 							{tab == SendSheetTab.ADDRESS &&
-								<View style={styles.addressView}>
-									<View>
+								<BottomSheetView style={styles.addressView}>
+									<BottomSheetView>
 										{!!walletAddress &&
 											<TouchableOpacity
 													onPress={() => this.onChangeAddress('')}>
@@ -593,7 +592,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 														size={30} />
 											</TouchableOpacity>
 										}
-									</View>
+									</BottomSheetView>
 									<NalliInput
 											style={styles.addressInput}
 											value={walletAddress}
@@ -603,10 +602,10 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 											onChangeText={this.onChangeAddress} />
 									<QRCodeScanner
 											onQRCodeScanned={this.onQRCodeScanned} />
-								</View>
+								</BottomSheetView>
 							}
 							{tab == SendSheetTab.DONATION &&
-								<View style={styles.contactContainer}>
+								<BottomSheetView style={styles.contactContainer}>
 									<Avatar
 											icon={{ name: 'star-border', type: 'material' }}
 											rounded
@@ -614,14 +613,14 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 											titleStyle={{ fontSize: 16 }}
 											containerStyle={{ marginRight: 15 }}
 											overlayContainerStyle={{ backgroundColor: Colors.main }} />
-									<View>
+									<BottomSheetView>
 										<NalliText size={ETextSize.H2} style={styles.contactName}>
 											Nalli donation
 										</NalliText>
 										<NalliText>
 											We really appreciate your help!
 										</NalliText>
-									</View>
+									</BottomSheetView>
 									<TouchableOpacity
 											onPress={() => this.toggleDonate(false)}
 											style={styles.contactSelectArrow}>
@@ -629,13 +628,13 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 												name='close'
 												size={23} />
 									</TouchableOpacity>
-								</View>
+								</BottomSheetView>
 							}
 
 							{!!recipient && (tab == SendSheetTab.CONTACT || tab == SendSheetTab.PHONE) &&
-								<View style={{ marginTop: 10 }}>
+								<BottomSheetView style={{ marginTop: 10 }}>
 									<ShowHide showText='Show details' hideText='Hide details'>
-										<View>
+										<BottomSheetView>
 											<NalliText size={ETextSize.H2}>Recipient address</NalliText>
 											<Link url={`https://nanolooker.com/account/${recipientAddress}`}>{recipientAddress}</Link>
 											{!isNalliUser &&
@@ -644,19 +643,19 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 											{recipientLastLoginOverMonthAgo &&
 												<NalliText>This user hasn't opened Nalli for some time. Make sure that they are still have control of this account.</NalliText>
 											}
-										</View>
+										</BottomSheetView>
 									</ShowHide>
-								</View>
+								</BottomSheetView>
 							}
 						</BottomSheetScrollView>
 						{(!!recipient || !!walletAddress) &&
-							<View style={styles.sendTransactionButton}>
+							<BottomSheetView style={styles.sendTransactionButton}>
 								<NalliButton
 										text={tab == SendSheetTab.DONATION ? 'Donate' : (!!walletAddress || isNalliUser) ? 'Send' : 'Invite new user'}
 										solid
 										onPress={this.confirm}
 										disabled={(!recipient && !walletAddress) || !sendAmount || process} />
-							</View>
+							</BottomSheetView>
 						}
 						<ContactsModal
 								isOpen={contactsModalOpen}
@@ -664,7 +663,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 						<PhoneNumberInputModal
 								isOpen={inputPhoneNumberModalOpen}
 								onConfirmNumber={this.onConfirmNumber} />
-					</View>
+					</BottomSheetView>
 				}
 			</MyBottomSheet>
 		);

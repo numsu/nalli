@@ -30,13 +30,6 @@ export default class CreateWalletImportSeed extends React.PureComponent<NativeSt
 		};
 	}
 
-	static navigationOptions = () => {
-		return {
-			headerStyle: { height: 75, elevation: 0, shadowOpacity: 0 },
-			headerTitle: 'Seed',
-		};
-	}
-
 	onChangeText = (text) => {
 		// Clear all non hex characters
 		const sanitized = text

@@ -51,14 +51,14 @@ export default class AuthLoadingScreen extends React.PureComponent<NativeStackSc
 			this.forceUpdate();
 
 			const deviceId = await VariableStore.getVariable<string>(NalliVariable.DEVICE_ID);
-			if (!deviceId) {
+			if (!deviceId || deviceId == 'undefined') {
 				await VariableStore.setVariable(NalliVariable.DEVICE_ID, uuid.v4());
 			}
 
 			const client = await AuthStore.getClient();
 			if (!client) {
 				// If no client information set, navigate to welcome screen
-				this.props.navigation.dispatch(StackActions.replace('Welcome'));
+				this.props.navigation.dispatch(StackActions.replace('Auth'));
 				return;
 			}
 
@@ -69,7 +69,7 @@ export default class AuthLoadingScreen extends React.PureComponent<NativeStackSc
 				if (wallet) {
 					this.props.navigation.dispatch(StackActions.replace('Home'));
 				} else {
-					this.props.navigation.dispatch(StackActions.replace('Permissions'));
+					this.props.navigation.dispatch(StackActions.replace('CreateWallet'));
 				}
 			} catch {
 				// If login token expired, navigate to pin screen

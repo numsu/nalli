@@ -7,9 +7,9 @@ import AuthLoadingScreen from '../screens/auth-loading.screen';
 import CreateWalletWelcome from '../screens/create-wallet/create-wallet-welcome.screen';
 import CreateWalletMnemonic from '../screens/create-wallet/create/create-wallet-mnemonic.screen';
 import CreateWalletNew from '../screens/create-wallet/create/create-wallet-new.screen';
-import CreateWalletImport from '../screens/create-wallet/import/create-wallet-import-mnemonic.screen';
+import CreateWalletImportMnemonic from '../screens/create-wallet/import/create-wallet-import-mnemonic.screen';
 import CreateWalletImportSeed from '../screens/create-wallet/import/create-wallet-import-seed.screen';
-import CreateWalletImportMnemonic from '../screens/create-wallet/import/create-wallet-import.screen';
+import CreateWalletImport from '../screens/create-wallet/import/create-wallet-import.screen';
 import Permissions from '../screens/create-wallet/permissions.screen';
 import HomeScreen from '../screens/home/home.screen';
 import LoginScreen from '../screens/login.screen';
@@ -28,6 +28,7 @@ class AuthNavigator extends React.PureComponent<any, any> {
 	render = () => {
 		return (
 			<Stack.Navigator
+					initialRouteName='Welcome'
 					screenOptions={{
 						headerStyle: {
 							backgroundColor: Colors.main,
@@ -38,9 +39,9 @@ class AuthNavigator extends React.PureComponent<any, any> {
 							color: 'white',
 						}
 					}}>
-				<Stack.Screen name='Welcome' component={WelcomeScreen} />
-				<Stack.Screen name='WelcomeOtp' component={WelcomeOtpScreen} />
-				<Stack.Screen name='WelcomePin' component={WelcomePinScreen} />
+				<Stack.Screen name='Welcome' options={{ headerShown: false }} component={WelcomeScreen} />
+				<Stack.Screen name='WelcomeOtp' options={{ headerTitle: 'Enter SMS code' }} component={WelcomeOtpScreen} />
+				<Stack.Screen name='WelcomePin' options={{ headerTitle: 'Set PIN', headerBackVisible: false }} component={WelcomePinScreen} />
 			</Stack.Navigator>
 		);
 	}
@@ -51,14 +52,14 @@ class CreateWalletNavigator extends React.PureComponent<any, any> {
 
 	render = () => {
 		return (
-			<Stack.Navigator initialRouteName='Permissions' screenOptions={{ headerShown: false }}>
-				<Stack.Screen name='Permissions' component={Permissions} />
-				<Stack.Screen name='CreateWalletWelcome' component={CreateWalletWelcome} />
-				<Stack.Screen name='WalletNew' component={CreateWalletNew} />
-				<Stack.Screen name='WalletMnemonic' component={CreateWalletMnemonic} />
-				<Stack.Screen name='WalletImport' component={CreateWalletImport} />
-				<Stack.Screen name='WalletImportSeed' component={CreateWalletImportSeed} />
-				<Stack.Screen name='WalletImportMnemonic' component={CreateWalletImportMnemonic} />
+			<Stack.Navigator initialRouteName='Permissions'>
+				<Stack.Screen name='Permissions' options={{ headerShown: false }} component={Permissions} />
+				<Stack.Screen name='CreateWalletWelcome' options={{ headerShown: false }} component={CreateWalletWelcome} />
+				<Stack.Screen name='WalletNew' options={{ headerTitle: 'Create' }} component={CreateWalletNew} />
+				<Stack.Screen name='WalletMnemonic' options={{ headerTitle: 'Create' }} component={CreateWalletMnemonic} />
+				<Stack.Screen name='WalletImport' options={{ headerTitle: 'Import' }} component={CreateWalletImport} />
+				<Stack.Screen name='WalletImportSeed' options={{ headerTitle: 'Seed' }} component={CreateWalletImportSeed} />
+				<Stack.Screen name='WalletImportMnemonic' options={{ headerTitle: 'Recovery phrase' }} component={CreateWalletImportMnemonic} />
 			</Stack.Navigator>
 		);
 	}

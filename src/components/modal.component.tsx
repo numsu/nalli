@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import {
 	EmitterSubscription,
 	KeyboardAvoidingView,
@@ -11,7 +11,7 @@ import { Avatar } from 'react-native-elements';
 import Modal from 'react-native-modal';
 
 import Colors from '../constants/colors';
-import { sleep } from '../constants/globals';
+import { ANIMATION_DELAY, sleep } from '../constants/globals';
 import layout from '../constants/layout';
 import { NalliAppState } from '../screens/home/privacy-shield.component';
 import VariableStore, { NalliVariable } from '../service/variable-store';
@@ -38,8 +38,6 @@ interface ModalState {
 
 class NalliModal extends React.PureComponent<ModalProps, ModalState> {
 
-	static animationDelay = 150;
-
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -63,7 +61,7 @@ class NalliModal extends React.PureComponent<ModalProps, ModalState> {
 		if (this.props.isOpen != this.state.isOpen) {
 			this.setState({ isOpen: this.props.isOpen });
 			if (this.props.isOpen == false) {
-				await sleep(NalliModal.animationDelay * 2);
+				await sleep(ANIMATION_DELAY * 2);
 			}
 			this.setState({ isRendered: this.props.isOpen });
 		}
@@ -91,8 +89,8 @@ class NalliModal extends React.PureComponent<ModalProps, ModalState> {
 						hideModalContentWhileAnimating
 						animationIn={'zoomIn'}
 						animationOut={'fadeOut'}
-						animationInTiming={NalliModal.animationDelay}
-						animationOutTiming={NalliModal.animationDelay}
+						animationInTiming={ANIMATION_DELAY}
+						animationOutTiming={ANIMATION_DELAY}
 						isVisible={isOpen && appState == NalliAppState.ACTIVE}
 						onBackdropPress={onClose}
 						onBackButtonPress={onClose}
