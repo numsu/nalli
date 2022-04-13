@@ -5,11 +5,10 @@ import {
 	View,
 } from 'react-native';
 
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-
 import layout from '../constants/layout';
 import { EBiometricsType } from '../service/biometrics.service';
 import VariableStore, { NalliVariable } from '../service/variable-store';
+import NalliIcon, { IconType } from './icon.component';
 import NalliText, { ETextSize } from './text.component';
 
 interface NalliNumberPadProps {
@@ -96,10 +95,10 @@ export default class NalliNumberPad extends React.PureComponent<NalliNumberPadPr
 				{numberElements}
 				{biometricsType != EBiometricsType.NO_BIOMETRICS &&
 					<TouchableOpacity
-						key={20}
-						style={[styles.number, style, { borderWidth: 0 }]}
-						onPress={onBiometricLoginPress}>
-						<MaterialCommunityIcons style={[styles.biometricsIcon, style]} name={EBiometricsType.getBiometricsTypeIcon(biometricsType) as any} />
+							key={20}
+							style={[styles.number, style, { borderWidth: 0 }]}
+							onPress={onBiometricLoginPress}>
+						<NalliIcon style={[styles.biometricsIcon, style]} icon={EBiometricsType.getBiometricsTypeIcon(biometricsType) as any} type={IconType.MATERIAL_COMMUNITY} />
 					</TouchableOpacity>
 				}
 				{biometricsType == EBiometricsType.NO_BIOMETRICS &&
@@ -117,7 +116,7 @@ export default class NalliNumberPad extends React.PureComponent<NalliNumberPadPr
 						key={10}
 						style={[styles.number, style, { borderWidth: 0 }]}
 						onPress={() => this.onRemoveText(onChangeText)}>
-					<Ionicons style={[{ color: 'white' }, style]} name='ios-backspace' size={30} />
+					<NalliIcon style={[{ color: 'white' }, style]} icon='ios-backspace' size={30} type={IconType.ION} />
 				</TouchableOpacity>
 			</View>
 		);

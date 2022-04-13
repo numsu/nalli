@@ -1,8 +1,4 @@
-import {
-	BarCodeEvent,
-	BarCodeScanner,
-	PermissionStatus,
-} from 'expo-barcode-scanner';
+import { BarCodeScanningResult, Camera, PermissionStatus } from 'expo-camera';
 import React from 'react';
 import {
 	Alert,
@@ -12,14 +8,13 @@ import {
 } from 'react-native';
 import Modal from 'react-native-modal';
 
-import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
-
 import { openSettings } from '../constants/globals';
 import layout from '../constants/layout';
+import NalliIcon, { IconType } from './icon.component';
 import NalliText, { ETextSize } from './text.component';
 
 interface QRCodeScannerProps {
-	onQRCodeScanned: (params: BarCodeEvent) => boolean;
+	onQRCodeScanned: (params: BarCodeScanningResult) => boolean;
 }
 
 interface QRCodeScannerState {
@@ -36,7 +31,7 @@ export default class QRCodeScanner extends React.PureComponent<QRCodeScannerProp
 	}
 
 	scan = async () => {
-		const { status } = await BarCodeScanner.requestPermissionsAsync();
+		const { status } = await Camera.requestCameraPermissionsAsync();
 		if (status == PermissionStatus.GRANTED) {
 			this.setState({ open: true });
 		} else {
@@ -62,7 +57,7 @@ export default class QRCodeScanner extends React.PureComponent<QRCodeScannerProp
 		this.setState({ open: false });
 	}
 
-	onQRCodeScanned = (params: BarCodeEvent, callback) => {
+	onQRCodeScanned = (params: BarCodeScanningResult, callback) => {
 		const success = callback(params);
 		if (success) {
 			this.setState({ open: false });
@@ -89,23 +84,21 @@ export default class QRCodeScanner extends React.PureComponent<QRCodeScannerProp
 							</NalliText>
 							<TouchableOpacity
 									onPress={this.close}>
-								<MaterialIcons
-										style={styles.close}
-										name='close'
-										size={40} />
+								<NalliIcon style={styles.close} icon='close' size={40} type={IconType.MATERIAL} />
 							</TouchableOpacity>
 						</View>
-						<BarCodeScanner
+						<Camera
 								style={styles.container}
-								onBarCodeScanned={(params: BarCodeEvent) => this.onQRCodeScanned(params, onQRCodeScanned)} />
+								onBarCodeScanned={(params: BarCodeScanningResult) => this.onQRCodeScanned(params, onQRCodeScanned)} />
+						{/* <BarCodeScanner Does not work in Android on expo 43
+								style={styles.container}
+								onBarCodeScanned={(params: BarCodeEvent) => this.onQRCodeScanned(params, onQRCodeScanned)} /> */}
 					</Modal>
 				}
 				<TouchableOpacity
 						style={styles.qrCodeButton}
 						onPress={this.scan}>
-					<FontAwesome
-							size={38}
-							name='qrcode' />
+					<NalliIcon icon='qrcode' size={38} type={IconType.FONT_AWESOME} />
 				</TouchableOpacity>
 			</View>
 		);

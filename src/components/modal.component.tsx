@@ -122,7 +122,6 @@ class NalliModal extends React.PureComponent<ModalProps, ModalState> {
 						<NalliLinearGradient style={{ height: 30, top: 50, ...linearGradientTopStyle }} start={!linearGradientTopStart || linearGradientTopStart == 0 ? 0 : 0.1} />
 						{noScroll &&
 							<View style={styles.contentContainer}>
-
 								<View style={styles.pushTop} />
 								{children}
 							</View>

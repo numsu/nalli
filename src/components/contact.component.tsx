@@ -6,11 +6,10 @@ import {
 } from 'react-native';
 import { Avatar } from 'react-native-elements';
 
-import { Ionicons } from '@expo/vector-icons';
-
 import colors from '../constants/colors';
 import { ContactItem } from '../service/contacts.service';
 import NalliBadge from './badge.component';
+import NalliIcon, { IconType } from './icon.component';
 import NalliText, { ETextSize } from './text.component';
 
 interface ContactProps {
@@ -56,10 +55,7 @@ export default class Contact extends React.PureComponent<ContactProps, ContactSt
 						{contact.formattedNumber}
 					</NalliText>
 				</View>
-				<Ionicons
-						style={styles.contactSelectArrow}
-						name='ios-arrow-forward'
-						size={32} />
+				<NalliIcon style={styles.contactSelectArrow} icon='ios-arrow-forward' size={25} type={IconType.ION} />
 			</TouchableOpacity>
 		);
 	}

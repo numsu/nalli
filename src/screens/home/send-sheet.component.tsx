@@ -1,4 +1,4 @@
-import { BarCodeEvent } from 'expo-barcode-scanner';
+import { BarCodeScanningResult } from 'expo-camera';
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
 import LottieView from 'lottie-react-native';
@@ -8,17 +8,16 @@ import React, { RefObject } from 'react';
 import {
 	Alert,
 	Keyboard,
-	Platform,
 	StyleSheet,
 	TouchableOpacity,
 } from 'react-native';
 import { Avatar } from 'react-native-elements';
 
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import CurrencyInput from '../../components/currency-input.component';
+import NalliIcon, { IconType } from '../../components/icon.component';
 import Link from '../../components/link.component';
 import NalliButton from '../../components/nalli-button.component';
 import NalliInput from '../../components/nalli-input.component';
@@ -197,7 +196,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 		this.setState({ walletAddress });
 	}
 
-	onQRCodeScanned = (params: BarCodeEvent): boolean => {
+	onQRCodeScanned = (params: BarCodeScanningResult): boolean => {
 		const address = params.data.replace('nano:', '');
 		if (!tools.validateAddress(address)) {
 			if (!this.barcodeAlertActive) {
@@ -456,10 +455,12 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 		}
 
 		let header = '';
-		if (requestId) {
-			header = 'Accept request';
-		} else if (!process) {
-			header = 'Send';
+		if (!process) {
+			if (requestId) {
+				header = 'Accept request';
+			} else {
+				header = 'Send';
+			}
 		}
 
 		return (
@@ -472,7 +473,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 					snapPoints={layout.isSmallDevice ? ['88%'] : ['71.5%']}
 					header={header}>
 				{process &&
-					<BottomSheetView style={styles.sendingContainer}>
+					<BottomSheetView style={styles.sheetContent}>
 						<BottomSheetView style={styles.animationContainer}>
 							{success &&
 								<LottieView
@@ -512,7 +513,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 					</BottomSheetView>
 				}
 				{!process &&
-					<BottomSheetView style={styles.transactionSheetContent}>
+					<BottomSheetView style={styles.sheetContent}>
 						<BottomSheetScrollView keyboardDismissMode={'interactive'}>
 							<BottomSheetView style={styles.transactionMoneyInputContainer}>
 								<CurrencyInput
@@ -579,17 +580,13 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 										{!!walletAddress &&
 											<TouchableOpacity
 													onPress={() => this.onChangeAddress('')}>
-												<MaterialIcons
-														name='close'
-														size={23} />
+												<NalliIcon icon='close' size={23} type={IconType.MATERIAL} />
 											</TouchableOpacity>
 										}
 										{!walletAddress &&
 											<TouchableOpacity
 													onPress={() => this.onChangeAddress(Clipboard.getStringAsync())}>
-												<Ionicons
-														name='ios-copy'
-														size={30} />
+												<NalliIcon icon='ios-copy' size={30} type={IconType.ION} />
 											</TouchableOpacity>
 										}
 									</BottomSheetView>
@@ -624,9 +621,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 									<TouchableOpacity
 											onPress={() => this.toggleDonate(false)}
 											style={styles.contactSelectArrow}>
-										<MaterialIcons
-												name='close'
-												size={23} />
+										<NalliIcon icon='close' size={23} type={IconType.MATERIAL} />
 									</TouchableOpacity>
 								</BottomSheetView>
 							}
@@ -672,15 +667,12 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 }
 
 const styles = StyleSheet.create({
-	sendingContainer: {
-		width: '100%',
-		height: '100%',
-	},
 	animationContainer: {
 		alignSelf: 'center',
 		width: layout.window.width * 0.8,
 		height: layout.window.width * 0.8,
 		flexDirection: 'row',
+		paddingHorizontal: -15,
 	},
 	successTextContainer: {
 		alignSelf: 'center',
@@ -694,7 +686,7 @@ const styles = StyleSheet.create({
 		color: Colors.main,
 		fontFamily: 'OpenSansBold',
 	},
-	transactionSheetContent: {
+	sheetContent: {
 		paddingHorizontal: 15,
 		width: '100%',
 		height: '100%',
@@ -767,15 +759,9 @@ const styles = StyleSheet.create({
 		height: 85,
 	},
 	sendTransactionButton: {
-		marginTop: 'auto',
-		paddingHorizontal: 17,
-		...Platform.select({
-			android: {
-				marginBottom: 95,
-			},
-			ios: {
-				marginBottom: 55,
-			},
-		}),
+		position: 'absolute',
+		bottom: 45,
+		left: 15,
+		width: '100%',
 	},
 });

@@ -1,4 +1,4 @@
-import { replacer, reviver } from '../constants/globals';
+import { noop, replacer, reviver } from '../constants/globals';
 import AuthStore from './auth-store';
 import NavigationService from './navigation.service';
 import VariableStore, { NalliVariable } from './variable-store';
@@ -86,7 +86,7 @@ export default class HttpService {
 			if (res.status == 401) {
 				NavigationService.navigate('Login');
 				await AuthStore.clearAuthentication();
-				AuthStore.clearExpires();
+				AuthStore.clearExpires().then(noop);
 			} else if (res.status == 400) {
 				throw new HttpError(+res.headers.get('x-nalli-error'));
 			}

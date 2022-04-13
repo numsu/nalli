@@ -7,16 +7,15 @@ import {
 	Alert,
 	EmitterSubscription,
 	Keyboard,
-	Platform,
 	StyleSheet,
 	TouchableOpacity,
 } from 'react-native';
 
-import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import CurrencyInput from '../../components/currency-input.component';
+import NalliIcon, { IconType } from '../../components/icon.component';
 import NalliButton from '../../components/nalli-button.component';
 import NalliInput from '../../components/nalli-input.component';
 import NalliNanoAddress from '../../components/nano-address.component';
@@ -260,10 +259,12 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 			success,
 		} = this.state;
 
+		const header = success ? '' : 'Request';
+
 		let view;
 		if (success) {
 			view = (
-				<BottomSheetView style={styles.sendingContainer}>
+				<BottomSheetView style={styles.sheetContent}>
 					<BottomSheetView style={styles.animationContainer}>
 						<LottieView
 								ref={animation => {
@@ -289,7 +290,7 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 		} else {
 			if (requestMode == RequestMode.QR) {
 				view = (
-					<BottomSheetScrollView keyboardDismissMode={'interactive'} style={styles.transactionSheetContent}>
+					<BottomSheetScrollView keyboardDismissMode={'interactive'} style={styles.sheetContent}>
 						<BottomSheetView style={styles.qrcodeContainer}>
 							<NalliText style={styles.text}>
 								Scan the QR-code below to send Nano to this wallet
@@ -318,7 +319,7 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 				);
 			} else {
 				view = (
-					<BottomSheetView style={styles.transactionSheetContent}>
+					<BottomSheetView style={styles.sheetContent}>
 						<BottomSheetScrollView keyboardDismissMode={'interactive'}>
 							<BottomSheetView style={styles.amountContainer}>
 								<CurrencyInput
@@ -350,7 +351,7 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 										onSwapPress={this.onSelectRecipientPress} />
 							}
 						</BottomSheetScrollView>
-						{recipient &&
+						{/* {recipient && */}
 							<BottomSheetView style={styles.confirmButton}>
 								<NalliButton
 										text='Request'
@@ -358,7 +359,7 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 										onPress={this.confirmRequest}
 										disabled={!recipient || !requestAmount || process} />
 							</BottomSheetView>
-						}
+						{/* } */}
 						<ContactsModal
 								isOpen={contactsModalOpen}
 								onlyNalliUsers
@@ -375,14 +376,10 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 						style={styles.toggleRequestModeButton}
 						onPress={this.toggleRequestMode}>
 					{requestMode == RequestMode.CONTACT &&
-						<FontAwesome
-								size={22}
-								name='qrcode' />
+						<NalliIcon icon='qrcode' size={22} type={IconType.FONT_AWESOME} />
 					}
 					{requestMode == RequestMode.QR &&
-						<Ionicons
-								size={16}
-								name='person' />
+						<NalliIcon icon='person' size={16} type={IconType.ION} />
 					}
 				</TouchableOpacity>
 			);
@@ -397,7 +394,7 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 					enablePanDownToClose={!process}
 					enableLinearGradient
 					snapPoints={['88%']}
-					header='Request'
+					header={header}
 					onClose={this.clearState}
 					headerIconComponent={headerIconComponent}>
 				{view}
@@ -408,15 +405,12 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 }
 
 const styles = StyleSheet.create({
-	sendingContainer: {
-		width: '100%',
-		height: '100%',
-	},
 	animationContainer: {
 		alignSelf: 'center',
 		width: layout.window.width * 0.8,
 		height: layout.window.width * 0.8,
 		flexDirection: 'row',
+		paddingHorizontal: -15,
 	},
 	successTextContainer: {
 		alignSelf: 'center',
@@ -430,7 +424,7 @@ const styles = StyleSheet.create({
 		color: Colors.main,
 		fontFamily: 'OpenSansBold',
 	},
-	transactionSheetContent: {
+	sheetContent: {
 		width: '100%',
 		height: '100%',
 		paddingHorizontal: 15,
@@ -465,16 +459,10 @@ const styles = StyleSheet.create({
 		height: 55,
 	},
 	confirmButton: {
-		marginTop: 'auto',
-		paddingHorizontal: 17,
-		...Platform.select({
-			android: {
-				marginBottom: 105,
-			},
-			ios: {
-				marginBottom: 65,
-			},
-		}),
+		position: 'absolute',
+		bottom: 45,
+		left: 15,
+		width: '100%',
 	},
 	qrcode: {
 		alignSelf: 'center',

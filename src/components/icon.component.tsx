@@ -1,12 +1,14 @@
 import React from 'react';
 
-import { FontAwesome5, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 
 export enum IconType {
 	ION,
 	MATERIAL_COMMUNITY,
 	MATERIAL,
 	FONT_AWESOME5,
+	FONT_AWESOME,
+	SIMPLE_LINE,
 }
 
 interface IconProps {
@@ -32,13 +34,17 @@ export default class NalliIcon extends React.PureComponent<IconProps, any> {
 
 		switch (type) {
 			case IconType.ION:
-				return <Ionicons name={icon as any} size={size} style={style} />
+				return <Ionicons name={icon as any} size={size} style={style} />;
 			case IconType.MATERIAL_COMMUNITY:
-				return <MaterialCommunityIcons name={icon as any} size={size} style={style} />
+				return <MaterialCommunityIcons name={icon as any} size={size} style={style} />;
 			case IconType.MATERIAL:
-				return <MaterialIcons name={icon as any} size={size} style={style} />
+				return <MaterialIcons name={icon as any} size={size} style={style} />;
 			case IconType.FONT_AWESOME5:
-				return <FontAwesome5 name={icon as any} size={size} style={style} />
+				return <FontAwesome5 name={icon as any} size={size} style={style} />;
+			case IconType.FONT_AWESOME:
+				return <FontAwesome name={icon as any} size={size} style={style} />;
+			case IconType.SIMPLE_LINE:
+				return <SimpleLineIcons name={icon as any} size={size} style={style} />;
 		}
 	}
 

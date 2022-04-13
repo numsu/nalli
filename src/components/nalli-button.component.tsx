@@ -4,9 +4,8 @@ import {
 	TouchableOpacity,
 } from 'react-native';
 
-import { Ionicons } from '@expo/vector-icons';
-
 import Colors from '../constants/colors';
+import NalliIcon, { IconType } from './icon.component';
 import NalliText, { ETextSize } from './text.component';
 
 interface NalliButtonProps {
@@ -60,7 +59,7 @@ export default class NalliButton extends React.PureComponent<NalliButtonProps, N
 								? styles.smallText
 								: {}
 						]}>
-					{icon && <Ionicons style={styles.icon} name={icon} size={small ? 15 : 20} />}
+					{icon && <NalliIcon style={styles.icon} icon={icon} size={small ? 15 : 20} type={IconType.ION} />}
 					{icon && '\xa0\xa0'}
 					{text}
 				</NalliText>

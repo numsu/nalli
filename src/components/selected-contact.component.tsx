@@ -7,11 +7,10 @@ import {
 } from 'react-native';
 import { Avatar } from 'react-native-elements';
 
-import { Ionicons } from '@expo/vector-icons';
-
 import colors from '../constants/colors';
 import Colors from '../constants/colors';
 import NalliBadge from './badge.component';
+import NalliIcon, { IconType } from './icon.component';
 import NalliText, { ETextSize } from './text.component';
 
 interface SelectedContactProps {
@@ -82,10 +81,7 @@ export default class SelectedContact extends React.PureComponent<SelectedContact
 					<TouchableOpacity
 							onPress={onSwapPress}
 							style={styles.contactSelectArrow}>
-						<Ionicons
-								name='ios-swap-horizontal'
-								style={styles.contactSelectArrow}
-								size={32} />
+						<NalliIcon style={styles.contactSelectArrow} icon='ios-swap-horizontal' size={25} type={IconType.ION} />
 					</TouchableOpacity>
 				}
 			</View>

@@ -5,9 +5,8 @@ import {
 	StyleSheet,
 } from 'react-native';
 
-import { Ionicons } from '@expo/vector-icons';
-
 import Colors from '../constants/colors';
+import NalliIcon, { IconType } from './icon.component';
 import NalliText from './text.component';
 
 interface LinkProps {
@@ -48,7 +47,7 @@ export default class Link extends React.PureComponent<LinkProps, LinkState> {
 			<NalliText
 					style={[styles.link, style ? style : undefined]}
 					onPress={this.open}>
-				<Ionicons name='ios-link' size={15} />&nbsp;{children}
+				<NalliIcon icon='ios-link' size={15} type={IconType.ION} />&nbsp;{children}
 			</NalliText>
 		);
 	}

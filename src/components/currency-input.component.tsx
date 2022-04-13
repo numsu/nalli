@@ -8,12 +8,11 @@ import {
 	View,
 } from 'react-native';
 
-import { Ionicons } from '@expo/vector-icons';
-
 import Colors from '../constants/colors';
 import CurrencyService from '../service/currency.service';
 import VariableStore, { NalliVariable } from '../service/variable-store';
 import { NalliAccount } from '../service/wallet-handler.service';
+import NalliIcon, { IconType } from './icon.component';
 import NalliText from './text.component';
 
 interface CurrencyInputProps {
@@ -189,10 +188,7 @@ export default class CurrencyInput extends React.PureComponent<CurrencyInputProp
 							style={[ styles.switchButton, hideMaxButton ? styles.switchButtonMiddle : undefined ]}
 							underlayColor={Colors.borderColor}
 							onPress={this.onCurrencySwitchPress}>
-						<Ionicons
-								style={styles.switchIcon}
-								name='ios-swap-horizontal'
-								size={32} />
+						<NalliIcon style={styles.switchIcon} icon='ios-swap-horizontal' size={32} type={IconType.ION} />
 					</TouchableHighlight>
 				}
 				<View style={[styles.inputConvertedCurrencyContainer, { borderTopColor: borderColor }]}>

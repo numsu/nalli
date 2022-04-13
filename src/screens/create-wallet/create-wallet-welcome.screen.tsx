@@ -5,10 +5,10 @@ import {
 	View,
 } from 'react-native';
 
-import { SimpleLineIcons } from '@expo/vector-icons';
 import { StackActions } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import NalliIcon, { IconType } from '../../components/icon.component';
 import NalliButton from '../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
@@ -42,7 +42,7 @@ export default class CreateWalletWelcome extends React.PureComponent<NativeStack
 		return (
 			<View style={styles.container}>
 				<TouchableOpacity style={styles.logout} onPress={this.onLogoutPress}>
-					<SimpleLineIcons style={{ color: Colors.main }} name='logout' size={30} />
+					<NalliIcon style={{ color: Colors.main }} icon='logout' size={30} type={IconType.SIMPLE_LINE} />
 				</TouchableOpacity>
 				<View style={styles.content}>
 					<View style={styles.welcome}>

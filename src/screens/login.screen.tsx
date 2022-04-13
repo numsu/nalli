@@ -4,7 +4,6 @@ import {
 	Alert,
 	StyleSheet,
 	TextInput,
-	TouchableOpacity,
 	View,
 } from 'react-native';
 
@@ -28,15 +27,15 @@ import VariableStore, { NalliVariable } from '../service/variable-store';
 import WalletStore from '../service/wallet-store';
 
 interface LoginState {
-	biometricsType: EBiometricsType,
+	biometricsType: EBiometricsType;
 	isBiometricProcess: boolean;
-	phoneNumber: string
+	phoneNumber: string;
 	phoneNumberCountry: string;
 	pin: string;
 	process: boolean;
 }
 
-export default class Login extends React.PureComponent<NativeStackScreenProps<any>, LoginState> {
+export default class Login extends React.Component<NativeStackScreenProps<any>, LoginState> {
 
 	constructor(props) {
 		super(props);
@@ -131,9 +130,8 @@ export default class Login extends React.PureComponent<NativeStackScreenProps<an
 			});
 			await AuthStore.setAuthentication(token.accessToken);
 			await ContactsService.refreshCache();
-			this.setState({ process: false, isBiometricProcess: false });
 			if (!wallet) {
-				this.props.navigation.dispatch(StackActions.replace('CreateWallet'));
+				this.props.navigation.dispatch(StackActions.replace('Permissions'));
 			} else {
 				this.props.navigation.dispatch(StackActions.replace('Home'));
 			}
@@ -156,7 +154,7 @@ export default class Login extends React.PureComponent<NativeStackScreenProps<an
 		await AuthStore.clearPin();
 		await VariableStore.clear();
 		AsyncStorage.clear();
-		this.props.navigation.dispatch(StackActions.replace('Auth'));
+		this.props.navigation.dispatch(StackActions.replace('Welcome'));
 	}
 
 	render = () => {
@@ -165,9 +163,9 @@ export default class Login extends React.PureComponent<NativeStackScreenProps<an
 			<DismissKeyboardView style={styles.container}>
 				<StatusBar translucent style='light' />
 				<Loading style={LoadingStyle.LIGHT} color='white' show={process} />
-				<TouchableOpacity onLongPress={this.clearWalletInfo}>
+				{/* <TouchableOpacity onPress={this.clearWalletInfo}> */}
 					<NalliLogo width={150} height={60} color='white' />
-				</TouchableOpacity>
+				{/* </TouchableOpacity> */}
 				<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 					Enter pin
 				</NalliText>

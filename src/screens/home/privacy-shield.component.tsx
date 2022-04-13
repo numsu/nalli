@@ -1,7 +1,6 @@
 import React from 'react';
 import { AppState, StyleSheet, View } from 'react-native';
 
-import Loading, { LoadingStyle } from '../../components/loading.component';
 import NalliLogo from '../../components/svg/nalli-logo';
 import Colors from '../../constants/colors';
 import layout from '../../constants/layout';
@@ -19,7 +18,6 @@ export enum NalliAppState {
 
 interface PrivacyShieldProps {
 	onAppStateChange: (state: NalliAppState) => any;
-	loaded: boolean;
 }
 
 interface PrivacyShieldState {
@@ -89,32 +87,19 @@ export default class PrivacyShield extends React.PureComponent<PrivacyShieldProp
 	}
 
 	render = () => {
-		const { children, loaded } = this.props;
+		const { children } = this.props;
 		const { appState } = this.state;
 
-		if (!loaded) {
-			return (
-				<View style={styles.container}>
+		return (
+			<View style={styles.container}>
+				{appState == NalliAppState.INACTIVE &&
 					<View style={styles.overlay}>
-						<View style={styles.overlayLoadingContainer}>
-							<Loading show style={LoadingStyle.LIGHT} color='white' />
-						</View>
+						<NalliLogo width={200} height={80} color='white' />
 					</View>
-					{children}
-				</View>
-			);
-		} else {
-			return (
-				<View style={styles.container}>
-					{appState == NalliAppState.INACTIVE &&
-						<View style={styles.overlay}>
-							<NalliLogo width={200} height={80} color='white' />
-						</View>
-					}
-					{children}
-				</View>
-			);
-		}
+				}
+				{children}
+			</View>
+		);
 	}
 
 }

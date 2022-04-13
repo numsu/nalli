@@ -5,9 +5,10 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
-import { BottomSheetFlatList, BottomSheetView } from '@gorhom/bottom-sheet';
+import { BottomSheetView } from '@gorhom/bottom-sheet';
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import NalliButton from '../../components/nalli-button.component';
@@ -128,7 +129,7 @@ export default class TransactionsSheet extends React.PureComponent<TransactionsS
 					linearGradientTopStyle={{ height: 35, top: 20 }}
 					header='Transactions'>
 				<BottomSheetView style={styles.transactionList}>
-					<BottomSheetFlatList
+					<FlatList
 							data={transactions}
 							keyExtractor={(item => item.hash)}
 							initialNumToRender={10}

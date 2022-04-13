@@ -33,3 +33,5 @@ export function openSettings() {
 		Linking.openSettings();
 	}
 }
+
+export function noop() {}

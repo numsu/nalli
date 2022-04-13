@@ -2,7 +2,7 @@ import * as Clipboard from 'expo-clipboard';
 import React from 'react';
 import { Alert, TouchableOpacity } from 'react-native';
 
-import { Ionicons } from '@expo/vector-icons';
+import NalliIcon, { IconType } from './icon.component';
 
 interface NalliCopyProps {
 	value: string;
@@ -51,9 +51,7 @@ export default class NalliCopy extends React.PureComponent<NalliCopyProps, Nalli
 			<TouchableOpacity
 					style={style}
 					onPress={this.copy}>
-				<Ionicons
-						name='ios-copy'
-						size={18} />
+				<NalliIcon icon='ios-copy' size={18} type={IconType.ION} />
 			</TouchableOpacity>
 		);
 	}
