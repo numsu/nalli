@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	FlatList,
 	StyleSheet,
@@ -21,7 +21,7 @@ interface CurrencyModalState {
 	isOpen: boolean;
 }
 
-export default class CurrencyModal extends React.PureComponent<CurrencyModalProps, CurrencyModalState> {
+export default class CurrencyModal extends PureComponent<CurrencyModalProps, CurrencyModalState> {
 
 	constructor(props) {
 		super(props);

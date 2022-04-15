@@ -1,4 +1,4 @@
-import React, { RefObject } from 'react';
+import { PureComponent, RefObject } from 'react';
 import {
 	KeyboardTypeOptions,
 	ReturnKeyTypeOptions,
@@ -32,7 +32,7 @@ interface NalliInputState {
 	borderColor?: string;
 }
 
-export default class NalliInput extends React.PureComponent<NalliInputProps, NalliInputState> {
+export default class NalliInput extends PureComponent<NalliInputProps, NalliInputState> {
 
 	constructor(props) {
 		super(props);

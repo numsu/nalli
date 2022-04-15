@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	StyleSheet,
 	View,
@@ -18,7 +18,7 @@ interface PermissionsState {
 	permission: number;
 }
 
-export default class Permissions extends React.PureComponent<NativeStackScreenProps<any>, PermissionsState> {
+export default class Permissions extends PureComponent<NativeStackScreenProps<any>, PermissionsState> {
 
 	constructor(props) {
 		super(props);

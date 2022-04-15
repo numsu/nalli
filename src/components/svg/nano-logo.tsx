@@ -1,10 +1,10 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import { View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 
 import Colors from '../../constants/colors';
 
-export default class NanoLogo extends React.PureComponent<any, any> {
+export default class NanoLogo extends PureComponent<any, any> {
 
 	constructor(props) {
 		super(props);

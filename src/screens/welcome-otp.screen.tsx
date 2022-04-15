@@ -1,4 +1,4 @@
-import React, { RefObject } from 'react';
+import { createRef, PureComponent, RefObject } from 'react';
 import {
 	Alert,
 	StyleSheet,
@@ -28,13 +28,13 @@ interface WelcomeOtpScreenState {
 	tries: number;
 }
 
-export default class WelcomeOtpScreen extends React.PureComponent<WelcomeOtpScreenProps, WelcomeOtpScreenState> {
+export default class WelcomeOtpScreen extends PureComponent<WelcomeOtpScreenProps, WelcomeOtpScreenState> {
 
 	codeInputRef: RefObject<TextInput>;
 
 	constructor(props: WelcomeOtpScreenProps) {
 		super(props);
-		this.codeInputRef = React.createRef();
+		this.codeInputRef = createRef();
 		this.state = props.route.params.state;
 	}
 

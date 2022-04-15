@@ -1,5 +1,5 @@
 import * as Haptics from 'expo-haptics';
-import React from 'react';
+import { PureComponent } from 'react';
 import { Alert, EmitterSubscription, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import Card from '../../components/card.component';
@@ -29,7 +29,7 @@ interface CarouselCardState {
 	displayedCurrency: string;
 }
 
-export default class CarouselCard extends React.PureComponent<CarouselCardProps, CarouselCardState> {
+export default class CarouselCard extends PureComponent<CarouselCardProps, CarouselCardState> {
 
 	subscriptions: EmitterSubscription[] = [];
 

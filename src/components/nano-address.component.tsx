@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	StyleSheet,
 	View,
@@ -15,7 +15,7 @@ interface NalliNanoAddressProps {
 interface NalliNanoAddressState {
 }
 
-export default class NalliNanoAddress extends React.PureComponent<NalliNanoAddressProps, NalliNanoAddressState> {
+export default class NalliNanoAddress extends PureComponent<NalliNanoAddressProps, NalliNanoAddressState> {
 
 	constructor(props) {
 		super(props);

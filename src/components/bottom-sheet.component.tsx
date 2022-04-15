@@ -1,4 +1,4 @@
-import React, { ReactNode, RefObject } from 'react';
+import { PureComponent, ReactNode, RefObject } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
@@ -24,7 +24,7 @@ interface BottomSheetProps {
 interface BottomSheetState {
 }
 
-export default class MyBottomSheet extends React.PureComponent<BottomSheetProps, BottomSheetState> {
+export default class MyBottomSheet extends PureComponent<BottomSheetProps, BottomSheetState> {
 
 	constructor(props) {
 		super(props);

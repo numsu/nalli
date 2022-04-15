@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	Alert,
 	Keyboard,
@@ -20,7 +20,7 @@ import AuthService from '../service/auth.service';
 import ClientService from '../service/client.service';
 import ContactsService from '../service/contacts.service';
 
-export default class WelcomeScreen extends React.PureComponent<NativeStackScreenProps<any>, any> {
+export default class WelcomeScreen extends PureComponent<NativeStackScreenProps<any>, any> {
 
 	state = {
 		phoneNumber: '',

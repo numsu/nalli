@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	Alert,
 	StyleSheet,
@@ -22,7 +22,7 @@ interface NumberInputModalState {
 	isOpen: boolean;
 }
 
-export default class PhoneNumberInputModal extends React.PureComponent<NumberInputModalProps, NumberInputModalState> {
+export default class PhoneNumberInputModal extends PureComponent<NumberInputModalProps, NumberInputModalState> {
 
 	constructor(props) {
 		super(props);

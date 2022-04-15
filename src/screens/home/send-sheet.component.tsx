@@ -4,7 +4,7 @@ import * as Haptics from 'expo-haptics';
 import LottieView from 'lottie-react-native';
 import moment from 'moment';
 import { block, tools } from 'nanocurrency-web';
-import React, { RefObject } from 'react';
+import { createRef, PureComponent, RefObject } from 'react';
 import {
 	Alert,
 	Keyboard,
@@ -77,7 +77,7 @@ enum SendSheetTab {
 	DONATION,
 }
 
-export default class SendSheet extends React.PureComponent<SendSheetProps, SendSheetState> {
+export default class SendSheet extends PureComponent<SendSheetProps, SendSheetState> {
 
 	sendSheetRef: RefObject<any>;
 	sendAmountRef: RefObject<any>;
@@ -88,8 +88,8 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 
 	constructor(props: SendSheetProps) {
 		super(props);
-		this.sendAmountRef = React.createRef();
-		this.sendSheetRef = React.createRef();
+		this.sendAmountRef = createRef();
+		this.sendSheetRef = createRef();
 		this.state = {
 			contactsModalOpen: false,
 			convertedAmount: '0',

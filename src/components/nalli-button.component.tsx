@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	StyleSheet,
 	TouchableOpacity,
@@ -22,7 +22,7 @@ interface NalliButtonProps {
 interface NalliButtonState {
 }
 
-export default class NalliButton extends React.PureComponent<NalliButtonProps, NalliButtonState> {
+export default class NalliButton extends PureComponent<NalliButtonProps, NalliButtonState> {
 
 	constructor(props) {
 		super(props);

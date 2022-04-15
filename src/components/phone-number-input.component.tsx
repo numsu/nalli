@@ -1,5 +1,5 @@
 import * as Localization from 'expo-localization';
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	Platform,
 	StyleSheet,
@@ -27,7 +27,7 @@ interface PhoneNumberInputState {
 	cca2: any;
 }
 
-export default class PhoneNumberInput extends React.PureComponent<PhoneNumberInputProps, PhoneNumberInputState> {
+export default class PhoneNumberInput extends PureComponent<PhoneNumberInputProps, PhoneNumberInputState> {
 
 	countries: CountryItem[];
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	StyleSheet,
 	TouchableOpacity,
@@ -15,7 +15,7 @@ import Colors from '../../constants/colors';
 import { noop } from '../../constants/globals';
 import AuthStore from '../../service/auth-store';
 
-export default class CreateWalletWelcome extends React.PureComponent<NativeStackScreenProps<any>, any> {
+export default class CreateWalletWelcome extends PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);

@@ -1,4 +1,4 @@
-import React, { RefObject } from 'react';
+import { PureComponent, RefObject } from 'react';
 import {
 	StyleSheet,
 	TextInput,
@@ -19,7 +19,7 @@ interface MnemonicWordProps {
 interface MnemonicWordState {
 }
 
-export default class MnemonicWord extends React.PureComponent<MnemonicWordProps, MnemonicWordState> {
+export default class MnemonicWord extends PureComponent<MnemonicWordProps, MnemonicWordState> {
 
 	constructor(props) {
 		super(props);

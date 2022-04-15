@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	ScrollView,
 	StyleSheet,
@@ -11,7 +11,7 @@ import NalliButton from '../../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 
-export default class CreateWalletImport extends React.PureComponent<NativeStackScreenProps<any>, any> {
+export default class CreateWalletImport extends PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);

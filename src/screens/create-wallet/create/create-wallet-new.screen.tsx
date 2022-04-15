@@ -1,5 +1,5 @@
 import { wallet } from 'nanocurrency-web';
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	ScrollView,
 	StyleSheet,
@@ -13,7 +13,7 @@ import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
 import { Wallet, WalletType } from '../../../service/wallet-store';
 
-export default class CreateWalletNew extends React.PureComponent<NativeStackScreenProps<any>, any> {
+export default class CreateWalletNew extends PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);

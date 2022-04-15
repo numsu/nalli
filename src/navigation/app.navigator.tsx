@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -23,7 +23,7 @@ export type Navigation = {
 
 const Stack = createNativeStackNavigator();
 
-class AuthNavigator extends React.PureComponent<any, any> {
+class AuthNavigator extends PureComponent<any, any> {
 
 	render = () => {
 		return (
@@ -48,7 +48,7 @@ class AuthNavigator extends React.PureComponent<any, any> {
 
 }
 
-class CreateWalletNavigator extends React.PureComponent<any, any> {
+class CreateWalletNavigator extends PureComponent<any, any> {
 
 	render = () => {
 		return (
@@ -66,7 +66,7 @@ class CreateWalletNavigator extends React.PureComponent<any, any> {
 
 }
 
-export default class MainNavigator extends React.PureComponent<any, any> {
+export default class MainNavigator extends PureComponent<any, any> {
 
 	render = () => {
 		return (

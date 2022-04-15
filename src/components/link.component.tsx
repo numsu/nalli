@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	Alert,
 	Linking,
@@ -17,7 +17,7 @@ interface LinkProps {
 interface LinkState {
 }
 
-export default class Link extends React.PureComponent<LinkProps, LinkState> {
+export default class Link extends PureComponent<LinkProps, LinkState> {
 
 	constructor(props) {
 		super(props);

@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	StyleSheet,
 	TouchableOpacity,
@@ -20,7 +20,7 @@ interface ContactProps {
 interface ContactState {
 }
 
-export default class Contact extends React.PureComponent<ContactProps, ContactState> {
+export default class Contact extends PureComponent<ContactProps, ContactState> {
 
 	constructor(props) {
 		super(props);

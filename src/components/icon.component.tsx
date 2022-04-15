@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 
 import { FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 
@@ -18,7 +18,7 @@ interface IconProps {
 	type: IconType,
 }
 
-export default class NalliIcon extends React.PureComponent<IconProps, any> {
+export default class NalliIcon extends PureComponent<IconProps, any> {
 
 	constructor(props) {
 		super(props);

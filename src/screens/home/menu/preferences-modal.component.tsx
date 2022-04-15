@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	Alert,
 	ScrollView,
@@ -22,7 +22,7 @@ interface PreferencesModalProps {
 	close: () => void;
 }
 
-export default class PreferencesModal extends React.PureComponent<PreferencesModalProps, any> {
+export default class PreferencesModal extends PureComponent<PreferencesModalProps, any> {
 
 	private readonly PREFERENCES_KEYS = [
 		{ key: NalliVariable.ONLY_NALLI_USERS, def: false },

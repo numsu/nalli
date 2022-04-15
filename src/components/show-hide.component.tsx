@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	StyleSheet,
 	TouchableWithoutFeedback,
@@ -22,7 +22,7 @@ interface ShowHideState {
 	show: boolean;
 }
 
-export default class ShowHide extends React.PureComponent<ShowHideProps, ShowHideState> {
+export default class ShowHide extends PureComponent<ShowHideProps, ShowHideState> {
 
 	constructor(props) {
 		super(props);

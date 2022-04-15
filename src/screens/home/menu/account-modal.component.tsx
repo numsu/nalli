@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	Alert,
 	ScrollView,
@@ -37,7 +37,7 @@ interface AccountModalState {
 	pin: string;
 }
 
-export default class AccountModal extends React.PureComponent<AccountModalProps, AccountModalState> {
+export default class AccountModal extends PureComponent<AccountModalProps, AccountModalState> {
 
 	constructor(props) {
 		super(props);

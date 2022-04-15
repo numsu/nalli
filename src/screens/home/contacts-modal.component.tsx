@@ -1,4 +1,4 @@
-import React, { RefObject } from 'react';
+import { createRef, PureComponent, RefObject } from 'react';
 import { EmitterSubscription, View } from 'react-native';
 import {
 	FlatList,
@@ -27,14 +27,14 @@ interface ContactsModalState {
 	process: boolean;
 }
 
-export default class ContactsModal extends React.PureComponent<ContactsModalProps, ContactsModalState> {
+export default class ContactsModal extends PureComponent<ContactsModalProps, ContactsModalState> {
 
 	contactsSearchRef: RefObject<any>;
 	subscriptions = [] as EmitterSubscription[];
 
 	constructor(props) {
 		super(props);
-		this.contactsSearchRef = React.createRef();
+		this.contactsSearchRef = createRef();
 		this.state = {
 			contacts: [],
 			filtered: [],

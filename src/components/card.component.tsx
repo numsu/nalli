@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	StyleSheet,
 	TouchableWithoutFeedback,
@@ -21,7 +21,7 @@ interface CardProps {
 interface CardState {
 }
 
-export default class Card extends React.PureComponent<CardProps, CardState> {
+export default class Card extends PureComponent<CardProps, CardState> {
 
 	constructor(props) {
 		super(props);

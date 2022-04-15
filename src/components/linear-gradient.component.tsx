@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	StyleSheet,
 } from 'react-native';
@@ -13,7 +13,7 @@ interface LinearGradientProps {
 interface LinearGradientState {
 }
 
-export default class NalliLinearGradient extends React.PureComponent<LinearGradientProps, LinearGradientState> {
+export default class NalliLinearGradient extends PureComponent<LinearGradientProps, LinearGradientState> {
 
 	constructor(props) {
 		super(props);

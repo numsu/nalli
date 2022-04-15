@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	StyleSheet,
 	TouchableOpacity,
@@ -24,7 +24,7 @@ interface SelectedContactProps {
 interface SelectedContactState {
 }
 
-export default class SelectedContact extends React.PureComponent<SelectedContactProps, SelectedContactState> {
+export default class SelectedContact extends PureComponent<SelectedContactProps, SelectedContactState> {
 
 	constructor(props) {
 		super(props);

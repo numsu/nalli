@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	Alert,
 	StyleSheet,
@@ -27,7 +27,7 @@ export interface TransactionModalState {
 	transaction: WalletTransaction;
 }
 
-export default class TransactionModal extends React.PureComponent<TransactionModalProps, TransactionModalState> {
+export default class TransactionModal extends PureComponent<TransactionModalProps, TransactionModalState> {
 
 	constructor(props) {
 		super(props);

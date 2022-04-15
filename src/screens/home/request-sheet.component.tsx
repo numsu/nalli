@@ -2,7 +2,7 @@ import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
 import LottieView from 'lottie-react-native';
 import { tools } from 'nanocurrency-web';
-import React, { RefObject } from 'react';
+import { createRef, PureComponent, RefObject } from 'react';
 import {
 	Alert,
 	EmitterSubscription,
@@ -60,7 +60,7 @@ enum RequestMode {
 	QR,
 }
 
-export default class RequestSheet extends React.PureComponent<RequestSheetProps, RequestSheetState> {
+export default class RequestSheet extends PureComponent<RequestSheetProps, RequestSheetState> {
 
 	requestSheetRef: RefObject<any>;
 	sendAnimation;
@@ -68,7 +68,7 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 
 	constructor(props) {
 		super(props);
-		this.requestSheetRef = React.createRef();
+		this.requestSheetRef = createRef();
 		this.state = {
 			address: '',
 			contactsModalOpen: false,

@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	StyleSheet,
 	TouchableOpacity,
@@ -25,7 +25,7 @@ interface NalliNumberPadState {
 	biometricsType: EBiometricsType;
 }
 
-export default class NalliNumberPad extends React.PureComponent<NalliNumberPadProps, NalliNumberPadState> {
+export default class NalliNumberPad extends PureComponent<NalliNumberPadProps, NalliNumberPadState> {
 
 	numbers = '123456789';
 

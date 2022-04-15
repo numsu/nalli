@@ -1,5 +1,5 @@
 import { wallet } from 'nanocurrency-web';
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	EmitterSubscription,
 	KeyboardAvoidingView,
@@ -45,7 +45,7 @@ interface HomeScreenState {
 	walletIsOpen: boolean;
 }
 
-export default class HomeScreen extends React.PureComponent<NativeStackScreenProps<any>, HomeScreenState> {
+export default class HomeScreen extends PureComponent<NativeStackScreenProps<any>, HomeScreenState> {
 
 	static firstLoad = false;
 

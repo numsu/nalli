@@ -1,5 +1,5 @@
 import * as Clipboard from 'expo-clipboard';
-import React from 'react';
+import { PureComponent } from 'react';
 import { Alert, TouchableOpacity } from 'react-native';
 
 import NalliIcon, { IconType } from './icon.component';
@@ -13,7 +13,7 @@ interface NalliCopyProps {
 interface NalliCopyState {
 }
 
-export default class NalliCopy extends React.PureComponent<NalliCopyProps, NalliCopyState> {
+export default class NalliCopy extends PureComponent<NalliCopyProps, NalliCopyState> {
 
 	constructor(props) {
 		super(props);

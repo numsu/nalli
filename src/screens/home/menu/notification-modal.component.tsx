@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	Alert,
 	StyleSheet,
@@ -22,7 +22,7 @@ interface NotificationModalState {
 	isOpen: boolean;
 }
 
-export default class NotificationModal extends React.PureComponent<NotificationModalProps, NotificationModalState> {
+export default class NotificationModal extends PureComponent<NotificationModalProps, NotificationModalState> {
 
 	constructor(props) {
 		super(props);

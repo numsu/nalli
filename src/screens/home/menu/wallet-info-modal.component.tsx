@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	EmitterSubscription,
 	ScrollView,
@@ -33,7 +33,7 @@ interface WalletInfoModalState {
 	walletInfo: Wallet;
 }
 
-export default class WalletInfoModal extends React.PureComponent<WalletInfoModalProps, WalletInfoModalState> {
+export default class WalletInfoModal extends PureComponent<WalletInfoModalProps, WalletInfoModalState> {
 
 	subscriptions: EmitterSubscription[] = [];
 

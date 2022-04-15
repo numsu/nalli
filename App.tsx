@@ -4,7 +4,7 @@ import AppLoading from 'expo-app-loading';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import { PureComponent } from 'react';
 import { Alert, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as encoding from 'text-encoding';
@@ -30,7 +30,7 @@ const customFonts = {
 
 const Stack = createNativeStackNavigator();
 
-export default class App extends React.PureComponent<any, any> {
+export default class App extends PureComponent<any, any> {
 
 	state = {
 		isLoadingComplete: false,

@@ -1,5 +1,5 @@
 import { BarCodeScanningResult, Camera, PermissionStatus } from 'expo-camera';
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	Alert,
 	StyleSheet,
@@ -21,7 +21,7 @@ interface QRCodeScannerState {
 	open: boolean;
 }
 
-export default class QRCodeScanner extends React.PureComponent<QRCodeScannerProps, QRCodeScannerState> {
+export default class QRCodeScanner extends PureComponent<QRCodeScannerProps, QRCodeScannerState> {
 
 	constructor(props) {
 		super(props);

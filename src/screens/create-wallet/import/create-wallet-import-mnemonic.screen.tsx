@@ -1,5 +1,5 @@
 import { tools, wallet } from 'nanocurrency-web';
-import React from 'react';
+import { createRef, PureComponent } from 'react';
 import {
 	Alert,
 	ScrollView,
@@ -20,14 +20,14 @@ import VariableStore, { NalliVariable } from '../../../service/variable-store';
 import WalletStore, { Wallet, WalletType } from '../../../service/wallet-store';
 import WalletService from '../../../service/wallet.service';
 
-export default class CreateWalletImportMnemonic extends React.PureComponent<NativeStackScreenProps<any>, any> {
+export default class CreateWalletImportMnemonic extends PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);
 		const words = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 		this.state = {
 			words,
-			refs: words.map(() => React.createRef()),
+			refs: words.map(() => createRef()),
 			process: false,
 		};
 	}

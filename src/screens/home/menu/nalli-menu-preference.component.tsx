@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import NalliIcon, { IconType } from '../../../components/icon.component';
@@ -13,7 +13,7 @@ interface NalliMenuPreferenceProps {
 	subheader: string;
 }
 
-export default class NalliMenuPreference extends React.PureComponent<NalliMenuPreferenceProps, any> {
+export default class NalliMenuPreference extends PureComponent<NalliMenuPreferenceProps, any> {
 
 	constructor(props) {
 		super(props);

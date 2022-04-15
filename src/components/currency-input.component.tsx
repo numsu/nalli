@@ -1,4 +1,4 @@
-import React, { RefObject } from 'react';
+import { PureComponent, RefObject } from 'react';
 import {
 	EmitterSubscription,
 	StyleSheet,
@@ -34,7 +34,7 @@ interface CurrencyInputState {
 	value: string;
 }
 
-export default class CurrencyInput extends React.PureComponent<CurrencyInputProps, CurrencyInputState> {
+export default class CurrencyInput extends PureComponent<CurrencyInputProps, CurrencyInputState> {
 
 	subscriptions: EmitterSubscription[] = [];
 

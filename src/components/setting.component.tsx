@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	StyleSheet,
 	Switch,
@@ -18,7 +18,7 @@ interface SettingProps {
 interface SettingState {
 }
 
-export default class Setting extends React.PureComponent<SettingProps, SettingState> {
+export default class Setting extends PureComponent<SettingProps, SettingState> {
 
 	constructor(props) {
 		super(props);

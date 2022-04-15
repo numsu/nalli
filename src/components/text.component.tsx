@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	StyleSheet,
 	Text,
@@ -25,7 +25,7 @@ export enum ETextSize {
 	BUTTON_SMALL,
 }
 
-export default class NalliText extends React.PureComponent<TextProps, TextState> {
+export default class NalliText extends PureComponent<TextProps, TextState> {
 
 	constructor(props) {
 		super(props);

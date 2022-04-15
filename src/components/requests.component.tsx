@@ -1,6 +1,6 @@
 import * as Haptics from 'expo-haptics';
 import { tools } from 'nanocurrency-web';
-import React from 'react';
+import { PureComponent } from 'react';
 import { Alert, EmitterSubscription, StyleSheet, TouchableHighlight, View } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 
@@ -26,7 +26,7 @@ interface RequestsState {
 	hasMore: boolean;
 }
 
-export default class NalliRequests extends React.PureComponent<RequestsProps, RequestsState> {
+export default class NalliRequests extends PureComponent<RequestsProps, RequestsState> {
 
 	subscriptions: EmitterSubscription[] = [];
 	interval;
@@ -56,7 +56,7 @@ export default class NalliRequests extends React.PureComponent<RequestsProps, Re
 	}
 
 	fetchRequests = async () => {
-		if (!await AuthStore.isPhoneNumberFunctionsEnabled()) {
+		if (!(await AuthStore.isPhoneNumberFunctionsEnabled())) {
 			return;
 		}
 

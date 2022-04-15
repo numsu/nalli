@@ -1,4 +1,4 @@
-import React, { RefObject } from 'react';
+import { createRef, PureComponent, RefObject } from 'react';
 import {
 	EmitterSubscription,
 	LogBox,
@@ -32,7 +32,7 @@ interface TransactionSheetState {
 	transactions: WalletTransaction[];
 }
 
-export default class TransactionsSheet extends React.PureComponent<TransactionsSheetProps, TransactionSheetState> {
+export default class TransactionsSheet extends PureComponent<TransactionsSheetProps, TransactionSheetState> {
 
 	ref: RefObject<any>;
 	interval;
@@ -40,7 +40,7 @@ export default class TransactionsSheet extends React.PureComponent<TransactionsS
 
 	constructor(props) {
 		super(props);
-		this.ref = React.createRef();
+		this.ref = createRef();
 		this.state = {
 			hasMoreTransactions: false,
 			selectedTransaction: {} as WalletTransaction,

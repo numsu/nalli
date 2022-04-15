@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	Alert,
 	StyleSheet,
@@ -21,7 +21,7 @@ interface WelcomePinScreenState {
 	verify: boolean;
 }
 
-export default class WelcomePinScreen extends React.PureComponent<NativeStackScreenProps<any>, WelcomePinScreenState> {
+export default class WelcomePinScreen extends PureComponent<NativeStackScreenProps<any>, WelcomePinScreenState> {
 
 	constructor(props) {
 		super(props);

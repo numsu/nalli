@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent, memo } from 'react';
 import {
 	EmitterSubscription,
 	KeyboardAvoidingView,
@@ -36,7 +36,7 @@ interface ModalState {
 	appState: NalliAppState;
 }
 
-class NalliModal extends React.PureComponent<ModalProps, ModalState> {
+class NalliModal extends PureComponent<ModalProps, ModalState> {
 
 	constructor(props) {
 		super(props);
@@ -143,7 +143,7 @@ class NalliModal extends React.PureComponent<ModalProps, ModalState> {
 
 }
 
-export default React.memo(NalliModal);
+export default memo(NalliModal);
 
 export enum EModalSize {
 	LARGE,

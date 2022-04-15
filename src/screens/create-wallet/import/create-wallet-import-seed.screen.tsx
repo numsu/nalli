@@ -1,5 +1,5 @@
 import { wallet } from 'nanocurrency-web';
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	Alert,
 	StyleSheet,
@@ -20,7 +20,7 @@ import VariableStore, { NalliVariable } from '../../../service/variable-store';
 import WalletStore, { Wallet, WalletType } from '../../../service/wallet-store';
 import WalletService from '../../../service/wallet.service';
 
-export default class CreateWalletImportSeed extends React.PureComponent<NativeStackScreenProps<any>, any> {
+export default class CreateWalletImportSeed extends PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);

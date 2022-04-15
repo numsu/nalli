@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import * as Updates from 'expo-updates'
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	Alert,
 	ImageBackground,
@@ -20,7 +20,7 @@ import ContactsService from '../service/contacts.service';
 import VariableStore, { NalliVariable } from '../service/variable-store';
 import WalletStore from '../service/wallet-store';
 
-export default class AuthLoadingScreen extends React.PureComponent<NativeStackScreenProps<any>, any> {
+export default class AuthLoadingScreen extends PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);

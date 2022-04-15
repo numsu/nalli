@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import Colors from '../constants/colors';
@@ -10,7 +10,7 @@ interface NalliBadgeProps {
 interface NalliBadgeState {
 }
 
-export default class NalliBadge extends React.PureComponent<NalliBadgeProps, NalliBadgeState> {
+export default class NalliBadge extends PureComponent<NalliBadgeProps, NalliBadgeState> {
 
 	constructor(props) {
 		super(props);

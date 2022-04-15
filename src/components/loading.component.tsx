@@ -1,5 +1,5 @@
 import LottieView from 'lottie-react-native';
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	StyleSheet,
 	View,
@@ -17,7 +17,7 @@ interface LoadingProps {
 	color?: 'main' | 'white';
 }
 
-export default class Loading extends React.PureComponent<LoadingProps, any> {
+export default class Loading extends PureComponent<LoadingProps, any> {
 
 	animation;
 

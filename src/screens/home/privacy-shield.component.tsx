@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import { AppState, StyleSheet, View } from 'react-native';
 
 import NalliLogo from '../../components/svg/nalli-logo';
@@ -27,7 +27,7 @@ interface PrivacyShieldState {
 	inactivationTime: string;
 }
 
-export default class PrivacyShield extends React.PureComponent<PrivacyShieldProps, PrivacyShieldState> {
+export default class PrivacyShield extends PureComponent<PrivacyShieldProps, PrivacyShieldState> {
 
 	constructor(props) {
 		super(props);

@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	Alert,
 	ScrollView,
@@ -19,7 +19,7 @@ import VariableStore, { NalliVariable } from '../../../service/variable-store';
 import WalletStore from '../../../service/wallet-store';
 import WalletService, { Wallet } from '../../../service/wallet.service';
 
-export default class CreateWalletMnemonic extends React.PureComponent<NativeStackScreenProps<any>, any> {
+export default class CreateWalletMnemonic extends PureComponent<NativeStackScreenProps<any>, any> {
 
 	constructor(props) {
 		super(props);

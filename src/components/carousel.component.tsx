@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import { EmitterSubscription, StyleSheet, TouchableHighlight, View } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 
@@ -23,7 +23,7 @@ interface CarouselState {
 	processing: boolean;
 }
 
-export default class NalliCarousel extends React.PureComponent<CarouselProps, CarouselState> {
+export default class NalliCarousel extends PureComponent<CarouselProps, CarouselState> {
 
 	carouselRef;
 	subscriptions: EmitterSubscription[] = [];

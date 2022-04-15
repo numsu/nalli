@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import { Alert, EmitterSubscription, Linking, ScrollView, StyleSheet, View } from 'react-native';
 
 import { IconType } from '../../../components/icon.component';
@@ -26,7 +26,7 @@ interface NalliMenuState {
 	walletInfoModalOpen: boolean;
 }
 
-export default class NalliMenu extends React.PureComponent<NalliMenuProps, NalliMenuState> {
+export default class NalliMenu extends PureComponent<NalliMenuProps, NalliMenuState> {
 
 	subscriptions: EmitterSubscription[] = [];
 

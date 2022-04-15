@@ -1,4 +1,4 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import {
 	StyleSheet,
 	TextInput,
@@ -25,7 +25,7 @@ interface ChangePinModalState {
 	confirm: string;
 }
 
-export default class ChangePinModal extends React.PureComponent<ChangePinModalProps, ChangePinModalState> {
+export default class ChangePinModal extends PureComponent<ChangePinModalProps, ChangePinModalState> {
 
 	constructor(props) {
 		super(props);
