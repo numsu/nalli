@@ -6,7 +6,6 @@ import {
 	TouchableOpacity,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import Animated, { FadeIn } from 'react-native-reanimated';
 
 import { BottomSheetView } from '@gorhom/bottom-sheet';
 
@@ -140,7 +139,7 @@ export default class TransactionsSheet extends React.PureComponent<TransactionsS
 								const item = itemInfo.item;
 								const amount = CurrencyService.formatNanoAmount(Number(item.amount));
 								return (
-									<Animated.View entering={FadeIn} key={item.hash} style={styles.transactionContainer}>
+									<BottomSheetView key={item.hash} style={styles.transactionContainer}>
 										<TouchableOpacity onPress={() => this.openTransaction(item)}>
 											<BottomSheetView style={styles.transactionRow}>
 												{item.type == 'send'
@@ -167,7 +166,7 @@ export default class TransactionsSheet extends React.PureComponent<TransactionsS
 												}
 											</BottomSheetView>
 										</TouchableOpacity>
-									</Animated.View>
+									</BottomSheetView>
 								);
 							}}
 							ListFooterComponent={() => {

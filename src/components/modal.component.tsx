@@ -36,7 +36,7 @@ interface ModalState {
 	appState: NalliAppState;
 }
 
-class NalliModal extends React.PureComponent<ModalProps, ModalState> {
+export default class NalliModal extends React.PureComponent<ModalProps, ModalState> {
 
 	constructor(props) {
 		super(props);
@@ -142,8 +142,6 @@ class NalliModal extends React.PureComponent<ModalProps, ModalState> {
 	}
 
 }
-
-export default React.memo(NalliModal);
 
 export enum EModalSize {
 	LARGE,

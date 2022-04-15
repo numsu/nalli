@@ -4,7 +4,6 @@ import {
 	TouchableWithoutFeedback,
 	View,
 } from 'react-native';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 import Colors from '../constants/colors';
 import NalliText, { ETextSize } from './text.component';
@@ -39,7 +38,7 @@ export default class Card extends React.PureComponent<CardProps, CardState> {
 		} = this.props;
 		return (
 			<TouchableWithoutFeedback onLongPress={onLongPress} onPress={onPress}>
-				<Animated.View entering={FadeIn} exiting={FadeOut} style={[style, styles.card]}>
+				<View style={[style, styles.card]}>
 					<NalliText
 							size={ETextSize.H1}
 							style={styles.header}>
@@ -49,7 +48,7 @@ export default class Card extends React.PureComponent<CardProps, CardState> {
 					<View style={contentContainerStyle}>
 						{children}
 					</View>
-				</Animated.View>
+				</View>
 			</TouchableWithoutFeedback>
 		);
 	}

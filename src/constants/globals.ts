@@ -1,6 +1,6 @@
 import { Linking, Platform } from "react-native";
 
-export const ANIMATION_DELAY = 150;
+export const ANIMATION_DELAY = 120;
 
 export function sleep(ms: number) {
 	return new Promise(resolve => setTimeout(resolve, ms));
