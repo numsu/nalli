@@ -3,6 +3,7 @@ import { AppState, StyleSheet, View } from 'react-native';
 
 import NalliLogo from '../../components/svg/nalli-logo';
 import Colors from '../../constants/colors';
+import { noop } from '../../constants/globals';
 import layout from '../../constants/layout';
 import AuthStore from '../../service/auth-store';
 import ClientService from '../../service/client.service';
@@ -62,8 +63,8 @@ export default class PrivacyShield extends React.PureComponent<PrivacyShieldProp
 		if (this.state.appState == NalliAppState.INACTIVE && nextAppState == 'active') {
 			try {
 				if (new Date(this.state.sessionExpiresTime).getTime() < new Date().getTime()) {
-					AuthStore.clearAuthentication();
-					AuthStore.clearExpires();
+					AuthStore.clearAuthentication().then(noop);
+					AuthStore.clearExpires().then(noop);
 					NavigationService.navigate('Login');
 					return;
 				} else if (new Date(this.state.inactivationTime) < new Date(new Date().getTime() - 60000)) {

@@ -351,7 +351,7 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 										onSwapPress={this.onSelectRecipientPress} />
 							}
 						</BottomSheetScrollView>
-						{/* {recipient && */}
+						{recipient &&
 							<BottomSheetView style={styles.confirmButton}>
 								<NalliButton
 										text='Request'
@@ -359,7 +359,7 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 										onPress={this.confirmRequest}
 										disabled={!recipient || !requestAmount || process} />
 							</BottomSheetView>
-						{/* } */}
+						}
 						<ContactsModal
 								isOpen={contactsModalOpen}
 								onlyNalliUsers

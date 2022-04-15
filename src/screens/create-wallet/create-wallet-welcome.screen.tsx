@@ -12,6 +12,7 @@ import NalliIcon, { IconType } from '../../components/icon.component';
 import NalliButton from '../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../components/text.component';
 import Colors from '../../constants/colors';
+import { noop } from '../../constants/globals';
 import AuthStore from '../../service/auth-store';
 
 export default class CreateWalletWelcome extends React.PureComponent<NativeStackScreenProps<any>, any> {
@@ -34,7 +35,7 @@ export default class CreateWalletWelcome extends React.PureComponent<NativeStack
 
 	onLogoutPress = async () => {
 		await AuthStore.clearAuthentication();
-		AuthStore.clearExpires();
+		AuthStore.clearExpires().then(noop);
 		this.props.navigation.dispatch(StackActions.replace('Login'));
 	}
 
