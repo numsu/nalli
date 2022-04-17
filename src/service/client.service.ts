@@ -37,6 +37,10 @@ export default class ClientService {
 		return HttpService.get<void>(`${this.uri}/delete`);
 	}
 
+	static userExistsByAddress(address: string) {
+		return HttpService.get<boolean>(`${this.uri}/exists/${address}`);
+	}
+
 }
 
 export interface Client {

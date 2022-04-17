@@ -11,6 +11,7 @@ import NalliText, { ETextSize } from './text.component';
 interface NalliButtonProps {
 	disabled?: boolean;
 	icon?: any;
+	iconType?: IconType;
 	text?: string;
 	textStyle?: any;
 	style?: any;
@@ -29,7 +30,18 @@ export default class NalliButton extends React.PureComponent<NalliButtonProps, N
 	}
 
 	render = () => {
-		const { disabled, icon, text, textStyle, small, style, solid, onPress } = this.props;
+		const {
+			disabled,
+			icon,
+			iconType,
+			onPress,
+			small,
+			solid,
+			style,
+			text,
+			textStyle,
+		} = this.props;
+
 		return (
 			<TouchableOpacity
 					activeOpacity={disabled ? 1 : 0.7}
@@ -59,7 +71,7 @@ export default class NalliButton extends React.PureComponent<NalliButtonProps, N
 								? styles.smallText
 								: {}
 						]}>
-					{icon && <NalliIcon style={styles.icon} icon={icon} size={small ? 15 : 20} type={IconType.ION} />}
+					{icon && <NalliIcon style={styles.icon} icon={icon} size={small ? 15 : 20} type={iconType || IconType.ION} />}
 					{icon && '\xa0\xa0'}
 					{text}
 				</NalliText>

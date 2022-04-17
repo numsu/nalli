@@ -51,6 +51,7 @@ export interface SendSheetState {
 	inputPhoneNumberModalOpen: boolean;
 	isNalliUser: boolean;
 	isPhoneNumberUser: boolean;
+	message: string;
 	process: boolean;
 	recipient: SendSheetRecipient;
 	recipientAddress: string;
@@ -97,6 +98,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 			inputPhoneNumberModalOpen: false,
 			isNalliUser: false,
 			isPhoneNumberUser: false,
+			message: '',
 			process: false,
 			recipient: undefined,
 			recipientAddress: undefined,
@@ -196,7 +198,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 		this.setState({ walletAddress });
 	}
 
-	onQRCodeScanned = (params: BarCodeScanningResult): boolean => {
+	onQRCodeScanned = async (params: BarCodeScanningResult): Promise<boolean> => {
 		const address = params.data.replace('nano:', '');
 		if (!tools.validateAddress(address)) {
 			if (!this.barcodeAlertActive) {
@@ -214,8 +216,13 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 			}
 			return false;
 		}
-		this.setState({ walletAddress: address });
+		const isNalliUser = await ClientService.userExistsByAddress(address);
+		this.setState({ walletAddress: address, isNalliUser });
 		return true;
+	}
+
+	updateMessage = (message: string) => {
+		this.setState({ message });
 	}
 
 	onSelectRecipientPress = async () => {
@@ -295,6 +302,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 			contactsModalOpen: false,
 			inputPhoneNumberModalOpen: false,
 			isNalliUser: false,
+			message: '',
 			recipient: undefined,
 			recipientAddress: undefined,
 			recipientLastLoginDate: undefined,
@@ -307,17 +315,18 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 		Keyboard.dismiss();
 		this.setState({
 			contactsModalOpen: false,
+			convertedAmount: '0',
 			inputPhoneNumberModalOpen: false,
 			isNalliUser: false,
+			message: '',
+			process: false,
 			recipient: undefined,
 			recipientAddress: undefined,
 			recipientLastLoginDate: undefined,
 			requestId: undefined,
-			walletAddress: undefined,
-			process: false,
-			success: false,
 			sendAmount: undefined,
-			convertedAmount: '0',
+			success: false,
+			walletAddress: undefined,
 		});
 		this.init();
 	}
@@ -401,6 +410,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 			await WalletService.publishTransaction({
 				subtype: EBlockSubType.SEND,
 				requestId: this.state.requestId,
+				message: this.state.message,
 				block: signedBlock,
 			});
 		} catch {
@@ -432,6 +442,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 			inputPhoneNumberModalOpen,
 			isNalliUser,
 			isPhoneNumberUser,
+			message,
 			process,
 			recipient,
 			recipientAddress,
@@ -470,7 +481,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 					enablePanDownToClose={!process || success}
 					enableLinearGradient
 					onClose={this.clearState}
-					snapPoints={layout.isSmallDevice ? ['88%'] : ['71.5%']}
+					snapPoints={['88%']}
 					header={header}>
 				{process &&
 					<BottomSheetView style={styles.sheetContent}>
@@ -499,7 +510,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 						{success &&
 							<BottomSheetView style={styles.successTextContainer}>
 								<NalliText style={styles.successText}>You sent <NalliText style={[styles.successText, styles.successTextColor]}>Ӿ {sendAmount}</NalliText></NalliText>
-								<NalliText style={styles.successText}>to <NalliText style={[styles.successText, styles.successTextColor]}>{recipientText}</NalliText></NalliText>
+								<NalliText style={styles.successText}>to </NalliText><NalliText style={[styles.successText, styles.successTextColor]}>{recipientText}</NalliText>
 							</BottomSheetView>
 						}
 						{success &&
@@ -543,6 +554,14 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 										<NalliText size={ETextSize.H2} style={styles.switchButtonText}>Address</NalliText>
 									</TouchableOpacity>
 								</BottomSheetView>
+							}
+							{isNalliUser &&
+								<NalliInput
+										style={styles.messageInput}
+										value={message}
+										maxLength={128}
+										onChangeText={this.updateMessage}
+										label='Message' />
 							}
 							{!(tab != SendSheetTab.DONATION && !requestId && isPhoneNumberUser) &&
 								<NalliText size={ETextSize.H2}>To</NalliText>
@@ -625,7 +644,6 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 									</TouchableOpacity>
 								</BottomSheetView>
 							}
-
 							{!!recipient && (tab == SendSheetTab.CONTACT || tab == SendSheetTab.PHONE) &&
 								<BottomSheetView style={{ marginTop: 10 }}>
 									<ShowHide showText='Show details' hideText='Hide details'>
@@ -696,8 +714,13 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 		marginTop: 10,
 	},
+	messageInput: {
+		fontSize: 16,
+		lineHeight: 25,
+		height: 55,
+	},
 	tabs: {
-		marginBottom: 25,
+		marginBottom: 15,
 		display: 'flex',
 		flexDirection: 'row',
 	},

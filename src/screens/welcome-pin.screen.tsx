@@ -73,7 +73,7 @@ export default class WelcomePinScreen extends React.PureComponent<NativeStackScr
 					<View style={styles.numberPadPinContainer}>
 						<TextInput
 								style={styles.numberPadPin}
-								value={'*'.repeat(pin.length)}
+								value={'⬤'.repeat(pin.length)}
 								allowFontScaling={false}
 								editable={false} />
 					</View>
@@ -114,8 +114,9 @@ const styles = StyleSheet.create({
 	},
 	numberPadPin: {
 		color: 'white',
-		fontSize: 38,
+		fontSize: 10,
 		width: '100%',
 		textAlign: 'center',
+		marginBottom: 10,
 	},
 });

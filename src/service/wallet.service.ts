@@ -49,6 +49,14 @@ export default class WalletService {
 		return HttpService.post<string>(`${this.uri}/publish/v2`, block);
 	}
 
+	static getPendingSendAmount() {
+		return HttpService.get<number>(`${this.uri}/pending/amount`);
+	}
+
+	static returnAllPendingSends() {
+		return HttpService.get<void>(`${this.uri}/pending/return/all`);
+	}
+
 	static createPendingSend(phone: string) {
 		return HttpService.post<PendingSend>(`${this.uri}/pending`, { phone });
 	}
@@ -96,22 +104,24 @@ export interface ReceivedPendingBlock {
 }
 
 export interface WalletTransaction {
-	phoneHash: string;
 	account: string;
-	type: string;
 	amount: string;
-	timestamp: number;
-	height: number;
-	hash: string;
-	pendingId: string;
-	pendingStatus: EPendingStatus;
 	custodialAccount: string;
 	custodialHash: string;
+	hash: string;
+	height: number;
+	message: string;
+	pendingId: string;
+	pendingStatus: EPendingStatus;
+	phoneHash: string;
+	timestamp: number;
+	type: string;
 }
 
 export interface BlockProcess {
 	subtype: EBlockSubType;
 	requestId?: string;
+	message?: string;
 	block: SignedBlock;
 }
 

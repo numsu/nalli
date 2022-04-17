@@ -98,7 +98,7 @@ export default class WalletInfoModal extends React.PureComponent<WalletInfoModal
 	}
 
 	closeAndLock = () => {
-		setTimeout(() => this.setState({ isUnlocked: false }), ANIMATION_DELAY); // Wait for animation
+		setTimeout(() => this.setState({ isUnlocked: false }), ANIMATION_DELAY);
 		this.props.close();
 	}
 
@@ -114,9 +114,11 @@ export default class WalletInfoModal extends React.PureComponent<WalletInfoModal
 		let words, privateKeys;
 		if (isUnlocked) {
 			let i = 0;
-			words = walletInfo.mnemonic.split(' ').map(word => (
-				<MnemonicWord key={i} index={++i}>{word}</MnemonicWord>
-			));
+			if (walletInfo.mnemonic) {
+				words = walletInfo.mnemonic.split(' ').map(word => (
+					<MnemonicWord key={i} index={++i}>{word}</MnemonicWord>
+				));
+			}
 			privateKeys = walletInfo.accounts.map(account => (
 				<View style={{ alignItems: 'center' }} key={account.accountIndex}>
 					<NalliText size={ETextSize.H2} style={styles.header}>{`Account #${account.accountIndex} private key`}</NalliText>
@@ -135,13 +137,17 @@ export default class WalletInfoModal extends React.PureComponent<WalletInfoModal
 				{isUnlocked &&
 					<ScrollView contentContainerStyle={styles.container}>
 						<NalliText>This information is everything needed to access your wallet and spend your funds. Keep a copy of this information in a safe place in case your phone breaks or you lose it and never share it with anyone.</NalliText>
-						<NalliText size={ETextSize.H2} style={styles.header}>Recovery phrase</NalliText>
-						<NalliText style={styles.addition}>Wallet type: {walletInfo.type == WalletType.HD_WALLET ? 'HD Wallet' : 'Legacy wallet'}</NalliText>
-						<ShowHide allowCopy copyValue={walletInfo.mnemonic} confirmCopy>
-							<View style={styles.wordsContainer}>
-								{words}
+						{!!words &&
+							<View>
+								<NalliText size={ETextSize.H2} style={styles.header}>Recovery phrase</NalliText>
+								<NalliText style={styles.addition}>Wallet type: {walletInfo.type == WalletType.HD_WALLET ? 'HD Wallet' : 'Legacy wallet'}</NalliText>
+								<ShowHide allowCopy copyValue={walletInfo.mnemonic} confirmCopy>
+									<View style={styles.wordsContainer}>
+										{words}
+									</View>
+								</ShowHide>
 							</View>
-						</ShowHide>
+						}
 						<NalliText size={ETextSize.H2} style={styles.header}>Wallet seed</NalliText>
 						<ShowHide allowCopy copyValue={walletInfo.seed} confirmCopy>
 							<NalliText>{walletInfo.seed}</NalliText>
@@ -154,7 +160,7 @@ export default class WalletInfoModal extends React.PureComponent<WalletInfoModal
 						<NalliText size={ETextSize.H2} style={styles.header}>Enter pin to view</NalliText>
 						<TextInput
 								style={styles.numberPadPin}
-								value={'*'.repeat(pin.length)}
+								value={'⬤'.repeat(pin.length)}
 								allowFontScaling={false}
 								editable={false} />
 						<NalliNumberPad
@@ -204,8 +210,9 @@ const styles = StyleSheet.create({
 	},
 	numberPadPin: {
 		color: Colors.main,
-		fontSize: 38,
+		fontSize: 10,
 		width: '100%',
 		textAlign: 'center',
+		marginBottom: 10,
 	},
 });

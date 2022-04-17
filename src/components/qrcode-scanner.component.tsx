@@ -14,7 +14,7 @@ import NalliIcon, { IconType } from './icon.component';
 import NalliText, { ETextSize } from './text.component';
 
 interface QRCodeScannerProps {
-	onQRCodeScanned: (params: BarCodeScanningResult) => boolean;
+	onQRCodeScanned: (params: BarCodeScanningResult) => Promise<boolean>;
 }
 
 interface QRCodeScannerState {

@@ -10,9 +10,11 @@ import { FlatList } from 'react-native-gesture-handler';
 import { BottomSheetView } from '@gorhom/bottom-sheet';
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
+import NalliIcon, { IconType } from '../../components/icon.component';
 import NalliButton from '../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../components/text.component';
 import colors from '../../constants/colors';
+import Colors from '../../constants/colors';
 import { ANIMATION_DELAY, sleep } from '../../constants/globals';
 import ContactsService from '../../service/contacts.service';
 import CurrencyService from '../../service/currency.service';
@@ -165,6 +167,13 @@ export default class TransactionsSheet extends React.PureComponent<TransactionsS
 													</NalliText>
 												}
 											</BottomSheetView>
+											{!!item.message &&
+												<BottomSheetView style={styles.transactionRow}>
+													<NalliText style={styles.transactionTarget}>
+														<NalliIcon style={styles.chatIcon} icon='chatbox' type={IconType.ION} size={14} />&nbsp;&nbsp;{item.message.length > 30 ? item.message.substring(0, 30) + '...' : item.message}
+													</NalliText>
+												</BottomSheetView>
+											}
 										</TouchableOpacity>
 									</BottomSheetView>
 								);
@@ -228,6 +237,9 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		lineHeight: 20,
 		fontFamily: 'OpenSans',
+	},
+	chatIcon: {
+		color: Colors.main,
 	},
 	fetchMoreButton: {
 		width: '50%',

@@ -122,6 +122,14 @@ export default class TransactionModal extends React.PureComponent<TransactionMod
 							</NalliText>
 						}
 					</View>
+					{!!transaction.message &&
+						<View style={styles.row}>
+							<NalliText size={ETextSize.H2}>Message</NalliText>
+							<NalliText>
+								{transaction.message}
+							</NalliText>
+						</View>
+					}
 					{transaction.pendingStatus == EPendingStatus.CREATED || transaction.pendingStatus == EPendingStatus.FILLED &&
 						<View style={styles.row}>
 							<NalliText size={ETextSize.H2}>Custodial transaction status</NalliText>

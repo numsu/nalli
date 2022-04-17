@@ -28,7 +28,7 @@ import WalletStore from '../service/wallet-store';
 
 interface LoginState {
 	biometricsType: EBiometricsType;
-	isBiometricProcess: boolean;
+	displayNumberPad: boolean;
 	phoneNumber: string;
 	phoneNumberCountry: string;
 	pin: string;
@@ -41,7 +41,7 @@ export default class Login extends React.Component<NativeStackScreenProps<any>, 
 		super(props);
 		this.state = {
 			biometricsType: EBiometricsType.NO_BIOMETRICS,
-			isBiometricProcess: false,
+			displayNumberPad: false,
 			phoneNumber: '',
 			phoneNumberCountry: 'us',
 			pin: '',
@@ -87,14 +87,16 @@ export default class Login extends React.Component<NativeStackScreenProps<any>, 
 		const isBiometricsEnabled = await BiometricsService.isBiometricsEnabled();
 		const isAutologinDisabled = await VariableStore.getVariable<boolean>(NalliVariable.NO_AUTOLOGIN, false);
 		if (isBiometricsEnabled && !isAutologinDisabled) {
-			this.setState({ isBiometricProcess: true }, async () => {
+			this.setState({ displayNumberPad: false }, async () => {
 				const success = await BiometricsService.authenticate(`Login with ${EBiometricsType.getBiometricsTypeText(this.state.biometricsType)}`);
 				if (success) {
 					await this.doLogin();
 				} else {
-					this.setState({ isBiometricProcess: false });
+					this.setState({ displayNumberPad: true });
 				}
 			});
+		} else {
+			this.setState({ displayNumberPad: true });
 		}
 		await VariableStore.setVariable(NalliVariable.NO_AUTOLOGIN, false);
 	}
@@ -137,7 +139,7 @@ export default class Login extends React.Component<NativeStackScreenProps<any>, 
 			}
 		} catch (e) {
 			console.error(e);
-			this.setState({ pin: '', process: false, isBiometricProcess: false });
+			this.setState({ pin: '', process: false, displayNumberPad: true });
 			if (e.code == NalliErrorCode.ACCOUNT_DISABLED) {
 				Alert.alert('Error', 'Your account is disabled. Most likely due to someone else registering with the same wallet. Please reinstall the application.');
 			} else {
@@ -158,7 +160,7 @@ export default class Login extends React.Component<NativeStackScreenProps<any>, 
 	}
 
 	render = () => {
-		const { isBiometricProcess, pin, process } = this.state;
+		const { displayNumberPad, pin, process } = this.state;
 		return (
 			<DismissKeyboardView style={styles.container}>
 				<StatusBar translucent style='light' />
@@ -169,12 +171,12 @@ export default class Login extends React.Component<NativeStackScreenProps<any>, 
 				<NalliText size={ETextSize.P_LARGE} style={styles.text}>
 					Enter pin
 				</NalliText>
-				{!isBiometricProcess &&
+				{displayNumberPad &&
 					<View style={styles.numberPadContainer}>
 						<View style={styles.numberPadPinContainer}>
 							<TextInput
 									style={styles.numberPadPin}
-									value={'*'.repeat(pin.length)}
+									value={'⬤'.repeat(pin.length)}
 									allowFontScaling={false}
 									editable={false} />
 						</View>
@@ -224,8 +226,9 @@ const styles = StyleSheet.create({
 	},
 	numberPadPin: {
 		color: 'white',
-		fontSize: 38,
+		fontSize: 10,
 		width: '100%',
 		textAlign: 'center',
+		marginBottom: 10,
 	},
 });

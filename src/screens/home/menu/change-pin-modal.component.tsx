@@ -83,7 +83,7 @@ export default class ChangePinModal extends React.PureComponent<ChangePinModalPr
 					<NalliText size={ETextSize.H2} style={styles.header}>{isConfirm ? 'Confirm new PIN' : 'New PIN'}</NalliText>
 					<TextInput
 							style={styles.numberPadPin}
-							value={'*'.repeat(isConfirm ? confirm.length : pin.length)}
+							value={'⬤'.repeat(isConfirm ? confirm.length : pin.length)}
 							allowFontScaling={false}
 							editable={false} />
 					<NalliNumberPad
@@ -114,8 +114,9 @@ const styles = StyleSheet.create({
 	},
 	numberPadPin: {
 		color: Colors.main,
-		fontSize: 38,
+		fontSize: 10,
 		width: '100%',
 		textAlign: 'center',
+		marginBottom: 10,
 	},
 });
