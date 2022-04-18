@@ -73,7 +73,7 @@ export default class PhoneNumberInputModal extends React.PureComponent<NumberInp
 					onClose={this.hide}
 					header='Phone number'
 					size={EModalSize.MINI}>
-				<View>
+				<View style={styles.container}>
 					<PhoneNumberInput
 							value={number}
 							onChangeNumber={this.onChangeNumber}
@@ -82,6 +82,7 @@ export default class PhoneNumberInputModal extends React.PureComponent<NumberInp
 							countryTextInputStyle={styles.input}
 							countryInputTextStyle={styles.countryInputText} />
 					<NalliButton
+							style={styles.button}
 							text='Confirm'
 							solid
 							onPress={() => this.onConfirmNumber(number)} />
@@ -93,13 +94,19 @@ export default class PhoneNumberInputModal extends React.PureComponent<NumberInp
 }
 
 const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+	},
 	input: {
 		borderColor: Colors.main,
 		color: Colors.main,
 		borderWidth: 1,
-		marginBottom: 20,
 	},
 	countryInputText: {
 		color: Colors.main,
+	},
+	button: {
+		position: 'absolute',
+		bottom: 20,
 	},
 });

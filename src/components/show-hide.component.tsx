@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
 	},
 	showhide: {
 		marginBottom: 10,
-		backgroundColor: 'rgba(200, 200, 200, 0.15)',
+		backgroundColor: Colors.lightGrey,
 		alignSelf: 'center',
 		paddingHorizontal: 30,
 		paddingVertical: 5,

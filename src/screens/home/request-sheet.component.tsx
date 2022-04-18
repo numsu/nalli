@@ -16,8 +16,8 @@ import { BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import CurrencyInput from '../../components/currency-input.component';
 import NalliIcon, { IconType } from '../../components/icon.component';
+import Message from '../../components/message.component';
 import NalliButton from '../../components/nalli-button.component';
-import NalliInput from '../../components/nalli-input.component';
 import NalliNanoAddress from '../../components/nano-address.component';
 import QRCode from '../../components/qrcode/qrcode.component';
 import SelectedContact from '../../components/selected-contact.component';
@@ -329,12 +329,6 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 										onChangeText={(requestAmount: string, convertedAmount: string, currency: string) =>
 												this.setState({ requestAmount: requestAmount, convertedAmount, currency })} />
 							</BottomSheetView>
-							<NalliInput
-									style={styles.messageInput}
-									value={message}
-									maxLength={64}
-									onChangeText={this.updateMessage}
-									label='Message' />
 							<NalliText size={ETextSize.H2}>From</NalliText>
 							{!recipient &&
 								<NalliButton
@@ -350,6 +344,9 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 										lastLoginDate={recipientLastLoginDate}
 										onSwapPress={this.onSelectRecipientPress} />
 							}
+							<Message
+									message={message}
+									onChangeMessage={this.updateMessage} />
 						</BottomSheetScrollView>
 						{recipient &&
 							<BottomSheetView style={styles.confirmButton}>
@@ -393,7 +390,7 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 					reference={this.requestSheetRef}
 					enablePanDownToClose={!process}
 					enableLinearGradient
-					snapPoints={['88%']}
+					snapPoints={layout.isSmallDevice ? ['88%'] : ['71.5%']}
 					header={header}
 					onClose={this.clearState}
 					headerIconComponent={headerIconComponent}>

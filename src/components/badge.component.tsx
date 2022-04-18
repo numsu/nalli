@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
 	badge: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		backgroundColor: Colors.borderColor,
+		backgroundColor: Colors.lightGrey,
 		paddingHorizontal: 6,
 		paddingVertical: 1,
 		borderRadius: 30,

@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
 		height: '100%',
 		width: '100%',
 		paddingTop: 40,
-		backgroundColor: 'rgba(0, 0, 0, 0.05)',
+		backgroundColor: Colors.lightGrey,
 	},
 	content: {
 		paddingVertical: 15,

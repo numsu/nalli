@@ -19,6 +19,7 @@ import MyBottomSheet from '../../components/bottom-sheet.component';
 import CurrencyInput from '../../components/currency-input.component';
 import NalliIcon, { IconType } from '../../components/icon.component';
 import Link from '../../components/link.component';
+import Message from '../../components/message.component';
 import NalliButton from '../../components/nalli-button.component';
 import NalliInput from '../../components/nalli-input.component';
 import NalliNanoAddress from '../../components/nano-address.component';
@@ -221,7 +222,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 		return true;
 	}
 
-	updateMessage = (message: string) => {
+	onChangeMessage = (message: string) => {
 		this.setState({ message });
 	}
 
@@ -481,7 +482,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 					enablePanDownToClose={!process || success}
 					enableLinearGradient
 					onClose={this.clearState}
-					snapPoints={['88%']}
+					snapPoints={layout.isSmallDevice ? ['88%'] : ['71.5%']}
 					header={header}>
 				{process &&
 					<BottomSheetView style={styles.sheetContent}>
@@ -555,19 +556,12 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 									</TouchableOpacity>
 								</BottomSheetView>
 							}
-							{isNalliUser &&
-								<NalliInput
-										style={styles.messageInput}
-										value={message}
-										maxLength={128}
-										onChangeText={this.updateMessage}
-										label='Message' />
-							}
 							{!(tab != SendSheetTab.DONATION && !requestId && isPhoneNumberUser) &&
 								<NalliText size={ETextSize.H2}>To</NalliText>
 							}
 							{(tab == SendSheetTab.CONTACT && !recipient) &&
 								<NalliButton
+										style={{ marginTop: 10 }}
 										text='Select contact'
 										icon='md-person'
 										onPress={this.onSelectRecipientPress} />
@@ -582,6 +576,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 							}
 							{(tab == SendSheetTab.PHONE && !recipient) &&
 								<NalliButton
+										style={{ marginTop: 10 }}
 										text='Input phone number'
 										icon='md-person'
 										onPress={this.onSelectInputNumberPress} />
@@ -643,6 +638,11 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 										<NalliIcon icon='close' size={23} type={IconType.MATERIAL} />
 									</TouchableOpacity>
 								</BottomSheetView>
+							}
+							{isNalliUser &&
+								<Message
+										message={message}
+										onChangeMessage={this.onChangeMessage} />
 							}
 							{!!recipient && (tab == SendSheetTab.CONTACT || tab == SendSheetTab.PHONE) &&
 								<BottomSheetView style={{ marginTop: 10 }}>
@@ -720,7 +720,6 @@ const styles = StyleSheet.create({
 		height: 55,
 	},
 	tabs: {
-		marginBottom: 15,
 		display: 'flex',
 		flexDirection: 'row',
 	},
