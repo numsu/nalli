@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 
 import Link from '../../components/link.component';
+import Message from '../../components/message.component';
 import NalliModal from '../../components/modal.component';
 import NalliButton from '../../components/nalli-button.component';
 import ShowHide from '../../components/show-hide.component';
@@ -124,10 +125,9 @@ export default class TransactionModal extends React.PureComponent<TransactionMod
 					</View>
 					{!!transaction.message &&
 						<View style={styles.row}>
-							<NalliText size={ETextSize.H2}>Message</NalliText>
-							<NalliText>
-								{transaction.message}
-							</NalliText>
+							<Message
+									disableEditing
+									message={transaction.message} />
 						</View>
 					}
 					{transaction.pendingStatus == EPendingStatus.CREATED || transaction.pendingStatus == EPendingStatus.FILLED &&

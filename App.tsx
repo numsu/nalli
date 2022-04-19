@@ -10,6 +10,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as encoding from 'text-encoding';
 
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -52,10 +53,12 @@ export default class App extends React.PureComponent<any, any> {
 			return (
 				<NavigationContainer ref={navigationRef}>
 					<GestureHandlerRootView style={styles.container}>
-						<StatusBar translucent hidden={false} style='dark' />
-						<Stack.Navigator initialRouteName='Main' screenOptions={{ headerShown: false }}>
-							<Stack.Screen name='Main' component={MainNavigator} />
-						</Stack.Navigator>
+						<BottomSheetModalProvider>
+							<StatusBar translucent hidden={false} style='dark' />
+							<Stack.Navigator initialRouteName='Main' screenOptions={{ headerShown: false }}>
+								<Stack.Screen name='Main' component={MainNavigator} />
+							</Stack.Navigator>
+						</BottomSheetModalProvider>
 					</GestureHandlerRootView>
 				</NavigationContainer>
 			);

@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
 		right: 0,
 		top: 0,
 		width: '100%',
-		height: 25,
+		height: 15,
 		zIndex: 1,
 	},
 	bottomContainerBackground: {
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
 		right: 0,
 		bottom: 0,
 		width: '100%',
-		height: 30,
+		height: 15,
 		zIndex: 1,
 	},
 });

@@ -11,7 +11,8 @@ import NalliInput from '../../components/nalli-input.component';
 interface MessageModalProps {
 	isOpen: boolean;
 	maxLength?: number;
-	onConfirmMessage: (message: string) => void;
+	message: string;
+	onConfirmMessage: (message?: string) => void;
 }
 
 interface MessageModalState {
@@ -25,27 +26,44 @@ export default class MessageModal extends React.PureComponent<MessageModalProps,
 		super(props);
 		this.state = {
 			isOpen: props.isOpen,
-			message: '',
+			message: props.message,
 		};
 	}
 
 	static getDerivedStateFromProps(nextProps, prevState) {
 		if (prevState.isOpen != nextProps.isOpen) {
-			return { isOpen: nextProps.isOpen };
+			return { isOpen: nextProps.isOpen, message: nextProps.message };
 		}
 		return null;
 	}
 
 	hide = () => {
-		this.props.onConfirmMessage(this.state.message);
+		this.props.onConfirmMessage();
+		this.setState({ message: this.props.message });
 	}
 
 	onChangeMessage = (message: string) => {
+		if (message.split('\n').length > 8) {
+			return;
+		}
 		this.setState({ message });
 	}
 
 	onConfirmMessage = (message: string) => {
-		this.props.onConfirmMessage(message);
+		const trimmed = this.cleanMessage(message);
+		if (message.length == 0 || trimmed != '') {
+			this.props.onConfirmMessage(trimmed);
+		}
+	}
+
+	cleanMessage = (message: string): string => {
+		const trimmed = message.trim();
+		const whitespaceTrimmed = trimmed.replace(/  +/g, ' ');
+		let lineBreaksTrimmed = whitespaceTrimmed;
+		while (lineBreaksTrimmed.includes('\n\n\n')) {
+			lineBreaksTrimmed = lineBreaksTrimmed.replace('\n\n\n', '\n\n');
+		}
+		return lineBreaksTrimmed;
 	}
 
 	render = () => {
@@ -61,8 +79,11 @@ export default class MessageModal extends React.PureComponent<MessageModalProps,
 					size={EModalSize.MINI}>
 				<View style={styles.container}>
 					<NalliInput
+							style={styles.input}
 							onChangeText={this.onChangeMessage}
 							label='Message'
+							multiline
+							numberOfLines={2}
 							maxLength={maxLength}
 							value={message} />
 					<NalliButton
@@ -80,6 +101,11 @@ export default class MessageModal extends React.PureComponent<MessageModalProps,
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		paddingBottom: 70,
+		marginTop: -8,
+	},
+	input: {
+		minHeight: 70,
 	},
 	button: {
 		position: 'absolute',

@@ -127,7 +127,6 @@ export default class TransactionsSheet extends React.PureComponent<TransactionsS
 					initialSnap={-1}
 					snapPoints={['25%', '87.5%']}
 					enableLinearGradient
-					linearGradientTopStyle={{ height: 35, top: 20 }}
 					header='Transactions'>
 				<BottomSheetView style={styles.transactionList}>
 					<FlatList
@@ -170,7 +169,7 @@ export default class TransactionsSheet extends React.PureComponent<TransactionsS
 											{!!item.message &&
 												<BottomSheetView style={styles.transactionRow}>
 													<NalliText style={styles.transactionTarget}>
-														<NalliIcon style={styles.chatIcon} icon='chatbox' type={IconType.ION} size={14} />&nbsp;&nbsp;{item.message.length > 30 ? item.message.substring(0, 30) + '...' : item.message}
+														<NalliIcon style={styles.chatIcon} icon='chatbox' type={IconType.ION} size={14} />&nbsp;&nbsp;{item.message.length > 30 ? item.message.substring(0, 30).replaceAll('\n', ' ') + '...' : item.message.replaceAll('\n', ' ')}
 													</NalliText>
 												</BottomSheetView>
 											}
@@ -213,8 +212,6 @@ const styles = StyleSheet.create({
 		backgroundColor: 'white',
 		paddingHorizontal: 15,
 		minHeight: '100%',
-		zIndex: -1,
-		paddingTop: 25,
 	},
 	transactionContainer: {
 		justifyContent: 'space-between',

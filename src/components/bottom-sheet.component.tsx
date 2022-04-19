@@ -14,7 +14,6 @@ interface BottomSheetProps {
 	header: string;
 	headerIconComponent?: any;
 	initialSnap: number;
-	linearGradientTopStart?: number;
 	linearGradientTopStyle?: any;
 	onClose?: () => void;
 	reference?: RefObject<any>;
@@ -38,8 +37,6 @@ export default class MyBottomSheet extends React.PureComponent<BottomSheetProps,
 			header,
 			headerIconComponent,
 			initialSnap,
-			linearGradientTopStyle,
-			linearGradientTopStart,
 			onClose,
 			reference,
 			snapPoints,
@@ -63,10 +60,10 @@ export default class MyBottomSheet extends React.PureComponent<BottomSheetProps,
 					{headerIconComponent}
 				</BottomSheetView>
 				<BottomSheetView style={styles.contentContainer}>
-					{enableLinearGradient && <NalliLinearGradient style={linearGradientTopStyle} start={linearGradientTopStart} />}
+					{enableLinearGradient && <NalliLinearGradient style={{ height: 25, top: 5 }} />}
 					{children}
 				</BottomSheetView>
-				{enableLinearGradient && <NalliLinearGradient bottom />}
+				{enableLinearGradient && <NalliLinearGradient style={{ height: 25 }} bottom />}
 			</BottomSheet>
 		);
 	}
@@ -83,10 +80,11 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		paddingHorizontal: 15,
 		zIndex: 100,
+		backgroundColor: 'white',
 	},
 	contentContainer: {
 		height: '100%',
-		marginTop: -20,
+		marginTop: -5,
 		zIndex: 1,
 	},
 	shadow: {

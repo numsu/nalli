@@ -12,8 +12,9 @@ import {
 	TouchableOpacity,
 } from 'react-native';
 import { Avatar } from 'react-native-elements';
+import { ScrollView } from 'react-native-gesture-handler';
 
-import { BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
+import { BottomSheetView } from '@gorhom/bottom-sheet';
 
 import MyBottomSheet from '../../components/bottom-sheet.component';
 import CurrencyInput from '../../components/currency-input.component';
@@ -526,7 +527,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 				}
 				{!process &&
 					<BottomSheetView style={styles.sheetContent}>
-						<BottomSheetScrollView keyboardDismissMode={'interactive'}>
+						<ScrollView showsVerticalScrollIndicator={false} keyboardDismissMode={'interactive'}>
 							<BottomSheetView style={styles.transactionMoneyInputContainer}>
 								<CurrencyInput
 										disabled={!!requestId}
@@ -660,7 +661,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 									</ShowHide>
 								</BottomSheetView>
 							}
-						</BottomSheetScrollView>
+						</ScrollView>
 						{(!!recipient || !!walletAddress) &&
 							<BottomSheetView style={styles.sendTransactionButton}>
 								<NalliButton
@@ -708,6 +709,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 15,
 		width: '100%',
 		height: '100%',
+		paddingBottom: 120,
 	},
 	transactionMoneyInputContainer: {
 		justifyContent: 'center',

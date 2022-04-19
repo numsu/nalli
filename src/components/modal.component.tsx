@@ -176,10 +176,10 @@ const styles = StyleSheet.create({
 		top: layout.window.height * 0.18,
 		...Platform.select({
 			android: {
-				height: 230,
+				minHeight: 230,
 			},
 			ios: {
-				height: 230,
+				minHeight: 230,
 			},
 		}),
 	},

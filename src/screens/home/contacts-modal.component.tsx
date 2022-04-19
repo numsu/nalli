@@ -148,7 +148,7 @@ export default class ContactsModal extends React.PureComponent<ContactsModalProp
 					isOpen={isOpen}
 					onClose={this.hide}
 					header='Select contact'
-					linearGradientTopStyle={{ height: 20, top: 109 }}
+					linearGradientTopStyle={{ height: 15, top: 109 }}
 					linearGradientTopStart={0}
 					headerContainerStyle={{ height: 100 }}
 					headerComponent={

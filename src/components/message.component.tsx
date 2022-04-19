@@ -13,7 +13,8 @@ import NalliText, { ETextSize } from './text.component';
 
 interface MessageProps {
 	message: string;
-	onChangeMessage: (message) => void;
+	onChangeMessage?: (message?: string) => void;
+	disableEditing?: boolean;
 }
 
 interface MessageState {
@@ -35,17 +36,22 @@ export default class Message extends React.PureComponent<MessageProps, MessageSt
 		this.setState({ messageModalOpen: true });
 	}
 
-	onChangeMessage = (message) => {
-		this.setState({ message, messageModalOpen: false });
-		this.props.onChangeMessage(message);
+	onChangeMessage = (message?: string) => {
+		if (message === undefined) {
+			this.setState({ messageModalOpen: false });
+		} else {
+			this.setState({ message, messageModalOpen: false });
+			this.props.onChangeMessage(message);
+		}
 	}
 
 	render = () => {
 		const { message, messageModalOpen } = this.state;
+		const { disableEditing } = this.props;
 		return (
 			<BottomSheetView style={{ marginVertical: 10 }}>
 				<NalliText size={ETextSize.H2}>Message</NalliText>
-				{!message &&
+				{!message && !disableEditing &&
 					<TouchableOpacity onPress={this.onAddMessagePress}>
 						<NalliText style={styles.addMessageText}><NalliIcon icon='plus' type={IconType.ANT_DESIGN} size={16} />&nbsp;Add a message</NalliText>
 					</TouchableOpacity>
@@ -53,17 +59,22 @@ export default class Message extends React.PureComponent<MessageProps, MessageSt
 				{!!message &&
 					<BottomSheetView>
 						<BottomSheetView style={styles.messageContainer}>
-							<NalliText style={styles.message} size={ETextSize.P_LARGE}>{message}</NalliText>
+							<NalliText style={styles.message} size={ETextSize.P_MEDIUM}>{message}</NalliText>
 						</BottomSheetView>
-						<TouchableOpacity onPress={this.onAddMessagePress}>
-							<NalliText style={styles.addMessageText}><NalliIcon icon='edit' type={IconType.MATERIAL} size={16} />&nbsp;Edit message</NalliText>
-						</TouchableOpacity>
+						{!disableEditing &&
+							<TouchableOpacity onPress={this.onAddMessagePress}>
+								<NalliText style={styles.addMessageText}><NalliIcon icon='edit' type={IconType.MATERIAL} size={16} />&nbsp;Edit message</NalliText>
+							</TouchableOpacity>
+						}
 					</BottomSheetView>
 				}
-				<MessageModal
-						maxLength={128}
-						isOpen={messageModalOpen}
-						onConfirmMessage={this.onChangeMessage} />
+				{!disableEditing &&
+					<MessageModal
+							message={message}
+							maxLength={128}
+							isOpen={messageModalOpen}
+							onConfirmMessage={this.onChangeMessage} />
+				}
 			</BottomSheetView>
 		);
 	}
@@ -80,9 +91,9 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: Colors.lightGrey,
 		paddingHorizontal: 15,
-		paddingBottom: 15,
-		paddingTop: 15,
-		borderRadius: 30,
+		paddingBottom: 10,
+		paddingTop: 10,
+		borderRadius: 25,
 		marginTop: 10,
 	},
 	message: {

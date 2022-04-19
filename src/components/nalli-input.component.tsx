@@ -94,8 +94,7 @@ export default class NalliInput extends React.PureComponent<NalliInputProps, Nal
 						returnKeyType={returnKeyType}
 						secureTextEntry={secureTextEntry}
 						style={[styles.input, style, { borderColor }]}
-						value={value}
-						 />
+						value={value} />
 			</View>
 		);
 	}
@@ -104,10 +103,10 @@ export default class NalliInput extends React.PureComponent<NalliInputProps, Nal
 
 const styles = StyleSheet.create({
 	label: {
-		marginBottom: -12,
 		marginLeft: 12,
+		marginBottom: -8,
 		backgroundColor: 'white',
-		padding: 5,
+		paddingHorizontal: 5,
 		zIndex: 105,
 		alignSelf: 'flex-start',
 	},
@@ -116,6 +115,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: 15,
 		padding: 12,
+		paddingTop: 12,
 		marginBottom: 10,
 		color: 'black',
 		fontSize: 16,
