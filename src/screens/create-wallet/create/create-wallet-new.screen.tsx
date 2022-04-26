@@ -1,3 +1,4 @@
+import * as Random from 'expo-random';
 import { wallet } from 'nanocurrency-web';
 import React from 'react';
 import {
@@ -11,6 +12,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import NalliButton from '../../../components/nalli-button.component';
 import NalliText, { ETextSize } from '../../../components/text.component';
 import Colors from '../../../constants/colors';
+import Convert from '../../../crypto/convert';
 import { Wallet, WalletType } from '../../../service/wallet-store';
 
 export default class CreateWalletNew extends React.PureComponent<NativeStackScreenProps<any>, any> {
@@ -28,7 +30,7 @@ export default class CreateWalletNew extends React.PureComponent<NativeStackScre
 
 	onCreateWalletPress = () => {
 		this.setState({ process: true });
-		const generated: Wallet = { ...wallet.generate(), type: WalletType.HD_WALLET };
+		const generated: Wallet = { ...wallet.generate(Convert.ab2hex(Random.getRandomBytes(64))), type: WalletType.HD_WALLET };
 		this.props.navigation.navigate('WalletMnemonic', { generated });
 		this.setState({ process: false });
 	}

@@ -3,7 +3,7 @@ import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
 import LottieView from 'lottie-react-native';
 import moment from 'moment';
-import { block, tools } from 'nanocurrency-web';
+import { block, box, tools } from 'nanocurrency-web';
 import React, { RefObject } from 'react';
 import {
 	Alert,
@@ -190,14 +190,19 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 	}
 
 	onChangeAddress = async (walletAddress: string | Promise<string>) => {
-		if (typeof walletAddress != 'string') {
-			walletAddress = await walletAddress;
+		if (!!walletAddress) {
+			if (typeof walletAddress != 'string') {
+				walletAddress = await walletAddress;
+			}
 			if (!tools.validateAddress(walletAddress)) {
 				Alert.alert('Error', 'Clipboard did not contain a valid Nano address');
 				return;
 			}
+			const isNalliUser = await ClientService.userExistsByAddress(walletAddress);
+			this.setState({ walletAddress, isNalliUser });
+		} else {
+			this.setState({ walletAddress: walletAddress as string, isNalliUser: false });
 		}
-		this.setState({ walletAddress });
 	}
 
 	onQRCodeScanned = async (params: BarCodeScanningResult): Promise<boolean> => {
@@ -399,6 +404,7 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 
 			this.setState({ process: true, success: false });
 
+			const privateKey = wallet.accounts[selectedAccountIndex].privateKey;
 			const signedBlock = block.send({
 				amountRaw: tools.convert(sendAmount, 'NANO', 'RAW'),
 				fromAddress: walletInfo.address,
@@ -407,15 +413,20 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 				representativeAddress: walletInfo.representativeAddress,
 				walletBalanceRaw: walletInfo.balance,
 				work: walletInfo.work,
-			}, wallet.accounts[selectedAccountIndex].privateKey);
+			}, privateKey);
 
+			let message;
+			if (!!this.state.message) {
+				message = box.encrypt(this.state.message, recipientAddress, privateKey);
+			}
 			await WalletService.publishTransaction({
 				subtype: EBlockSubType.SEND,
 				requestId: this.state.requestId,
-				message: this.state.message,
+				message,
 				block: signedBlock,
 			});
-		} catch {
+		} catch (e) {
+			console.error(e);
 			Alert.alert('Error', 'Something went wrong. Please try again.');
 			this.setState({ process: false });
 			return;

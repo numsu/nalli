@@ -38,33 +38,37 @@ export default class WalletHandler {
 			return accounts;
 		}
 
-		for (const account of accounts) {
-			if (account.pendingBlocks) {
-				await VariableStore.setVariable(NalliVariable.PROCESSING_PENDING, true);
-				this.lock = true;
-				for (const pending of account.pendingBlocks) {
-					const walletInfo = await WalletService.getWalletInfoAddress(account.address);
-					const signedBlock = block.receive({
-						amountRaw: pending.amount,
-						toAddress: walletInfo.address,
-						frontier: walletInfo.frontier,
-						representativeAddress: walletInfo.representativeAddress,
-						transactionHash: pending.hash,
-						walletBalanceRaw: walletInfo.balance,
-						work: walletInfo.work,
-					}, storedWallet.accounts[account.accountIndex].privateKey);
-					await WalletService.publishTransaction({
-						subtype: EBlockSubType.RECEIVE,
-						block: signedBlock
-					});
+		try {
+			for (const account of accounts) {
+				if (account.pendingBlocks) {
+					await VariableStore.setVariable(NalliVariable.PROCESSING_PENDING, true);
+					this.lock = true;
+					for (const pending of account.pendingBlocks) {
+						const walletInfo = await WalletService.getWalletInfoAddress(account.address);
+						const signedBlock = block.receive({
+							amountRaw: pending.amount,
+							toAddress: walletInfo.address,
+							frontier: walletInfo.frontier,
+							representativeAddress: walletInfo.representativeAddress,
+							transactionHash: pending.hash,
+							walletBalanceRaw: walletInfo.balance,
+							work: walletInfo.work,
+						}, storedWallet.accounts[account.accountIndex].privateKey);
+						await WalletService.publishTransaction({
+							subtype: EBlockSubType.RECEIVE,
+							block: signedBlock
+						});
 
-					let balance = +account.balance;
-					balance += Number(tools.convert(pending.amount, 'RAW', 'NANO'));
-					account.balance = CurrencyService.formatNanoAmount(Number(balance), false);
-					await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-					await VariableStore.setVariable<NalliAccount[]>(NalliVariable.ACCOUNTS_BALANCES, accounts);
+						let balance = +account.balance;
+						balance += Number(tools.convert(pending.amount, 'RAW', 'NANO'));
+						account.balance = CurrencyService.formatNanoAmount(Number(balance), false);
+						await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+						await VariableStore.setVariable<NalliAccount[]>(NalliVariable.ACCOUNTS_BALANCES, accounts);
+					}
 				}
 			}
+		} catch (e) {
+			console.error(e);
 		}
 
 		await VariableStore.setVariable(NalliVariable.PROCESSING_PENDING, false);

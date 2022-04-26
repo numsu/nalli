@@ -4,9 +4,11 @@ import {
 	View,
 } from 'react-native';
 
+import NalliIcon, { IconType } from '../../components/icon.component';
 import NalliModal, { EModalSize } from '../../components/modal.component';
 import NalliButton from '../../components/nalli-button.component';
 import NalliInput from '../../components/nalli-input.component';
+import NalliText, { ETextSize } from '../../components/text.component';
 
 interface MessageModalProps {
 	isOpen: boolean;
@@ -86,6 +88,7 @@ export default class MessageModal extends React.PureComponent<MessageModalProps,
 							numberOfLines={2}
 							maxLength={maxLength}
 							value={message} />
+					<NalliText style={styles.encryptedText} size={ETextSize.P_SMALL}><NalliIcon icon='lock-closed' type={IconType.ION} size={9} />End-to-end encrypted</NalliText>
 					<NalliButton
 							style={styles.button}
 							text='Confirm'
@@ -106,6 +109,12 @@ const styles = StyleSheet.create({
 	},
 	input: {
 		minHeight: 70,
+	},
+	encryptedText: {
+		alignSelf: 'flex-end',
+		color: 'green',
+		marginBottom: 10,
+		marginTop: -8,
 	},
 	button: {
 		position: 'absolute',

@@ -1,7 +1,7 @@
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
 import LottieView from 'lottie-react-native';
-import { tools } from 'nanocurrency-web';
+import { box, tools } from 'nanocurrency-web';
 import React, { RefObject } from 'react';
 import {
 	Alert,
@@ -28,6 +28,7 @@ import AuthStore from '../../service/auth-store';
 import ClientService from '../../service/client.service';
 import RequestService from '../../service/request.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
+import WalletStore from '../../service/wallet-store';
 import ContactsModal from './contacts-modal.component';
 import { SendSheetRecipient } from './send-sheet.component';
 
@@ -233,9 +234,17 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 	sendRequest = async () => {
 		this.setState({ process: true });
 		const converted = tools.convert(this.state.requestAmount, 'NANO', 'RAW');
+
+		let message;
+		if (!!this.state.message) {
+			const selectedAccountIndex = await VariableStore.getVariable<number>(NalliVariable.SELECTED_ACCOUNT_INDEX, 0);
+			const privateKey = (await WalletStore.getWallet()).accounts[selectedAccountIndex].privateKey;
+			message = box.encrypt(this.state.message, this.state.recipientAddress, privateKey);
+		}
+
 		await RequestService.newRequest({
 			amount: converted,
-			message: this.state.message,
+			message,
 			recipientId: this.state.recipientId,
 		});
 		this.setState({ success: true, process: false });
@@ -457,7 +466,7 @@ const styles = StyleSheet.create({
 	},
 	confirmButton: {
 		position: 'absolute',
-		bottom: 45,
+		bottom: 52,
 		left: 15,
 		width: '100%',
 	},

@@ -36,4 +36,18 @@ export default class Convert {
 		return Array.prototype.map.call(new Uint8Array(buf), x => ('00' + x.toString(16)).slice(-2)).join('');
 	}
 
+	/**
+	 * Convert hex string to array of 8 bytes (int64)
+	 *
+	 * @param {String} bin Array of bytes
+	 * @return {Uint8Array} Array of 8 bytes (int64)
+	 */
+	static hex2ab = (hex: string): Uint8Array => {
+		const ab = []
+		for (let i = 0; i < hex.length; i += 2) {
+			ab.push(parseInt(hex.substr(i, 2), 16))
+		}
+		return new Uint8Array(ab)
+	}
+
 }

@@ -1,5 +1,5 @@
 import * as Haptics from 'expo-haptics';
-import { tools } from 'nanocurrency-web';
+import { box, tools } from 'nanocurrency-web';
 import React from 'react';
 import { Alert, EmitterSubscription, StyleSheet, TouchableHighlight, View } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
@@ -12,8 +12,10 @@ import ContactsService from '../service/contacts.service';
 import CurrencyService from '../service/currency.service';
 import RequestService, { Request } from '../service/request.service';
 import VariableStore, { NalliVariable } from '../service/variable-store';
+import WalletStore from '../service/wallet-store';
 import { DateUtil } from '../util/date.util';
 import Card from './card.component';
+import NalliIcon, { IconType } from './icon.component';
 import NalliButton from './nalli-button.component';
 import NalliText, { ETextSize } from './text.component';
 
@@ -67,10 +69,19 @@ export default class NalliRequests extends React.PureComponent<RequestsProps, Re
 				await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
 			}
 		}
+
+		const privateKey = (await WalletStore.getWallet()).accounts[0].privateKey; // Always the home account
+		const decryptedRequests = requests.map(request => {
+			if (!!request.message) {
+				request.message = box.decrypt(request.message, request.address, privateKey);
+			}
+			return request;
+		});
+
 		if (requests.length == 10 && hasMore) {
-			requests.push({} as Request); // Display the has more card
+			decryptedRequests.push({} as Request); // Display the has more card
 		}
-		this.setState({ requests, hasMore });
+		this.setState({ requests: decryptedRequests, hasMore });
 	}
 
 	confirmIgnoreRequest = (request: Request) => {
@@ -120,7 +131,11 @@ export default class NalliRequests extends React.PureComponent<RequestsProps, Re
 									<Card style={styles.card} contentContainerStyle={styles.cardContainer} title='Request'>
 										<View style={styles.text}>
 											<NalliText size={ETextSize.H2}>{senderName} requested <NalliText style={{ color: Colors.main }} size={ETextSize.H2}>Ӿ&nbsp;{amount}</NalliText> from you {DateUtil.getRelativeTime(data.item.created).toLowerCase()}.</NalliText>
-											<NalliText style={styles.marginTop}>{data.item.message}</NalliText>
+											{!!data.item.message &&
+												<NalliText style={styles.marginTop}>
+													<NalliIcon style={styles.chatIcon} icon='chatbox' type={IconType.ION} size={12} />&nbsp;&nbsp;{data.item.message}
+												</NalliText>
+											}
 										</View>
 										<View style={styles.actions}>
 											<NalliButton small solid text='Accept' onPress={() => onAcceptPress(data.item)} />
@@ -166,5 +181,8 @@ const styles = StyleSheet.create({
 	},
 	marginTop: {
 		marginTop: 8,
+	},
+	chatIcon: {
+		color: Colors.main,
 	},
 });

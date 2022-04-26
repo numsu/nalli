@@ -1,3 +1,4 @@
+import { box } from 'nanocurrency-web';
 import React, { RefObject } from 'react';
 import {
 	EmitterSubscription,
@@ -19,6 +20,7 @@ import { ANIMATION_DELAY, sleep } from '../../constants/globals';
 import ContactsService from '../../service/contacts.service';
 import CurrencyService from '../../service/currency.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
+import WalletStore from '../../service/wallet-store';
 import WalletService, { EPendingStatus, WalletTransaction } from '../../service/wallet.service';
 import { DateUtil } from '../../util/date.util';
 import TransactionModal from './transaction-modal.component';
@@ -75,7 +77,16 @@ export default class TransactionsSheet extends React.PureComponent<TransactionsS
 	}
 
 	getTransactions = async () => {
-		const res = await WalletService.getWalletTransactions(25, 0);
+		const res = (await WalletService.getWalletTransactions(25, 0));
+		const selectedAccountIndex = await VariableStore.getVariable<number>(NalliVariable.SELECTED_ACCOUNT_INDEX, 0);
+		const privateKey = (await WalletStore.getWallet()).accounts[selectedAccountIndex].privateKey;
+		for (const transaction of res) {
+			if (!!transaction.message) {
+				const decrypted = box.decrypt(transaction.message, transaction.account, privateKey);
+				transaction.message = decrypted;
+			}
+		}
+
 		this.setState({
 			transactions: res.sort((a, b) => b.timestamp - a.timestamp),
 			hasMoreTransactions: res.length == 25,

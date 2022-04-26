@@ -2465,7 +2465,7 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
 
-base64-js@^1.1.2, base64-js@^1.2.3, base64-js@^1.5.1:
+base64-js@^1.1.2, base64-js@^1.2.3, base64-js@^1.3.0, base64-js@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
@@ -2497,6 +2497,11 @@ blakejs@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/blakejs/-/blakejs-1.1.1.tgz#bf313053978b2cd4c444a48795710be05c785702"
   integrity sha512-bLG6PHOCZJKNshTjGRBvET0vTciwQE6zFKOKKXPDJfwFBd4Ac0yBfPZqcGvGJap50l7ktvlpFqc2jGVaUgbJgg==
+
+blakejs@1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/blakejs/-/blakejs-1.2.1.tgz#5057e4206eadb4a97f7c0b6e197a505042fc3814"
+  integrity sha512-QXUSXI3QVc/gJME0dBpXrag1kbzOqCjCX8/b54ntNyW6sjtoqxqRk3LTmXzaJoh71zMsDCjM+47jS7XiwN/+fQ==
 
 blueimp-md5@^2.10.0:
   version "2.19.0"
@@ -2603,6 +2608,11 @@ builtin-modules@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/builtin-modules/-/builtin-modules-1.1.1.tgz#270f076c5a72c02f5b65a47df94c5fe3a278892f"
   integrity sha1-Jw8HbFpywC9bZaR9+Uxf46J4iS8=
+
+byte-base64@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/byte-base64/-/byte-base64-1.1.0.tgz#e28afbdc9d122c9d3ca716b8b5cc696dbedf8d08"
+  integrity sha512-56cXelkJrVMdCY9V/3RfDxTh4VfMFCQ5km7B7GkIGfo4bcPL9aACyJLB0Ms3Ezu5rsHmLB2suis96z4fLM03DA==
 
 bytes@3.0.0:
   version "3.0.0"
@@ -3662,7 +3672,7 @@ expo-modules-autolinking@~0.5.1:
     find-up "^5.0.0"
     fs-extra "^9.1.0"
 
-expo-modules-core@~0.4.10, expo-modules-core@~0.4.4, expo-modules-core@~0.4.7, expo-modules-core@~0.4.8:
+expo-modules-core@~0.4.10, expo-modules-core@~0.4.4, expo-modules-core@~0.4.6, expo-modules-core@~0.4.7, expo-modules-core@~0.4.8:
   version "0.4.10"
   resolved "https://registry.yarnpkg.com/expo-modules-core/-/expo-modules-core-0.4.10.tgz#6c7e7e211b3056fc23a462e9faea88cc7653fe9b"
   integrity sha512-uCZA3QzF0syRaHwYY99iaNhnye4vSQGsJ/y6IAiesXdbeVahWibX4G1KoKNPUyNsKXIM4tqA+4yByUSvJe4AAw==
@@ -3687,6 +3697,14 @@ expo-notifications@~0.13.3:
     fs-extra "^9.0.1"
     unimodules-task-manager-interface "~7.0.3"
     uuid "^3.4.0"
+
+expo-random@~12.0.1:
+  version "12.0.1"
+  resolved "https://registry.yarnpkg.com/expo-random/-/expo-random-12.0.1.tgz#d36706b744c27c1a145f0510f57093a6541aec5e"
+  integrity sha512-TX1qLnV2cqyefK8nfxz6MK/YD/49QkQbGgtM5gkWbYFQVIlFhzctRzAhaR3/bix5809m7s3mc+Mm0du3jIyA8g==
+  dependencies:
+    base64-js "^1.3.0"
+    expo-modules-core "~0.4.6"
 
 expo-secure-store@~11.0.3:
   version "11.0.3"
@@ -6075,13 +6093,14 @@ mz@^2.7.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
-nanocurrency-web@1.3.6:
-  version "1.3.6"
-  resolved "https://registry.yarnpkg.com/nanocurrency-web/-/nanocurrency-web-1.3.6.tgz#82d0c89ce8a15f0e517391a0d7320ffc27b52d08"
-  integrity sha512-mTRZzxNDl9cEy4HK3Y21ZztgIPrvIeQoATd57iiUjBC//YPtCWg1XQJzb0zfIKMbWm5oYr0dxfdii0czdQWS8Q==
+nanocurrency-web@1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/nanocurrency-web/-/nanocurrency-web-1.4.2.tgz#1d58767f9036d893429a62ba986b62b2e7ce7541"
+  integrity sha512-N+eAxBtzb4RcFNfLNUvCc07Kkph/aLN0UWHb19KzCLpPlbW+eBJNTSb5UQg1b0L9kH7Du5es3VqnuSYBAFb9CA==
   dependencies:
     bignumber.js "9.0.2"
-    blakejs "1.1.1"
+    blakejs "1.2.1"
+    byte-base64 "1.1.0"
     crypto-js "3.1.9-1"
 
 nanoid@^3.1.20, nanoid@^3.1.23, nanoid@^3.3.1:
