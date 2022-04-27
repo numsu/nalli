@@ -11,9 +11,9 @@
 		"lint": "tslint -p tsconfig.json src/**/*.{ts,tsx}",
 		"lint:fix": "tslint -p tsconfig.json src/**/*.{ts,tsx} --fix",
 		"build:eas": "eas build --profile prod",
-		"build:ios": "expo build:ios --release-channel prod-v120",
-		"build:android": "expo build:android --release-channel prod-v120",
-		"publish": "expo publish --release-channel prod-v120"
+		"build:ios": "expo build:ios --release-channel prod-v130",
+		"build:android": "expo build:android --release-channel prod-v130",
+		"publish": "expo publish --release-channel prod-v130"
 	},
 	"jest": {
 		"preset": "jest-expo"
@@ -50,7 +50,7 @@
 		"google-libphonenumber": "3.2.26",
 		"lottie-react-native": "4.0.3",
 		"moment": "2.29.1",
-		"nanocurrency-web": "1.4.2",
+		"nanocurrency-web": "1.4.3",
 		"react": "17.0.1",
 		"react-dom": "17.0.1",
 		"react-native": "0.64.3",

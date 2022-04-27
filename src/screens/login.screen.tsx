@@ -155,8 +155,8 @@ export default class Login extends React.Component<NativeStackScreenProps<any>, 
 		await AuthStore.clearExpires();
 		await AuthStore.clearPin();
 		await VariableStore.clear();
-		AsyncStorage.clear();
-		this.props.navigation.dispatch(StackActions.replace('Welcome'));
+		await AsyncStorage.clear();
+		this.props.navigation.dispatch(StackActions.replace('Auth'));
 	}
 
 	render = () => {

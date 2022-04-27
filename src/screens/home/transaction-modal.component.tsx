@@ -165,14 +165,14 @@ export default class TransactionModal extends React.PureComponent<TransactionMod
 								}
 							</View>
 						}
-						{transaction.custodialAccount && transaction.type == 'receive' && transaction.pendingStatus != EPendingStatus.RETURNED &&
-								<View>
-									<NalliText style={styles.info}>
-										You received these funds from a custodial account upon registration.
-									</NalliText>
-								</View>
+						{!!transaction.custodialAccount && transaction.type == 'receive' && transaction.pendingStatus != EPendingStatus.RETURNED &&
+							<View>
+								<NalliText style={styles.info}>
+									You received these funds from a custodial account upon registration.
+								</NalliText>
+							</View>
 						}
-						{transaction.account &&
+						{!!transaction.account &&
 							<View style={styles.row}>
 								<NalliText size={ETextSize.H2}>Account</NalliText>
 								<Link url={`https://nanolooker.com/account/${transaction.account}`}>
@@ -186,7 +186,7 @@ export default class TransactionModal extends React.PureComponent<TransactionMod
 								{transaction.hash}
 							</Link>
 						</View>
-						{transaction.custodialAccount &&
+						{!!transaction.custodialAccount &&
 							<View style={styles.row}>
 								<NalliText size={ETextSize.H2}>Custodial account</NalliText>
 								<Link url={`https://nanolooker.com/account/${transaction.custodialAccount}`}>
@@ -194,7 +194,7 @@ export default class TransactionModal extends React.PureComponent<TransactionMod
 								</Link>
 							</View>
 						}
-						{transaction.custodialHash &&
+						{!!transaction.custodialHash &&
 							<View style={[styles.row]}>
 								<NalliText size={ETextSize.H2}>Custodial hash</NalliText>
 								<Link url={`https://nanolooker.com/block/${transaction.custodialHash}`}>
@@ -202,7 +202,7 @@ export default class TransactionModal extends React.PureComponent<TransactionMod
 								</Link>
 							</View>
 						}
-						{transaction.custodialAccount
+						{!!transaction.custodialAccount
 								&& transaction.type == 'send'
 								&& (transaction.pendingStatus == EPendingStatus.FILLED
 									|| transaction.pendingStatus == EPendingStatus.CREATED) &&

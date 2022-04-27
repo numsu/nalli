@@ -30,7 +30,7 @@ export default class CreateWalletNew extends React.PureComponent<NativeStackScre
 
 	onCreateWalletPress = () => {
 		this.setState({ process: true });
-		const generated: Wallet = { ...wallet.generate(Convert.ab2hex(Random.getRandomBytes(64))), type: WalletType.HD_WALLET };
+		const generated: Wallet = { ...wallet.generate(Convert.ab2hex(Random.getRandomBytes(32))), type: WalletType.HD_WALLET };
 		this.props.navigation.navigate('WalletMnemonic', { generated });
 		this.setState({ process: false });
 	}

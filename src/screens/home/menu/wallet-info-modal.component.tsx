@@ -138,7 +138,7 @@ export default class WalletInfoModal extends React.PureComponent<WalletInfoModal
 					<ScrollView contentContainerStyle={styles.container}>
 						<NalliText>This information is everything needed to access your wallet and spend your funds. Keep a copy of this information in a safe place in case your phone breaks or you lose it and never share it with anyone.</NalliText>
 						{!!words &&
-							<View>
+							<View style={styles.recoveryPhraseContainer}>
 								<NalliText size={ETextSize.H2} style={styles.header}>Recovery phrase</NalliText>
 								<NalliText style={styles.addition}>Wallet type: {walletInfo.type == WalletType.HD_WALLET ? 'HD Wallet' : 'Legacy wallet'}</NalliText>
 								<ShowHide allowCopy copyValue={walletInfo.mnemonic} confirmCopy>
@@ -192,6 +192,9 @@ const styles = StyleSheet.create({
 		marginTop: layout.isSmallDevice ? 0 : 30,
 		alignItems: 'center',
 		paddingBottom: 30,
+	},
+	recoveryPhraseContainer: {
+		alignItems: 'center',
 	},
 	header: {
 		marginBottom: 15,
