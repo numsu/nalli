@@ -45,7 +45,7 @@ export default class MessageModal extends React.PureComponent<MessageModalProps,
 	}
 
 	onChangeMessage = (message: string) => {
-		if (message.split('\n').length > 8) {
+		if (message.split('\n').length > 5) {
 			return;
 		}
 		this.setState({ message });

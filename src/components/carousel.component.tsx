@@ -103,6 +103,7 @@ export default class NalliCarousel extends React.PureComponent<CarouselProps, Ca
 						shouldOptimizeUpdates
 						enableSnap
 						enableMomentum
+						decelerationRate={0.9}
 						initialNumToRender={1}
 						lockScrollWhileSnapping={false}
 						data={accounts}

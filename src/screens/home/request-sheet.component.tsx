@@ -7,6 +7,7 @@ import {
 	Alert,
 	EmitterSubscription,
 	Keyboard,
+	Platform,
 	StyleSheet,
 	TouchableOpacity,
 } from 'react-native';
@@ -233,22 +234,25 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 
 	sendRequest = async () => {
 		this.setState({ process: true });
-		const converted = tools.convert(this.state.requestAmount, 'NANO', 'RAW');
+		try {
+			const converted = tools.convert(this.state.requestAmount, 'NANO', 'RAW');
 
-		let message;
-		if (!!this.state.message) {
-			const selectedAccountIndex = await VariableStore.getVariable<number>(NalliVariable.SELECTED_ACCOUNT_INDEX, 0);
-			const privateKey = (await WalletStore.getWallet()).accounts[selectedAccountIndex].privateKey;
-			message = box.encrypt(this.state.message, this.state.recipientAddress, privateKey);
+			let message;
+			if (!!this.state.message) {
+				const selectedAccountIndex = await VariableStore.getVariable<number>(NalliVariable.SELECTED_ACCOUNT_INDEX, 0);
+				const privateKey = (await WalletStore.getWallet()).accounts[selectedAccountIndex].privateKey;
+				message = box.encrypt(this.state.message, this.state.recipientAddress, privateKey);
+			}
+
+			await RequestService.newRequest({
+				amount: converted,
+				message,
+				recipientId: this.state.recipientId,
+			});
+			await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+		} finally {
+			this.setState({ success: true, process: false });
 		}
-
-		await RequestService.newRequest({
-			amount: converted,
-			message,
-			recipientId: this.state.recipientId,
-		});
-		this.setState({ success: true, process: false });
-		await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 	}
 
 	render = () => {
@@ -431,9 +435,17 @@ const styles = StyleSheet.create({
 		fontFamily: 'OpenSansBold',
 	},
 	sheetContent: {
-		width: '100%',
-		height: '100%',
 		paddingHorizontal: 15,
+		width: '100%',
+		...Platform.select({
+			android: {
+				height: (layout.isSmallDevice ? layout.window.height * 0.8 : layout.window.height * 0.61),
+			},
+			ios: {
+				height: (layout.isSmallDevice ? layout.window.height * 0.8 : layout.window.height * 0.65),
+			}
+		}),
+		paddingBottom: 85,
 	},
 	qrcodeContainer: {
 		paddingTop: 20,
@@ -466,7 +478,7 @@ const styles = StyleSheet.create({
 	},
 	confirmButton: {
 		position: 'absolute',
-		bottom: 52,
+		bottom: 20,
 		left: 15,
 		width: '100%',
 	},

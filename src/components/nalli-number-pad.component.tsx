@@ -98,11 +98,11 @@ export default class NalliNumberPad extends React.PureComponent<NalliNumberPadPr
 							key={20}
 							style={[styles.number, style, { borderWidth: 0 }]}
 							onPress={onBiometricLoginPress}>
-						<NalliIcon style={[styles.biometricsIcon, style]} icon={EBiometricsType.getBiometricsTypeIcon(biometricsType) as any} type={IconType.MATERIAL_COMMUNITY} />
+						<NalliIcon style={[styles.biometricsIcon, style]} icon={EBiometricsType.getBiometricsTypeIcon(biometricsType) as any} type={IconType.MATERIAL_COMMUNITY} size={24} />
 					</TouchableOpacity>
 				}
 				{biometricsType == EBiometricsType.NO_BIOMETRICS &&
-					<View style={{ flexBasis: '33%' }}></View>
+					<View style={{ flexBasis: '31%' }}></View>
 				}
 				<TouchableOpacity
 						key={0}
@@ -116,7 +116,7 @@ export default class NalliNumberPad extends React.PureComponent<NalliNumberPadPr
 						key={10}
 						style={[styles.number, style, { borderWidth: 0 }]}
 						onPress={() => this.onRemoveText(onChangeText)}>
-					<NalliIcon style={[{ color: 'white' }, style]} icon='ios-backspace' size={30} type={IconType.ION} />
+					<NalliIcon style={[{ color: 'white' }, style]} icon='ios-backspace' size={24} type={IconType.ION} />
 				</TouchableOpacity>
 			</View>
 		);
@@ -146,7 +146,9 @@ const styles = StyleSheet.create({
 		opacity: 0.8,
 	},
 	biometricsIcon: {
-		fontSize: 38,
+		fontSize: 32,
+		marginTop: -8,
+		marginBottom: -8,
 		color: 'white',
 	},
 	numberText: {

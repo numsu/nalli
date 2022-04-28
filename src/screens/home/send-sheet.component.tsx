@@ -8,6 +8,7 @@ import React, { RefObject } from 'react';
 import {
 	Alert,
 	Keyboard,
+	Platform,
 	StyleSheet,
 	TouchableOpacity,
 } from 'react-native';
@@ -719,8 +720,15 @@ const styles = StyleSheet.create({
 	sheetContent: {
 		paddingHorizontal: 15,
 		width: '100%',
-		height: '100%',
-		paddingBottom: 120,
+		...Platform.select({
+			android: {
+				height: (layout.isSmallDevice ? layout.window.height * 0.8 : layout.window.height * 0.61),
+			},
+			ios: {
+				height: (layout.isSmallDevice ? layout.window.height * 0.8 : layout.window.height * 0.66),
+			}
+		}),
+		paddingBottom: 85,
 	},
 	transactionMoneyInputContainer: {
 		justifyContent: 'center',
@@ -795,7 +803,7 @@ const styles = StyleSheet.create({
 	},
 	sendTransactionButton: {
 		position: 'absolute',
-		bottom: 45,
+		bottom: 20,
 		left: 15,
 		width: '100%',
 	},

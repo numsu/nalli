@@ -1,6 +1,7 @@
 import React from 'react';
 import {
 	Alert,
+	Platform,
 	ScrollView,
 	StyleSheet,
 	TextInput,
@@ -264,7 +265,15 @@ const styles = StyleSheet.create({
 	},
 	numberPadPin: {
 		color: Colors.main,
-		fontSize: 10,
+		...Platform.select({
+			android: {
+				fontSize: 14,
+			},
+			ios: {
+				fontSize: 10,
+			},
+		}),
+		letterSpacing: 2,
 		width: '100%',
 		textAlign: 'center',
 		marginBottom: 10,

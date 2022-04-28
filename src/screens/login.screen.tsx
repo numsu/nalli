@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import {
 	Alert,
+	Platform,
 	StyleSheet,
 	TextInput,
 	View,
@@ -226,7 +227,15 @@ const styles = StyleSheet.create({
 	},
 	numberPadPin: {
 		color: 'white',
-		fontSize: 10,
+		...Platform.select({
+			android: {
+				fontSize: 14,
+			},
+			ios: {
+				fontSize: 10,
+			},
+		}),
+		letterSpacing: 2,
 		width: '100%',
 		textAlign: 'center',
 		marginBottom: 10,

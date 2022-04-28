@@ -4,6 +4,7 @@ const Colors = {
 	inputPlaceholder: '#AAA',
 	darkText: '#444',
 	main: '#184fd9',
+	mainLight: '#668FF9',
 	shadowColor: 'black',
 	danger: '#ca0b00',
 	greyTextOnBlue: '#ccc',

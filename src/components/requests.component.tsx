@@ -118,9 +118,12 @@ export default class NalliRequests extends React.PureComponent<RequestsProps, Re
 					activeSlideAlignment={'start'}
 					containerCustomStyle={styles.carouselContainer}
 					lockScrollWhileSnapping={false}
+					enableMomentum
+					decelerationRate={0.9}
 					shouldOptimizeUpdates
 					layoutCardOffset={8}
 					data={requests}
+					keyExtractor={(data, _) => data.requestId}
 					renderItem={(data: { item: Request; index: number }) => {
 						if (data.item?.requestId) {
 							const amount = CurrencyService.formatNanoAmount(Number(tools.convert(data.item.amount, 'RAW', 'NANO')));
