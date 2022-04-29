@@ -65,27 +65,30 @@ export default class PreferencesModal extends React.PureComponent<PreferencesMod
 
 	toggleBiometrics = async () => {
 		const biometricsType = await VariableStore.getVariable<EBiometricsType>(NalliVariable.BIOMETRICS_TYPE, EBiometricsType.NO_BIOMETRICS);
-		if (biometricsType == EBiometricsType.NO_BIOMETRICS) {
-			const typeText = EBiometricsType.getBiometricsTypeText(this.state.supportedBiometricsType);
-			const success = await BiometricsService.authenticate(`Enable ${typeText} to use instead of PIN`);
-			if (success) {
-				await VariableStore.setVariable(NalliVariable.BIOMETRICS_TYPE, this.state.supportedBiometricsType);
-				this.setState({
-					isBiometricsEnabled: true,
-				});
-			}
+		const nextStateEnabled = biometricsType == EBiometricsType.NO_BIOMETRICS;
+		this.setState({ isBiometricsEnabled: nextStateEnabled });
+
+		const typeText = EBiometricsType.getBiometricsTypeText(this.state.supportedBiometricsType);
+		const success = await BiometricsService.authenticate(`${nextStateEnabled ? 'Enable' : 'Disable'} login with ${typeText.toLowerCase()}`);
+
+		if (!success) {
+			this.setState({ isBiometricsEnabled: !nextStateEnabled });
+			return;
+		}
+
+		if (nextStateEnabled) {
+			await VariableStore.setVariable(NalliVariable.BIOMETRICS_TYPE, this.state.supportedBiometricsType);
 		} else {
 			await VariableStore.setVariable(NalliVariable.BIOMETRICS_TYPE, EBiometricsType.NO_BIOMETRICS);
-			this.setState({
-				isBiometricsEnabled: false,
-			});
 		}
 	}
 
 	togglePushEnabled = async () => {
 		if (!this.state.pushEnabled) {
+			this.setState({ pushEnabled: true });
 			const success = await NotificationService.registerForPushNotifications();
 			if (!success) {
+				this.setState({ pushEnabled: false });
 				Alert.alert(
 					'No permission',
 					'You haven\'t given us a permission to send you notifications. Please allow Nalli to send notifications in your settings.',
@@ -100,8 +103,6 @@ export default class PreferencesModal extends React.PureComponent<PreferencesMod
 						},
 					],
 				);
-			} else {
-				this.setState({ pushEnabled: true });
 			}
 		} else {
 			AuthService.registerPush({ token: '' });

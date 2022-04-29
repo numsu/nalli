@@ -8,7 +8,6 @@ const Colors = {
 	shadowColor: 'black',
 	danger: '#ca0b00',
 	greyTextOnBlue: '#ccc',
-	greyBackground: '#eaeaea',
 	lightGrey: 'rgba(200, 200, 200, 0.15)',
 };
 

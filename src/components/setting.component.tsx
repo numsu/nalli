@@ -42,9 +42,9 @@ export default class Setting extends React.PureComponent<SettingProps, SettingSt
 				</View>
 				<Switch
 						value={value}
-						thumbColor={Colors.main}
-						trackColor={{ true: Colors.mainLight, false: Colors.greyBackground }}
-						ios_backgroundColor={Colors.greyBackground}
+						thumbColor={'white'}
+						trackColor={{ true: Colors.main, false: Colors.lightGrey }}
+						ios_backgroundColor={Colors.lightGrey}
 						onValueChange={onValueChange} />
 			</View>
 		);
