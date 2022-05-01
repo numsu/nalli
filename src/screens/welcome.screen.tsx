@@ -73,11 +73,19 @@ export default class WelcomeScreen extends React.PureComponent<NativeStackScreen
 	}
 
 	createWallet = async () => {
-		const token = await AuthService.registerNoPhone();
-		await AuthStore.setAuthentication(token.accessToken);
-		const client = await ClientService.getClient();
-		AuthStore.setClient(client);
-		this.props.navigation.navigate('WelcomePin');
+		if (this.state.process) {
+			return;
+		}
+		this.setState({ process: true });
+		try {
+			const token = await AuthService.registerNoPhone();
+			await AuthStore.setAuthentication(token.accessToken);
+			const client = await ClientService.getClient();
+			AuthStore.setClient(client);
+			this.props.navigation.navigate('WelcomePin');
+		} finally {
+			this.setState({ process: false });
+		}
 	}
 
 	render = () => {
