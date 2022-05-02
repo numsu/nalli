@@ -43,9 +43,7 @@ export default class AuthStore {
 	static async clearClient(): Promise<void> {
 		try {
 			this.client = undefined;
-			return await AsyncStorage.removeItem(this.clientKey, () => (
-				console.log('Client information cleared')
-			));
+			return await AsyncStorage.removeItem(this.clientKey);
 		} catch (err) {
 			console.error(err);
 			throw new Error('Error clearing client from storage');
@@ -120,9 +118,7 @@ export default class AuthStore {
 	static async clearAuthentication(): Promise<void> {
 		try {
 			this.authentication = undefined;
-			return await AsyncStorage.removeItem(this.authKey, () => (
-				console.log('Authentication cleared')
-			));
+			return await AsyncStorage.removeItem(this.authKey);
 		} catch (err) {
 			console.error(err);
 			throw new Error('Error clearing authentication from storage');
@@ -154,9 +150,7 @@ export default class AuthStore {
 	static async clearExpires(): Promise<void> {
 		try {
 			this.expires = undefined;
-			return await AsyncStorage.removeItem(this.expiresKey, () => (
-				console.log('Expires cleared')
-			));
+			return await AsyncStorage.removeItem(this.expiresKey);
 		} catch (err) {
 			console.error(err);
 			throw new Error('Error clearing expires from storage');

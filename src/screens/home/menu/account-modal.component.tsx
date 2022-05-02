@@ -7,6 +7,7 @@ import {
 	TextInput,
 	View,
 } from 'react-native';
+import uuid from 'react-native-uuid';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -156,6 +157,7 @@ export default class AccountModal extends React.PureComponent<AccountModalProps,
 			await AuthStore.clearPin();
 			await WalletStore.clearWallet();
 			await AsyncStorage.clear();
+			await VariableStore.setVariable(NalliVariable.DEVICE_ID, uuid.v4());
 		} catch (e) {
 			console.error(e);
 			Alert.alert('Error', 'Something went wrong deleting your information from your phone, but your information is deleted from our servers.');

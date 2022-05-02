@@ -7,6 +7,7 @@ import {
 	TextInput,
 	View,
 } from 'react-native';
+import uuid from 'react-native-uuid';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackActions } from '@react-navigation/native';
@@ -157,6 +158,7 @@ export default class Login extends React.Component<NativeStackScreenProps<any>, 
 		await AuthStore.clearPin();
 		await VariableStore.clear();
 		await AsyncStorage.clear();
+		await VariableStore.setVariable(NalliVariable.DEVICE_ID, uuid.v4());
 		this.props.navigation.dispatch(StackActions.replace('Auth'));
 	}
 

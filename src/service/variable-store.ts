@@ -43,7 +43,7 @@ export default class VariableStore {
 	static async removeVariable(key: NalliVariable): Promise<void> {
 		try {
 			this.variables.delete(key);
-			await AsyncStorage.removeItem(key);
+			await AsyncStorage.setItem(this.variablesKey, JSON.stringify(this.variables, replacer));
 		} catch (e) {
 			console.error('Error removing variable from storage', e);
 		}
@@ -58,8 +58,8 @@ export default class VariableStore {
 	}
 
 	static async clear(): Promise<void> {
-		await AsyncStorage.multiRemove(Array.from(this.variables.keys()));
 		this.variables.clear();
+		await AsyncStorage.setItem(this.variablesKey, JSON.stringify(this.variables, replacer));
 	}
 
 	private static async populate() {

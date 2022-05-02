@@ -56,8 +56,8 @@ export default class CreateWalletMnemonic extends React.PureComponent<NativeStac
 						try {
 							await WalletService.saveNewWallet(this.state.generated.accounts[0]);
 							await WalletStore.setWallet(this.state.generated);
-							VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT, this.state.generated.accounts[0].address);
-							VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT_INDEX, 0);
+							await VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT, this.state.generated.accounts[0].address);
+							await VariableStore.setVariable(NalliVariable.SELECTED_ACCOUNT_INDEX, 0);
 							this.props.navigation.dispatch(StackActions.replace('Login'));
 						} catch {
 							this.setState({ process: false });
