@@ -1,5 +1,6 @@
 import { blake2bFinal, blake2bInit, blake2bUpdate } from 'blakejs';
 import * as Contacts from 'expo-contacts';
+import * as Permissions from 'expo-permissions';
 import { Alert } from 'react-native';
 
 import { openSettings, sleep } from '../constants/globals';
@@ -39,8 +40,11 @@ export default class ContactsService {
 	}
 
 	static async askPermission(): Promise<boolean> {
-		const { status } = await Contacts.getPermissionsAsync();
-		return status == Contacts.PermissionStatus.GRANTED;
+		const { status } = await Permissions.askAsync(Permissions.CONTACTS);
+		return status == Permissions.PermissionStatus.GRANTED;
+		// After Expo 44:
+		// const { status } = await Contacts.getPermissionsAsync();
+		// return status == Contacts.PermissionStatus.GRANTED;
 	}
 
 	static async getContacts(alertNoPermission = true): Promise<ContactItem[]> {

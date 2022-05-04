@@ -43,6 +43,7 @@
 		"expo-localization": "~11.0.0",
 		"expo-modules-core": "~0.4.10",
 		"expo-notifications": "~0.13.3",
+		"expo-permissions": "~13.0.3",
 		"expo-random": "~12.0.1",
 		"expo-secure-store": "~11.0.3",
 		"expo-status-bar": "~1.1.0",
