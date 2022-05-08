@@ -27,9 +27,11 @@ import Colors from '../../constants/colors';
 import layout from '../../constants/layout';
 import AuthStore from '../../service/auth-store';
 import ClientService from '../../service/client.service';
+import ContactsService from '../../service/contacts.service';
 import RequestService from '../../service/request.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 import WalletStore from '../../service/wallet-store';
+import { WalletTransaction } from '../../service/wallet.service';
 import ContactsModal from './contacts-modal.component';
 import { SendSheetRecipient } from './send-sheet.component';
 
@@ -43,7 +45,6 @@ export interface RequestSheetState {
 	contactsModalOpen: boolean;
 	convertedAmount: string;
 	currency: string;
-	isNalliUser: boolean;
 	isPhoneNumberUser: boolean;
 	message: string;
 	process: boolean;
@@ -65,6 +66,7 @@ enum RequestMode {
 export default class RequestSheet extends React.PureComponent<RequestSheetProps, RequestSheetState> {
 
 	requestSheetRef: RefObject<any>;
+	currencyInputRef: CurrencyInput;
 	sendAnimation;
 	subscriptions: EmitterSubscription[] = [];
 
@@ -76,7 +78,6 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 			contactsModalOpen: false,
 			convertedAmount: '0',
 			currency: 'xno',
-			isNalliUser: false,
 			isPhoneNumberUser: false,
 			message: '',
 			process: false,
@@ -117,6 +118,24 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 		this.requestSheetRef.current.snapToIndex(0);
 	}
 
+	fillWithTransaction = async (transaction: WalletTransaction) => {
+		const contact = ContactsService.getContactByHash(transaction.phoneHash);
+		const recipient = await ClientService.getClientAddress(contact.fullNumber);
+		this.setState({
+			recipient: {
+				initials: contact.initials,
+				name: contact.name,
+				formattedNumber: contact.formattedNumber,
+				number: contact.fullNumber,
+			},
+			recipientId: recipient.id,
+			recipientAddress: transaction.account,
+			requestAmount: transaction.amount,
+		}, () => {
+			this.currencyInputRef.forceXno();
+		});
+	}
+
 	onCopyPress = (address: string) => {
 		if (!this.state.showCopiedText) {
 			Clipboard.setString(address);
@@ -142,7 +161,6 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 		if (selectedContact) {
 			const recipient = await ClientService.getClientAddress(selectedContact.fullNumber);
 			let address;
-			let isNalliUser = false;
 			let recipientLastLoginDate;
 			let recipientId;
 
@@ -153,14 +171,12 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 			} else {
 				address = recipient.address;
 				recipientId = recipient.id;
-				isNalliUser = recipient.nalliUser;
 				recipientLastLoginDate = recipient.lastLogin;
 			}
 
 			this.setState({
 				contactsModalOpen: false,
 				recipientId,
-				isNalliUser,
 				recipient: selectedContact,
 				recipientAddress: address,
 				recipientLastLoginDate,
@@ -173,7 +189,6 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 	clearRecipient = () => {
 		this.setState({
 			contactsModalOpen: false,
-			isNalliUser: false,
 			message: '',
 			recipient: undefined,
 			recipientAddress: undefined,
@@ -187,7 +202,6 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 		this.setState({
 			contactsModalOpen: false,
 			convertedAmount: '0',
-			isNalliUser: false,
 			message: '',
 			process: false,
 			recipient: undefined,
@@ -260,7 +274,6 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 			address,
 			contactsModalOpen,
 			convertedAmount,
-			isNalliUser,
 			isPhoneNumberUser,
 			message,
 			process,
@@ -336,6 +349,7 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 						<BottomSheetScrollView keyboardDismissMode={'interactive'}>
 							<BottomSheetView style={styles.amountContainer}>
 								<CurrencyInput
+										ref={c => this.currencyInputRef = c}
 										value={requestAmount}
 										convertedValue={convertedAmount}
 										hideMaxButton
@@ -353,7 +367,7 @@ export default class RequestSheet extends React.PureComponent<RequestSheetProps,
 							{recipient &&
 								<SelectedContact
 										contact={recipient}
-										isNalliUser={isNalliUser}
+										isNalliUser={true}
 										lastLoginDate={recipientLastLoginDate}
 										onSwapPress={this.onSelectRecipientPress} />
 							}
@@ -445,7 +459,7 @@ const styles = StyleSheet.create({
 				height: (layout.isSmallDevice ? layout.window.height * 0.8 : layout.window.height * 0.65),
 			}
 		}),
-		paddingBottom: 85,
+		paddingBottom: 100,
 	},
 	qrcodeContainer: {
 		paddingTop: 20,
@@ -478,7 +492,7 @@ const styles = StyleSheet.create({
 	},
 	confirmButton: {
 		position: 'absolute',
-		bottom: 20,
+		bottom: 50,
 		left: 15,
 		width: '100%',
 	},

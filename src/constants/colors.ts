@@ -8,7 +8,7 @@ const Colors = {
 	shadowColor: 'black',
 	danger: '#ca0b00',
 	greyTextOnBlue: '#ccc',
-	lightGrey: 'rgba(200, 200, 200, 0.15)',
+	lightGrey: '#f8f8f8',
 };
 
 export default Colors;

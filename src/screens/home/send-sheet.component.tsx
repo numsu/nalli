@@ -39,7 +39,7 @@ import { Request } from '../../service/request.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 import WalletHandler from '../../service/wallet-handler.service';
 import WalletStore from '../../service/wallet-store';
-import WalletService, { EBlockSubType } from '../../service/wallet.service';
+import WalletService, { EBlockSubType, WalletTransaction } from '../../service/wallet.service';
 import ContactsModal from './contacts-modal.component';
 import PhoneNumberInputModal from './number-input-modal.component';
 
@@ -177,6 +177,29 @@ export default class SendSheet extends React.PureComponent<SendSheetProps, SendS
 			sendAmount: amount,
 			recipient,
 			requestId: request.requestId,
+		}, () => {
+			this.currencyInputRef.forceXno();
+		});
+	}
+
+	fillWithTransaction = (transaction: WalletTransaction) => {
+		const isNalliUser = !!transaction.phoneHash;
+		let contact;
+		if (isNalliUser) {
+			contact = ContactsService.getContactByHash(transaction.phoneHash);
+		}
+		this.setState({
+			isNalliUser,
+			recipient: contact && {
+				initials: contact.initials,
+				name: contact.name,
+				formattedNumber: contact.formattedNumber,
+				number: contact.fullNumber,
+			},
+			recipientAddress: transaction.account,
+			walletAddress: transaction.account,
+			sendAmount: transaction.amount,
+			tab: !contact ? SendSheetTab.ADDRESS : SendSheetTab.CONTACT,
 		}, () => {
 			this.currencyInputRef.forceXno();
 		});
@@ -728,7 +751,7 @@ const styles = StyleSheet.create({
 				height: (layout.isSmallDevice ? layout.window.height * 0.8 : layout.window.height * 0.66),
 			}
 		}),
-		paddingBottom: 85,
+		paddingBottom: 100,
 	},
 	transactionMoneyInputContainer: {
 		justifyContent: 'center',
@@ -803,7 +826,7 @@ const styles = StyleSheet.create({
 	},
 	sendTransactionButton: {
 		position: 'absolute',
-		bottom: 20,
+		bottom: 40,
 		left: 15,
 		width: '100%',
 	},

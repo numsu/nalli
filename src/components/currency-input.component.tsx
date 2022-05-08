@@ -170,6 +170,7 @@ export default class CurrencyInput extends React.PureComponent<CurrencyInputProp
 							onBlur={this.onBlur}
 							onFocus={this.onFocus}
 							allowFontScaling={false}
+							placeholderTextColor={Colors.inputPlaceholder}
 							style={[styles.input, style, { borderBottomColor: borderColor }]}
 							keyboardType='decimal-pad'
 							value={value}

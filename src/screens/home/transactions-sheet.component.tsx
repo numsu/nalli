@@ -1,12 +1,14 @@
+import * as Haptics from 'expo-haptics';
 import { box } from 'nanocurrency-web';
 import React, { RefObject } from 'react';
 import {
 	EmitterSubscription,
 	LogBox,
+	Platform,
 	StyleSheet,
-	TouchableOpacity,
+	TouchableHighlight,
 } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { SwipeListView } from 'react-native-swipe-list-view';
 
 import { BottomSheetView } from '@gorhom/bottom-sheet';
 
@@ -17,6 +19,7 @@ import NalliText, { ETextSize } from '../../components/text.component';
 import colors from '../../constants/colors';
 import Colors from '../../constants/colors';
 import { ANIMATION_DELAY, sleep } from '../../constants/globals';
+import AuthStore from '../../service/auth-store';
 import ContactsService from '../../service/contacts.service';
 import CurrencyService from '../../service/currency.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
@@ -26,10 +29,13 @@ import { DateUtil } from '../../util/date.util';
 import TransactionModal from './transaction-modal.component';
 
 interface TransactionsSheetProps {
+	onSwipeSend: (transaction: WalletTransaction) => void;
+	onSwipeRequest: (transaction: WalletTransaction) => void;
 }
 
 interface TransactionSheetState {
 	hasMoreTransactions: boolean;
+	isPhoneNumberFunctionsEnabled: boolean;
 	selectedTransaction: WalletTransaction;
 	transactionModalOpen: boolean;
 	transactions: WalletTransaction[];
@@ -41,11 +47,16 @@ export default class TransactionsSheet extends React.PureComponent<TransactionsS
 	interval;
 	subscriptions = [] as EmitterSubscription[];
 
+	isLeftSwipeActivated = false;
+	isRightSwipeActivated = false;
+	activatedKey: string;
+
 	constructor(props) {
 		super(props);
 		this.ref = React.createRef();
 		this.state = {
 			hasMoreTransactions: false,
+			isPhoneNumberFunctionsEnabled: false,
 			selectedTransaction: {} as WalletTransaction,
 			transactionModalOpen: false,
 			transactions: [],
@@ -70,6 +81,10 @@ export default class TransactionsSheet extends React.PureComponent<TransactionsS
 		this.subscriptions.push(VariableStore.watchVariable(NalliVariable.ACCOUNTS_BALANCES, () => this.fetchTransactions(true)));
 	}
 
+	close = () => {
+		this.ref.current.snapToIndex(0);
+	}
+
 	fetchTransactions(force = false) {
 		if (!this.state.transactions || !this.state.transactions.length || force) {
 			this.getTransactions();
@@ -87,7 +102,10 @@ export default class TransactionsSheet extends React.PureComponent<TransactionsS
 			}
 		}
 
+		const isPhoneNumberUser = await AuthStore.isPhoneNumberFunctionsEnabled();
+
 		this.setState({
+			isPhoneNumberFunctionsEnabled: isPhoneNumberUser,
 			transactions: res.sort((a, b) => b.timestamp - a.timestamp),
 			hasMoreTransactions: res.length == 25,
 		}, () => this.ref.current.snapToIndex(0));
@@ -122,9 +140,45 @@ export default class TransactionsSheet extends React.PureComponent<TransactionsS
 		this.setState({ selectedTransaction: {} as WalletTransaction });
 	}
 
+	onSwipeLeftAction = (data) => {
+		this.isLeftSwipeActivated = data.isActivated;
+		if (data.isActivated) {
+			this.activatedKey = data.key;
+			if (Platform.OS == 'ios') {
+				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+			}
+		} else {
+			this.activatedKey = undefined;
+		}
+	}
+
+	onSwipeRightAction = (data) => {
+		this.isRightSwipeActivated = data.isActivated;
+		if (data.isActivated) {
+			this.activatedKey = data.key;
+			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+		} else {
+			this.activatedKey = undefined;
+		}
+	}
+
+	onSwipeTouchEnd = () => {
+		if (this.isRightSwipeActivated) {
+			const transaction = this.state.transactions.find(t => t.hash == this.activatedKey);
+			const contact = ContactsService.getContactByHash(transaction.phoneHash);
+			if (!!contact) {
+				this.props.onSwipeRequest(transaction);
+			}
+		} else if (this.isLeftSwipeActivated) {
+			const transaction = this.state.transactions.find(t => t.hash == this.activatedKey);
+			this.props.onSwipeSend(transaction);
+		}
+	}
+
 	render = () => {
 		const {
 			hasMoreTransactions,
+			isPhoneNumberFunctionsEnabled,
 			selectedTransaction,
 			transactionModalOpen,
 			transactions,
@@ -140,19 +194,43 @@ export default class TransactionsSheet extends React.PureComponent<TransactionsS
 					enableLinearGradient
 					header='Transactions'>
 				<BottomSheetView style={styles.transactionList}>
-					<FlatList
+					<SwipeListView
 							data={transactions}
 							keyExtractor={(item => item.hash)}
 							initialNumToRender={10}
 							showsVerticalScrollIndicator={false}
-							ListHeaderComponent={() => <BottomSheetView style={{ paddingTop: 20 }}><></></BottomSheetView>}
+							ListHeaderComponent={() => <BottomSheetView style={{ paddingTop: 25 }}><></></BottomSheetView>}
 							ListEmptyComponent={() => <NalliText style={styles.noMoreText}>Your transactions will appear here</NalliText>}
+							renderHiddenItem={() => (
+								<BottomSheetView style={styles.swipeRowBack}>
+									<BottomSheetView style={styles.swipeRowItem}>
+										<NalliText size={ETextSize.P_MEDIUM} style={styles.swipeRowText}>
+											<NalliIcon icon='md-arrow-up' type={IconType.ION} />&nbsp;Send
+										</NalliText>
+									</BottomSheetView>
+									<BottomSheetView style={{ ...styles.swipeRowItem, ...styles.swipeRowItemRight }}>
+										<NalliText size={ETextSize.P_MEDIUM} style={styles.swipeRowText}>
+											Request&nbsp;<NalliIcon icon='md-arrow-down' type={IconType.ION} />
+										</NalliText>
+									</BottomSheetView>
+								</BottomSheetView>
+							)}
+							leftActionValue={0}
+							leftActivationValue={100}
+							stopLeftSwipe={150}
+							disableLeftSwipe={!isPhoneNumberFunctionsEnabled}
+							rightActionValue={0}
+							rightActivationValue={-100}
+							stopRightSwipe={-150}
+							onLeftActionStatusChange={data => this.onSwipeLeftAction(data)}
+							onRightActionStatusChange={data => this.onSwipeRightAction(data)}
+							onTouchEnd={() => this.onSwipeTouchEnd()}
 							renderItem={itemInfo => {
 								const item = itemInfo.item;
 								const amount = CurrencyService.formatNanoAmount(Number(item.amount));
 								return (
-									<BottomSheetView key={item.hash} style={styles.transactionContainer}>
-										<TouchableOpacity onPress={() => this.openTransaction(item)}>
+									<TouchableHighlight underlayColor={Colors.lightGrey} key={item.hash} style={styles.transactionContainer} onPress={() => this.openTransaction(item)}>
+										<BottomSheetView>
 											<BottomSheetView style={styles.transactionRow}>
 												{item.type == 'send'
 													? <NalliText size={ETextSize.H2}>Sent</NalliText>
@@ -184,8 +262,8 @@ export default class TransactionsSheet extends React.PureComponent<TransactionsS
 													</NalliText>
 												</BottomSheetView>
 											}
-										</TouchableOpacity>
-									</BottomSheetView>
+										</BottomSheetView>
+									</TouchableHighlight>
 								);
 							}}
 							ListFooterComponent={() => {
@@ -221,20 +299,43 @@ export default class TransactionsSheet extends React.PureComponent<TransactionsS
 const styles = StyleSheet.create({
 	transactionList: {
 		backgroundColor: 'white',
-		paddingHorizontal: 15,
+		paddingHorizontal: 10,
 		minHeight: '100%',
 	},
 	transactionContainer: {
+        backgroundColor: 'white',
 		justifyContent: 'space-between',
 		borderBottomWidth: 1,
 		borderBottomColor: colors.borderColor,
-		paddingVertical: 5,
+		padding: 5,
 	},
 	transactionRow: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		paddingTop: -3,
 		paddingBottom: 3,
+	},
+	swipeRowBack: {
+        alignItems: 'center',
+        backgroundColor: Colors.lightGrey,
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+	},
+	swipeRowItem: {
+		backgroundColor: Colors.main,
+		width: '50%',
+		height: '100%',
+		justifyContent: 'center',
+		paddingLeft: 10,
+	},
+	swipeRowItemRight: {
+		alignContent: 'flex-end',
+		alignItems: 'flex-end',
+		paddingRight: 10,
+	},
+	swipeRowText: {
+		color: 'white',
 	},
 	transactionAmount: {
 		fontSize: 18,

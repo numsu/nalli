@@ -31,7 +31,7 @@ import { Request } from '../../service/request.service';
 import VariableStore, { NalliVariable } from '../../service/variable-store';
 import WalletHandler from '../../service/wallet-handler.service';
 import WalletStore, { WalletType } from '../../service/wallet-store';
-import WalletService from '../../service/wallet.service';
+import WalletService, { WalletTransaction } from '../../service/wallet.service';
 import WsService, { EWebSocketNotificationType } from '../../service/ws.service';
 import NalliMenu from './menu/nalli-menu.component';
 import PrivacyShield, { NalliAppState } from './privacy-shield.component';
@@ -188,7 +188,7 @@ export default class HomeScreen extends React.PureComponent<NativeStackScreenPro
 		this.sendSheetRef.open();
 	}
 
-	onReceivePress = () => {
+	onRequestPress = () => {
 		this.requestSheetRef.open();
 	}
 
@@ -200,6 +200,18 @@ export default class HomeScreen extends React.PureComponent<NativeStackScreenPro
 		this.sidemenuRef.openMenu(false);
 		this.onSendPress();
 		this.sendSheetRef.toggleDonate(true);
+	}
+
+	onSwipeSend = (transaction: WalletTransaction) => {
+		this.transactionSheetRef.close();
+		this.onSendPress();
+		this.sendSheetRef.fillWithTransaction(transaction);
+	}
+
+	onSwipeRequest = (transaction: WalletTransaction) => {
+		this.transactionSheetRef.close();
+		this.onRequestPress();
+		this.requestSheetRef.fillWithTransaction(transaction);
 	}
 
 	onRequestAcceptPress = (request: Request) => {
@@ -224,7 +236,7 @@ export default class HomeScreen extends React.PureComponent<NativeStackScreenPro
 						ref={menu => this.sidemenuRef = menu}
 						menu={<NalliMenu onDonatePress={this.onDonatePress} />}
 						bounceBackOnOverdraw={false}
-						toleranceX={20}
+						toleranceX={1}
 						autoClosing={false}>
 					<ScrollView scrollEnabled={false}>
 						<KeyboardAvoidingView>
@@ -270,11 +282,14 @@ export default class HomeScreen extends React.PureComponent<NativeStackScreenPro
 												solid
 												icon='md-arrow-down'
 												style={styles.action}
-												onPress={this.onReceivePress}
+												onPress={this.onRequestPress}
 												disabled={!walletIsOpen} />
 									</View>
 								</View>
-								<TransactionsSheet ref={c => this.transactionSheetRef = c} />
+								<TransactionsSheet
+										ref={c => this.transactionSheetRef = c}
+										onSwipeSend={this.onSwipeSend}
+										onSwipeRequest={this.onSwipeRequest} />
 								<SendSheet
 										ref={c => this.sendSheetRef = c}
 										onSendSuccess={this.onSendSuccess} />

@@ -48,9 +48,11 @@ export default class MyBottomSheet extends React.PureComponent<BottomSheetProps,
 					snapPoints={snapPoints}
 					enablePanDownToClose={enablePanDownToClose}
 					animateOnMount={false}
+					enableContentPanningGesture={false}
 					ref={reference}
 					onClose={onClose}
-					handleIndicatorStyle={styles.panelHandle}
+					handleIndicatorStyle={styles.panelHandleIndicator}
+					handleStyle={styles.panelHandle}
 					style={styles.shadow}>
 				<BottomSheetView style={styles.headerContainer}>
 					<NalliText
@@ -71,8 +73,11 @@ export default class MyBottomSheet extends React.PureComponent<BottomSheetProps,
 }
 
 const styles = StyleSheet.create({
-	panelHandle: {
+	panelHandleIndicator: {
 		backgroundColor: Colors.borderColor,
+	},
+	panelHandle: {
+		paddingVertical: 20,
 	},
 	headerContainer: {
 		flexDirection: 'row',
